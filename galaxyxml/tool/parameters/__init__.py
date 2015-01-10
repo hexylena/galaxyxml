@@ -45,7 +45,7 @@ class XMLParam(object):
 class RequestParamTranslation(XMLParam):
     name = 'request_param_translation'
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.node = etree.Element(self.name)
 
     def acceptable_child(self, child):
@@ -55,7 +55,7 @@ class RequestParamTranslation(XMLParam):
 class RequestParam(XMLParam):
     name = 'request_param'
 
-    def __init__(self, galaxy_name, remote_name, missing):
+    def __init__(self, galaxy_name, remote_name, missing, **kwargs):
         #TODO: bulk copy locals into self.attr?
         self.galaxy_name = galaxy_name
         # http://stackoverflow.com/a/1408860
@@ -69,7 +69,7 @@ class RequestParam(XMLParam):
 class AppendParam(XMLParam):
     name = 'append_param'
 
-    def __init__(self, separator="&amp;", first_separator="?", join="="):
+    def __init__(self, separator="&amp;", first_separator="?", join="=", **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(AppendParam, self).__init__(**params)
 
@@ -80,7 +80,7 @@ class AppendParam(XMLParam):
 class AppendParamValue(XMLParam):
     name = 'value'
 
-    def __init__(self, name="_export", missing="1"):
+    def __init__(self, name="_export", missing="1", **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(AppendParamValue, self).__init__(**params)
 
@@ -98,9 +98,19 @@ class Inputs(XMLParam):
 
 class InputParameter(XMLParam):
 
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, name, **kwargs):
+        # TODO: look at
         self.mako_identifier = name
-        self.num_dashes = 1
+        # We use kwargs instead of the usual locals(), so manually copy the
+        # name to kwargs
+        kwargs['name'] = name
+
+        if 'num_dashes' in kwargs:
+            self.num_dashes = kwargs['num_dashes']
+        else:
+            self.num_dashes = 0
+        del kwargs['num_dashes']
+
         self.space_between_arg = " "
 
         # Not sure about this :(
@@ -109,7 +119,7 @@ class InputParameter(XMLParam):
             tmp = '(%s) %s' % (self.flag(), kwargs['help'])
             kwargs['help'] = tmp
 
-        super(InputParameter, self).__init__(*args, **kwargs)
+        super(InputParameter, self).__init__(**kwargs)
 
     def command_line(self):
         before = self.command_line_before()
@@ -143,7 +153,8 @@ class InputParameter(XMLParam):
 class Repeat(InputParameter):
     name = 'repeat'
 
-    def __init__(self, name, title, min=None, max=None, default=None):
+    def __init__(self, name, title, min=None, max=None, default=None,
+            **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Repeat, self).__init__(**params)
 
@@ -160,7 +171,7 @@ class Repeat(InputParameter):
 class Conditional(InputParameter):
     name = 'conditional'
 
-    def __init__(self, name):
+    def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Conditional, self).__init__(**params)
 
@@ -192,14 +203,16 @@ class Param(InputParameter):
 class TextParam(Param):
     type = 'text'
 
-    def __init__(self, name, optional=None, label=None, help=None, size=None, area=False):
+    def __init__(self, name, optional=None, label=None, help=None, size=None,
+            area=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
 
 class _NumericParam(Param):
 
-    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None):
+    def __init__(self, name, value, optional=None, label=None, help=None,
+            min=None, max=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -216,7 +229,7 @@ class BooleanParam(Param):
     type = 'boolean'
 
     def __init__(self, name, optional=None, label=None, help=None,
-                 checked=False, truevalue=None, falsevalue=None):
+                 checked=False, truevalue=None, falsevalue=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
 
         super(BooleanParam, self).__init__(**params)
@@ -243,7 +256,7 @@ class DataParam(Param):
     type = 'data'
 
     def __init__(self, name, optional=None, label=None, help=None, format=None,
-                 multiple=None):
+                 multiple=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -252,7 +265,8 @@ class SelectParam(Param):
     type = 'data'
 
     def __init__(self, name, optional=None, label=None, help=None,
-                 data_ref=None, display=None, multiple=None, options=None, default=None):
+            data_ref=None, display=None, multiple=None, options=None,
+            default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         del params['options']
         del params['default']
@@ -271,7 +285,7 @@ class SelectParam(Param):
 class SelectOption(InputParameter):
     name = 'option'
 
-    def __init__(self, value, text, selected=False):
+    def __init__(self, value, text, selected=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         del params['text']
         super(SelectOption, self).__init__(**params)
@@ -283,7 +297,7 @@ class ValidatorParam(InputParameter):
 
     def __init__(self, type, message=None, filename=None, metadata_name=None,
                  metadata_column=None, line_startswith=None, min=None,
-                 max=None):
+                 max=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(ValidatorParam, self).__init__(**params)
 
@@ -301,13 +315,18 @@ class OutputParameter(XMLParam):
     name = 'data'
 
     def __init__(self, name, format, format_source=None, metadata_source=None,
-                 label=None, from_work_dir=None, hidden=False):
+                 label=None, from_work_dir=None, hidden=False, **kwargs):
         # TODO: validate format_source&metadata_source against something in the
         # XMLParam children tree.
         self.mako_identifier = name
-        self.num_dashes = 0
+        if 'num_dashes' in kwargs:
+            self.num_dashes = kwargs['num_dashes']
+        else:
+            self.num_dashes = 0
         self.space_between_arg = " "
         params = Util.clean_kwargs(locals().copy())
+        del params['num_dashes']
+
         super(OutputParameter, self).__init__(**params)
 
     def command_line(self):
@@ -329,7 +348,7 @@ class OutputParameter(XMLParam):
 class OutputFilter(XMLParam):
     name = 'filter'
 
-    def __init__(self, text):
+    def __init__(self, text, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         del params['text']
         super(OutputFilter, self).__init__(**params)
@@ -341,7 +360,7 @@ class OutputFilter(XMLParam):
 class ChangeFormat(XMLParam):
     name = 'change_format'
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(ChangeFormat, self).__init__(**params)
 
@@ -352,7 +371,7 @@ class ChangeFormat(XMLParam):
 class ChangeFormatWhen(XMLParam):
     name = 'when'
 
-    def __init__(self, input, format, value):
+    def __init__(self, input, format, value, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(ChangeFormatWhen, self).__init__(**params)
 

@@ -50,6 +50,13 @@ class Tool(GalaxyXML):
         else:
             self.root.append(sub_node)
 
+    def clean_command_string(self, command_line):
+        clean = []
+        for x in command_line:
+            if x is not [] and x is not ['']:
+                clean.append(x.strip())
+        return '\n'.join(clean)
+
     def export(self):
         command_line = []
         try:
@@ -68,7 +75,10 @@ class Tool(GalaxyXML):
 
         # Add command section
         command_node = etree.SubElement(self.root, 'command')
-        command_node.text = etree.CDATA("%s %s" % (self.executable, '\n'.join(command_line)))
+
+        actual_cli = "%s %s" % (self.executable, self.clean_command_string(command_line))
+        command_node.text = etree.CDATA(actual_cli.strip())
+
 
         try:
             self.append(self.inputs)
