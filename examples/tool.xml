@@ -6,13 +6,12 @@
   <command><![CDATA[aragorn $flag
 -float $float
 -i$int_min,$int_max
-
 -output $output]]></command>
   <inputs>
-    <param checked="false" help="(-flag) Flag help" label="Flag label" type="boolean" truevalue="$flag"/>
-    <param help="(-float) Float help" label="Float label" type="float" value="0"/>
-    <param help="(-int_min) int_min help" label="int_min label" type="integer" value="0"/>
-    <param help="(-int_max) int_max help" label="int_max label" type="integer" value="0"/>
+    <param checked="false" help="(-flag) Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag"/>
+    <param help="(-float) Float help" label="Float label" name="float" type="float" value="0"/>
+    <param help="(-int_min) int_min help" label="int_min label" name="int_min" type="integer" value="0"/>
+    <param help="(-int_max) int_max help" label="int_max label" name="int_max" type="integer" value="0"/>
   </inputs>
   <outputs>
     <data format="tabular" hidden="false" name="output"/>
