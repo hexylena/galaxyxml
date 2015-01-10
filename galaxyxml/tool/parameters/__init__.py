@@ -229,7 +229,7 @@ class BooleanParam(Param):
             # Unfortunately, mako_identifier is set as a result of the super
             # call, which we shouldn't call TWICE, so we'll just hack around this :(
             #params['truevalue'] = '%s%s' % (self.)
-            self.node.attrib['truevalue'] = self.command_line_actual()
+            self.node.attrib['truevalue'] = self.flag()
 
 
     def command_line_actual(self):
