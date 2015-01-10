@@ -70,8 +70,15 @@ class Tool(GalaxyXML):
         command_node = etree.SubElement(self.root, 'command')
         command_node.text = etree.CDATA("%s %s" % (self.executable, '\n'.join(command_line)))
 
-        self.append(self.inputs)
-        self.append(self.outputs)
+        try:
+            self.append(self.inputs)
+        except:
+            pass
+
+        try:
+            self.append(self.outputs)
+        except:
+            pass
 
         help_element = etree.SubElement(self.root, 'help')
         help_element.text = etree.CDATA(self.help)
