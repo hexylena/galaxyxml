@@ -8,7 +8,7 @@ VALID_URL_METHODS = ('get', 'post')
 
 class Tool(GalaxyXML):
 
-    def __init__(self, name, version, description, executable, hidden=False,
+    def __init__(self, name, id, version, description, executable, hidden=False,
                  tool_type=None, URL_method=None, workflow_compatible=True,
                  force_history_refresh=False, interpreter=None):
 
@@ -16,6 +16,7 @@ class Tool(GalaxyXML):
         self.interpreter = interpreter
         kwargs = {
             'name': name,
+            'id': id,
             'version': version,
             'hidden': hidden,
             'workflow_compatible': workflow_compatible,
