@@ -9,6 +9,7 @@ setup(name="galaxyxml",
         author_email='rasche.eric@yandex.ru',
         license='GPL3',
         install_requires=requirements,
+        packages=["galaxyxml"],
         classifiers=[
             'Development Status :: 3 - Alpha',
             'Operating System :: OS Independent',
