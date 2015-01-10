@@ -107,9 +107,9 @@ class InputParameter(XMLParam):
 
         if 'num_dashes' in kwargs:
             self.num_dashes = kwargs['num_dashes']
+            del kwargs['num_dashes']
         else:
             self.num_dashes = 0
-        del kwargs['num_dashes']
 
         self.space_between_arg = " "
 
@@ -321,11 +321,11 @@ class OutputParameter(XMLParam):
         self.mako_identifier = name
         if 'num_dashes' in kwargs:
             self.num_dashes = kwargs['num_dashes']
+            del kwargs['num_dashes']
         else:
             self.num_dashes = 0
         self.space_between_arg = " "
         params = Util.clean_kwargs(locals().copy())
-        del params['num_dashes']
 
         super(OutputParameter, self).__init__(**params)
 
