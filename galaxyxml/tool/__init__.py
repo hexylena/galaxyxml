@@ -68,7 +68,7 @@ class Tool(GalaxyXML):
 
         # Add command section
         command_node = etree.SubElement(self.root, 'command')
-        command_node.text = etree.CDATA("%s %s" % (self.executable, command_line))
+        command_node.text = etree.CDATA("%s %s" % (self.executable, '\n'.join(command_line)))
 
         self.append(self.inputs)
         self.append(self.outputs)
@@ -76,5 +76,4 @@ class Tool(GalaxyXML):
         help_element = etree.SubElement(self.root, 'help')
         help_element.text = etree.CDATA(self.help)
 
-
-return super(Tool, self).export()
+        return super(Tool, self).export()
