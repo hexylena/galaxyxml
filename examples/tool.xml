@@ -1,9 +1,9 @@
-<tool force_history_refresh="false" hidden="false" name="aragorn" version="1.2.36" workflow_compatible="true">
-  <description>tRNA finder</description>
+<tool force_history_refresh="false" hidden="false" id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36" workflow_compatible="true">
+  <description>Aragorn is a tRNA finder</description>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <command><![CDATA[aragorn $flag
+  <command><![CDATA[aragorn.exe $flag
 -float $float
 -i$int_min,$int_max
 -output $output]]></command>
