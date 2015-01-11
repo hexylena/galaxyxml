@@ -156,16 +156,20 @@ class Repeat(InputParameter):
     def __init__(self, name, title, min=None, max=None, default=None,
             **kwargs):
         params = Util.clean_kwargs(locals().copy())
+        # Allow overriding
+        self.command_line_before = '#for $i in $repeat'
+        self.command_line_after = '#end for'
+
         super(Repeat, self).__init__(**params)
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
 
     def command_line_before(self):
-        return '#for $i in $repeat'
+        return self.command_line_before
 
     def command_line_after(self):
-        return '#end for'
+        return self.command_line_after
 
 
 class Conditional(InputParameter):
