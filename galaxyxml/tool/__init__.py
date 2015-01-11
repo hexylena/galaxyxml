@@ -55,7 +55,8 @@ class Tool(GalaxyXML):
         clean = []
         for x in command_line:
             if x is not [] and x is not ['']:
-                clean.append(x.strip())
+                clean.append(x)
+
         return '\n'.join(clean)
 
     def export(self):

@@ -157,8 +157,8 @@ class Repeat(InputParameter):
             **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
-        self.command_line_before = '#for $i in $repeat'
-        self.command_line_after = '#end for'
+        self.cli_before = '#for $i in $repeat'
+        self.cli_after  = '#end for'
 
         super(Repeat, self).__init__(**params)
 
@@ -166,11 +166,10 @@ class Repeat(InputParameter):
         return issubclass(type(child), InputParameter)
 
     def command_line_before(self):
-        return self.command_line_before
+        return self.cli_before
 
     def command_line_after(self):
-        return self.command_line_after
-
+        return self.cli_after
 
 class Conditional(InputParameter):
     name = 'conditional'
