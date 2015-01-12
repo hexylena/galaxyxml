@@ -105,6 +105,12 @@ class InputParameter(XMLParam):
         # name to kwargs
         kwargs['name'] = name
 
+        # Handle positional parameters
+        if 'positional' in kwargs and kwargs['positional']:
+            self.positional = True
+        else:
+            self.positional = False
+
         if 'num_dashes' in kwargs:
             self.num_dashes = kwargs['num_dashes']
             del kwargs['num_dashes']
@@ -115,9 +121,12 @@ class InputParameter(XMLParam):
 
         # Not sure about this :(
         # https://wiki.galaxyproject.org/Tools/BestPractices#Parameter_help
-        if 'help' in kwargs:
-            tmp = '(%s) %s' % (self.flag(), kwargs['help'])
-            kwargs['help'] = tmp
+        if 'label' in kwargs:
+            # TODO: replace with positional attribute
+            if len(self.flag()) > 0:
+                if kwargs['label'] is None:
+                    kwargs['label'] = 'Author did not provide help for this parameter... '
+                kwargs['label'] += '(%s)' % self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
@@ -139,7 +148,10 @@ class InputParameter(XMLParam):
         if hasattr(self, 'command_line_override'):
             return self.command_line_override
         else:
-            return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
+            if self.positional:
+                return self.mako_name()
+            else:
+                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
         # TODO: enhance logic to check up parents for things like repeat>condotion>param
@@ -157,9 +169,8 @@ class Repeat(InputParameter):
             **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
-        self.cli_before = '#for $i in $repeat'
+        self.cli_before = '#for $i in $%s' % name
         self.cli_after  = '#end for'
-
         super(Repeat, self).__init__(**params)
 
     def acceptable_child(self, child):
@@ -170,6 +181,12 @@ class Repeat(InputParameter):
 
     def command_line_after(self):
         return self.cli_after
+
+    def command_line_actual(self):
+        if hasattr(self, 'command_line_override'):
+            return self.command_line_override
+        else:
+            return "%s" % self.mako_name()
 
 class Conditional(InputParameter):
     name = 'conditional'

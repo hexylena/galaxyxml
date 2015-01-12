@@ -75,8 +75,13 @@ class Tool(GalaxyXML):
         stdio = etree.SubElement(self.root, 'stdio')
         etree.SubElement(stdio, 'exit_code', range='1:', level='fatal')
 
+        # Steal interpreter from kwargs
+        command_kwargs = {}
+        if self.interpreter is not None:
+            command_kwargs['interpreter'] = self.interpreter
+
         # Add command section
-        command_node = etree.SubElement(self.root, 'command')
+        command_node = etree.SubElement(self.root, 'command', **command_kwargs)
 
         actual_cli = "%s %s" % (self.executable, self.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
