@@ -1,12 +1,16 @@
 from setuptools import setup
 from pip.req import parse_requirements
+import sys, os
+
+if sys.argv[-1] == 'publish':
+    os.system("python setup.py sdist bdist_wheel upload")
+    sys.exit()
 
 setup(name="galaxyxml",
-        version='0.1.1',
+        version='0.1.2',
         description='Galaxy XML generation library',
         author='Eric Rasche',
         author_email='rasche.eric@yandex.ru',
-        license='GPL3',
         install_requires=['lxml'],
         packages=["galaxyxml", "galaxyxml.tool", "galaxyxml.tool.parameters"],
         classifiers=[
@@ -14,5 +18,6 @@ setup(name="galaxyxml",
             'Operating System :: OS Independent',
             'Intended Audience :: Developers',
             'Environment :: Console',
+            'License :: OSI Approved :: Apache Software License',
             ],
         )
