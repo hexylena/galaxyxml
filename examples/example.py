@@ -45,7 +45,5 @@ tool.inputs = inputs
 tool.outputs = outputs
 tool.help = 'HI'
 
-data = tool.export()
+print tool.export()
 
-with open('tool.xml', 'w') as handle:
-    handle.write(data)

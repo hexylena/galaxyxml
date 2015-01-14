@@ -254,7 +254,7 @@ class BooleanParam(Param):
         params = Util.clean_kwargs(locals().copy())
 
         super(BooleanParam, self).__init__(**params)
-        if truevalue is None and falsevalue is None:
+        if truevalue is None:
             # If truevalue and falsevalue are None, then we use "auto", the IUC
             # recommended default.
             #
@@ -265,6 +265,8 @@ class BooleanParam(Param):
             #params['truevalue'] = '%s%s' % (self.)
             self.node.attrib['truevalue'] = self.flag()
 
+        if falsevalue is None:
+            self.node.attrib['falsevalue'] = ""
 
     def command_line_actual(self):
         if hasattr(self, 'command_line_override'):

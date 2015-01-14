@@ -9,7 +9,7 @@
 
 -output $output]]></command>
   <inputs>
-    <param checked="false" help="Flag help" label="Flag label (-flag)" name="flag" type="boolean" truevalue="-flag"/>
+    <param checked="false" help="Flag help" label="Flag label (-flag)" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
     <param help="Float help" label="Float label (-float)" name="float" type="float" value="0"/>
     <param help="int_min help" label="int_min label (-int_min)" name="int_min" type="integer" value="0"/>
     <param help="int_max help" label="int_max label (-int_max)" name="int_max" type="integer" value="0"/>
@@ -19,3 +19,4 @@
   </outputs>
   <help><![CDATA[HI]]></help>
 </tool>
+
