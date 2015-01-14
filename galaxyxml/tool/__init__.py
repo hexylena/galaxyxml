@@ -10,7 +10,7 @@ class Tool(GalaxyXML):
 
     def __init__(self, name, id, version, description, executable, hidden=False,
                  tool_type=None, URL_method=None, workflow_compatible=True,
-                 force_history_refresh=False, interpreter=None):
+                 interpreter=None):
 
         self.executable = executable
         self.interpreter = interpreter
@@ -20,7 +20,6 @@ class Tool(GalaxyXML):
             'version': version,
             'hidden': hidden,
             'workflow_compatible': workflow_compatible,
-            'force_history_refresh': force_history_refresh,
         }
         kwargs = Util.coerce(kwargs)
         self.root = etree.Element('tool', **kwargs)
