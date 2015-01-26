@@ -178,6 +178,7 @@ class Repeat(InputParameter):
         # Allow overriding
         self.command_line_before_override = '#for $i in $%s:' % name
         self.command_line_after_override = '#end for'
+        #self.command_line_override
         super(Repeat, self).__init__(**params)
 
     def acceptable_child(self, child):
@@ -294,7 +295,7 @@ class SelectParam(Param):
         del params['options']
         del params['default']
 
-        super(DataParam, self).__init__(**params)
+        super(SelectParam, self).__init__(**params)
 
         if options is not None and default is not None:
             if default  not in options:
