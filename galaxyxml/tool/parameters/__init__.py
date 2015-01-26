@@ -140,15 +140,21 @@ class InputParameter(XMLParam):
         return '\n'.join(complete)
 
     def command_line_before(self):
-        return None
+        try:
+            return self.command_line_after_override
+        except:
+            return None
 
     def command_line_after(self):
-        return None
+        try:
+            return self.command_line_after_override
+        except:
+            return None
 
     def command_line_actual(self):
-        if hasattr(self, 'command_line_override'):
+        try:
             return self.command_line_override
-        else:
+        except:
             if self.positional:
                 return self.mako_name()
             else:
