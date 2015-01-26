@@ -48,5 +48,7 @@ class Util(object):
         # There will be more params, it would be NICE to use a whitelist
         # instead of a blacklist, but until we have more data let's just
         # blacklist stuff we see commonly.
-        del params['positional']
+        for blacklist in ('positional',):
+            if blacklist in params:
+                del params[blacklist]
         return params
