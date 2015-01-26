@@ -44,4 +44,9 @@ class Util(object):
                 params[k] = kwargs[k]
             del params['kwargs']
         del params['self']
+
+        # There will be more params, it would be NICE to use a whitelist
+        # instead of a blacklist, but until we have more data let's just
+        # blacklist stuff we see commonly.
+        del params['positional']
         return params
