@@ -10,7 +10,7 @@ class Tool(GalaxyXML):
 
     def __init__(self, name, id, version, description, executable, hidden=False,
                  tool_type=None, URL_method=None, workflow_compatible=True,
-                 interpreter=None):
+                 interpreter=None, version_command='interpreter filename.exe --version'):
 
         self.executable = executable
         self.interpreter = interpreter
@@ -21,6 +21,7 @@ class Tool(GalaxyXML):
             'hidden': hidden,
             'workflow_compatible': workflow_compatible,
         }
+        self.version_command = version_command
 
         # Remove some of the default values to make tools look a bit nicer
         if not hidden:
@@ -47,9 +48,12 @@ class Tool(GalaxyXML):
         description_node = etree.SubElement(self.root, 'description')
         description_node.text = description
 
-    def version_command(self, command_string):
+    def append_version_command(self):
         version_command = etree.SubElement(self.root, 'version_command')
-        version_command.text = version_command
+        try:
+            version_command.text = self.version_command
+        except:
+            pass
 
     def append(self, sub_node):
         if issubclass(type(sub_node), XMLParam):
@@ -80,6 +84,9 @@ class Tool(GalaxyXML):
         # Add stdio section
         stdio = etree.SubElement(self.root, 'stdio')
         etree.SubElement(stdio, 'exit_code', range='1:', level='fatal')
+
+        # Append version command
+        self.append_version_command()
 
         # Steal interpreter from kwargs
         command_kwargs = {}

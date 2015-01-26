@@ -176,7 +176,7 @@ class Repeat(InputParameter):
             **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
-        self.command_line_before_override = '#for $i in $%s' % name
+        self.command_line_before_override = '#for $i in $%s:' % name
         self.command_line_after_override = '#end for'
         super(Repeat, self).__init__(**params)
 

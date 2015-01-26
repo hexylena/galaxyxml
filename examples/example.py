@@ -3,7 +3,7 @@ import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 
 tool = gxt.Tool("aragorn", 'se.lu.mbioekol.mbio-serv2.aragorn',
-    "1.2.36", "Aragorn is a tRNA finder", "aragorn.exe")
+    "1.2.36", "Aragorn is a tRNA finder", "aragorn.exe", version_command="aragorn.exe --version")
 
 inputs = gxtp.Inputs()
 outputs = gxtp.Outputs()
