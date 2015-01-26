@@ -286,7 +286,7 @@ class DataParam(Param):
 
 
 class SelectParam(Param):
-    type = 'data'
+    type = None
 
     def __init__(self, name, optional=None, label=None, help=None,
             data_ref=None, display=None, multiple=None, options=None,
@@ -301,9 +301,12 @@ class SelectParam(Param):
             if default  not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k,v  in options:
+        for k,v  in options.iteritems():
             selected = (k == default)
             self.append(SelectOption(k, v, selected=selected))
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), SelectOption)
 
 
 class SelectOption(InputParameter):
@@ -311,8 +314,12 @@ class SelectOption(InputParameter):
 
     def __init__(self, value, text, selected=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        del params['text']
-        super(SelectOption, self).__init__(**params)
+
+        passed_kwargs = {}
+        if selected:
+            passed_kwargs['checked'] = ""
+
+        super(SelectOption, self).__init__(value, **passed_kwargs)
         self.node.text = text
 
 
