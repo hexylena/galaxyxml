@@ -141,7 +141,7 @@ class InputParameter(XMLParam):
 
     def command_line_before(self):
         try:
-            return self.command_line_after_override
+            return self.command_line_before_override
         except:
             return None
 
