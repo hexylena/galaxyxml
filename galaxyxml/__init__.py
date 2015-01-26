@@ -12,13 +12,17 @@ class GalaxyXML(object):
 class Util(object):
 
     @classmethod
-    def coerce(cls, data):
+    def coerce(cls, data, kill_lists=False):
         """Recursive data sanitisation
         """
         if isinstance(data, dict):
-            return {k: cls.coerce(v) for k, v in data.items() if v is not None}
+            return {k: cls.coerce(v, kill_lists=kill_lists) for k, v in
+                    data.items() if v is not None}
         elif isinstance(data, list):
-            return [cls.coerce(v) for v in data]
+            if kill_lists:
+                return cls.coerce(data[0])
+            else:
+                return [cls.coerce(v, kill_lists=kill_lists) for v in data]
         else:
             return cls.coerce_value(data)
 

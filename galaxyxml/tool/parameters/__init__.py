@@ -8,7 +8,7 @@ class XMLParam(object):
         # http://stackoverflow.com/a/12118700
         self.children = []
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        kwargs = Util.coerce(kwargs)
+        kwargs = Util.coerce(kwargs, kill_lists=True)
         self.node = etree.Element(self.name, **kwargs)
 
     def append(self, sub_node):
