@@ -21,6 +21,13 @@ class Tool(GalaxyXML):
             'hidden': hidden,
             'workflow_compatible': workflow_compatible,
         }
+
+        # Remove some of the default values to make tools look a bit nicer
+        if not hidden:
+            del kwargs['hidden']
+        if workflow_compatible:
+            del kwargs['workflow_compatible']
+
         kwargs = Util.coerce(kwargs)
         self.root = etree.Element('tool', **kwargs)
 
