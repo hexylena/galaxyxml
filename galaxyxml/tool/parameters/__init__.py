@@ -176,18 +176,12 @@ class Repeat(InputParameter):
             **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
-        self.cli_before = '#for $i in $%s' % name
-        self.cli_after  = '#end for'
+        self.command_line_before_override = '#for $i in $%s' % name
+        self.command_line_after_override = '#end for'
         super(Repeat, self).__init__(**params)
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
-
-    def command_line_before(self):
-        return self.cli_before
-
-    def command_line_after(self):
-        return self.cli_after
 
     def command_line_actual(self):
         if hasattr(self, 'command_line_override'):
