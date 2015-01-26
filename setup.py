@@ -3,7 +3,7 @@ from pip.req import parse_requirements
 import sys, os
 
 if sys.argv[-1] == 'publish':
-    os.system("python setup.py sdist bdist_wheel upload")
+    os.system("python setup.py sdist bdist_wheel upload; git push")
     sys.exit()
 
 setup(name="galaxyxml",
