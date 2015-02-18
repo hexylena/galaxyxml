@@ -103,7 +103,8 @@ class InputParameter(XMLParam):
         self.mako_identifier = name
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
-        kwargs['name'] = name
+        if name is not None:
+            kwargs['name'] = name
 
         # Handle positional parameters
         if 'positional' in kwargs and kwargs['positional']:
@@ -317,10 +318,11 @@ class SelectOption(InputParameter):
 
         passed_kwargs = {}
         if selected:
-            passed_kwargs['checked'] = ""
+            passed_kwargs['selected'] = "true"
+        passed_kwargs['value'] = params['value']
 
-        super(SelectOption, self).__init__(value, **passed_kwargs)
-        self.node.text = text
+        super(SelectOption, self).__init__(None, **passed_kwargs)
+        self.node.text = str(text)
 
 
 class ValidatorParam(InputParameter):
