@@ -41,18 +41,20 @@ class Util(object):
             return str(obj)
 
     @classmethod
-    def clean_kwargs(cls, params):
+    def clean_kwargs(cls, params, final=False):
         if 'kwargs' in params:
             kwargs = params['kwargs']
             for k in kwargs:
                 params[k] = kwargs[k]
             del params['kwargs']
-        del params['self']
+        if 'self' in params:
+            del params['self']
 
         # There will be more params, it would be NICE to use a whitelist
         # instead of a blacklist, but until we have more data let's just
         # blacklist stuff we see commonly.
-        for blacklist in ('positional',):
-            if blacklist in params:
-                del params[blacklist]
+        if final:
+            for blacklist in ('positional',):
+                if blacklist in params:
+                    del params[blacklist]
         return params

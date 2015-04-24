@@ -9,6 +9,7 @@ class XMLParam(object):
         self.children = []
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
+        kwargs = Util.clean_kwargs(kwargs, final=True)
         self.node = etree.Element(self.name, **kwargs)
 
     def append(self, sub_node):
@@ -128,7 +129,10 @@ class InputParameter(XMLParam):
                 if kwargs['label'] is None:
                     kwargs['label'] = 'Author did not provide help for this parameter... '
                 if not self.positional:
-                    kwargs['label'] += ' (%s)' % self.flag()
+                    if kwargs['help'] is None:
+                        kwargs['help'] = '(%s)' % self.flag()
+                    else:
+                        kwargs['help'] += ' (%s)' % self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 

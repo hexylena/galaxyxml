@@ -28,12 +28,17 @@ param_min = gxtp.IntegerParam('int_min',
 param_max = gxtp.IntegerParam('int_max',
                               label='int_max label',
                               help='int_max help', value=0, num_dashes=1)
+
+posint = gxtp.IntegerParam('posint', label='posint label', positional=True,
+                           help='posinthelp', value=0, num_dashes=2)
+
 param_min.command_line_override = '-i$int_min,$int_max'
 param_max.command_line_override = ''
 param_min.space_between_arg = ' '
 param_max.space_between_arg = ' '
 inputs.append(param_min)
 inputs.append(param_max)
+inputs.append(posint)
 
 
 # Outputs
