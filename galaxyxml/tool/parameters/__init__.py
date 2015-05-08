@@ -94,7 +94,19 @@ class Inputs(XMLParam):
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter)
+        return issubclass(type(child), (InputParameter, InputSection))
+
+
+class InputSection(XMLParam):
+    name = 'section'
+
+    def __init__(self, section_name, title, expanded=True, **kwargs):
+        self.section_name = section_name
+        params = Util.clean_kwargs(locals().copy())
+        super(InputSection, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), (InputParameter, InputSection))
 
 
 class InputParameter(XMLParam):

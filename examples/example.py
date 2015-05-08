@@ -16,10 +16,13 @@ inputs.append(param)
 
 
 # A float
+section = gxtp.InputSection('section_name', 'Section Title')
+
 param = gxtp.FloatParam('float', label='Float label',
-                        help='Float help', value=0, num_dashes=1)
+                        help='Float help', value=10, num_dashes=2)
 param.space_between_arg = ' '
-inputs.append(param)
+section.append(param)
+inputs.append(section)
 
 
 param_min = gxtp.IntegerParam('int_min',
