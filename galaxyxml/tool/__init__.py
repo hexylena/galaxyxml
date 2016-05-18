@@ -1,3 +1,4 @@
+from __future__ import print_function
 from lxml import etree
 from galaxyxml import Util, GalaxyXML
 from galaxyxml.tool.parameters import XMLParam
@@ -73,8 +74,8 @@ class Tool(GalaxyXML):
         command_line = []
         try:
             command_line.append(self.inputs.cli())
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
         try:
             command_line.append(self.outputs.cli())
