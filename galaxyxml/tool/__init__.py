@@ -73,8 +73,8 @@ class Tool(GalaxyXML):
         command_line = []
         try:
             command_line.append(self.inputs.cli())
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
         try:
             command_line.append(self.outputs.cli())

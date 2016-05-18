@@ -50,5 +50,5 @@ tool.inputs = inputs
 tool.outputs = outputs
 tool.help = 'HI'
 
-print tool.export()
+print(tool.export())
 

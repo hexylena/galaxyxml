@@ -7,7 +7,7 @@ class XMLParam(object):
     def __init__(self, *args, **kwargs):
         # http://stackoverflow.com/a/12118700
         self.children = []
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
         self.node = etree.Element(self.name, **kwargs)
@@ -306,7 +306,7 @@ class SelectParam(Param):
             if default  not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k,v  in options.iteritems():
+        for k,v  in options.items():
             selected = (k == default)
             self.append(SelectOption(k, v, selected=selected))
 

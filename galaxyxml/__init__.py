@@ -17,7 +17,7 @@ class Util(object):
         """
         if isinstance(data, dict):
             return {k: cls.coerce(v, kill_lists=kill_lists) for k, v in
-                    data.items() if v is not None}
+                    list(data.items()) if v is not None}
         elif isinstance(data, list):
             if kill_lists:
                 return cls.coerce(data[0])
