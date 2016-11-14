@@ -7,7 +7,7 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 setup(name="galaxyxml",
-        version='0.2.1',
+        version='0.2.2',
         description='Galaxy XML generation library',
         author='Eric Rasche',
         author_email='esr@tamu.edu',
