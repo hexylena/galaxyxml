@@ -293,7 +293,7 @@ class DataParam(Param):
 
 
 class SelectParam(Param):
-    type = None
+    type = 'select'
 
     def __init__(self, name, optional=None, label=None, help=None,
             data_ref=None, display=None, multiple=None, options=None,
