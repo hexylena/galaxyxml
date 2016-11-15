@@ -235,6 +235,8 @@ class TextParam(Param):
     def __init__(self, name, optional=None, label=None, help=None, size=None,
             area=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
+        params['value'] = params['default']
+        del params['default']
         super(TextParam, self).__init__(**params)
 
 
