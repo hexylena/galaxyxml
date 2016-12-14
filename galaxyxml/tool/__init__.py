@@ -71,6 +71,22 @@ class Tool(GalaxyXML):
         return '\n'.join(clean)
 
     def export(self):
+
+        try:
+            self.append(self.edam_operations)
+        except:
+            pass
+
+        try:
+            self.append(self.edam_topics)
+        except:
+            pass
+
+        try:
+            self.append(self.requirements)
+        except:
+            pass
+
         command_line = []
         try:
             command_line.append(self.inputs.cli())
