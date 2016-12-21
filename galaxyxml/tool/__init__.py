@@ -129,5 +129,10 @@ class Tool(GalaxyXML):
 
         help_element = etree.SubElement(self.root, 'help')
         help_element.text = etree.CDATA(self.help)
+       
+        try:
+            self.append(self.citations)
+        except:
+            pass
 
         return super(Tool, self).export()
