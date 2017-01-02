@@ -468,3 +468,20 @@ class ChangeFormatWhen(XMLParam):
 
     def acceptable_child(self, child):
         return False
+
+
+class Citations(XMLParam):
+    name = 'citations'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Citation)
+
+
+class Citation(XMLParam):
+    name = 'citation'
+
+    def __init__(self, type, value):
+        passed_kwargs = {}
+        passed_kwargs['type'] = type
+        super(Citation, self).__init__(**passed_kwargs)
+        self.node.text = str(value)
