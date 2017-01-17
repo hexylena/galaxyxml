@@ -41,7 +41,7 @@ class XMLParam(object):
         lines = []
         for child in self.children:
             lines.append(child.command_line())
-            #lines += child.command_line()
+            # lines += child.command_line()
         return '\n'.join(lines)
 
     def command_line(self):

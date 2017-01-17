@@ -70,7 +70,7 @@ class Tool(GalaxyXML):
 
         return '\n'.join(clean)
 
-    def export(self):
+    def export(self):  # noqa
 
         try:
             self.append(self.edam_operations)
