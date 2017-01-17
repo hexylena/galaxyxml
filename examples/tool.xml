@@ -1,12 +1,15 @@
-<tool hidden="false" id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36" workflow_compatible="true">
+<?xml version="1.0"?>
+<tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
   <description>Aragorn is a tRNA finder</description>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
+  <version_command>aragorn.exe --version</version_command>
   <command><![CDATA[aragorn.exe $flag
 -float $float
 -i$int_min,$int_max
 
+$posint
 -output $output]]></command>
   <inputs>
     <param checked="false" help="Flag help" label="Flag label (-flag)" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
@@ -19,4 +22,3 @@
   </outputs>
   <help><![CDATA[HI]]></help>
 </tool>
-
