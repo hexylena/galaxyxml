@@ -53,6 +53,9 @@ class Util(object):
         if 'self' in params:
             del params['self']
 
+        if '__class__' in params:
+            del params['__class__']
+
         # There will be more params, it would be NICE to use a whitelist
         # instead of a blacklist, but until we have more data let's just
         # blacklist stuff we see commonly.

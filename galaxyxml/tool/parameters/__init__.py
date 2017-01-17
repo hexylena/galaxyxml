@@ -185,10 +185,7 @@ class InputParameter(XMLParam):
                     kwargs[
                         'label'] = 'Author did not provide help for this parameter... '
                 if not self.positional:
-                    if kwargs['help'] is None:
-                        kwargs['help'] = '(%s)' % self.flag()
-                    else:
-                        kwargs['help'] += ' (%s)' % self.flag()
+                    kwargs['argument'] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
