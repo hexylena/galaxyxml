@@ -1,9 +1,8 @@
 from setuptools import setup
-from pip.req import parse_requirements
-import sys, os
+
 
 setup(name="galaxyxml",
-        version='0.2.4',
+        version='0.3.0',
         description='Galaxy XML generation library',
         author='Eric Rasche',
         author_email='esr@tamu.edu',
