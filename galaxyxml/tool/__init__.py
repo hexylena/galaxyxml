@@ -1,4 +1,3 @@
-
 from lxml import etree
 from galaxyxml import Util, GalaxyXML
 from galaxyxml.tool.parameters import XMLParam
@@ -35,7 +34,8 @@ class Tool(GalaxyXML):
 
         if tool_type is not None:
             if tool_type not in VALID_TOOL_TYPES:
-                raise Exception("Tool type must be one of %s" % ','.join(VALID_TOOL_TYPES))
+                raise Exception("Tool type must be one of %s" %
+                                ','.join(VALID_TOOL_TYPES))
             else:
                 kwargs['tool_type'] = tool_type
 
@@ -113,9 +113,9 @@ class Tool(GalaxyXML):
         # Add command section
         command_node = etree.SubElement(self.root, 'command', **command_kwargs)
 
-        actual_cli = "%s %s" % (self.executable, self.clean_command_string(command_line))
+        actual_cli = "%s %s" % (
+            self.executable, self.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
-
 
         try:
             self.append(self.inputs)
@@ -129,7 +129,7 @@ class Tool(GalaxyXML):
 
         help_element = etree.SubElement(self.root, 'help')
         help_element.text = etree.CDATA(self.help)
-       
+
         try:
             self.append(self.citations)
         except:

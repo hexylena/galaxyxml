@@ -3,6 +3,7 @@ from builtins import object
 from lxml import etree
 from galaxyxml import Util
 
+
 class XMLParam(object):
     name = 'node'
 
@@ -21,9 +22,11 @@ class XMLParam(object):
                 self.node.append(sub_node.node)
                 self.children.append(sub_node)
             else:
-                raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node)))
+                raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (
+                    type(self), type(sub_node)))
         else:
-            raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node)))
+            raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (
+                type(self), type(sub_node)))
 
     def validate(self):
         # Very few need validation, but some nodes we may want to have
@@ -59,7 +62,7 @@ class RequestParam(XMLParam):
     name = 'request_param'
 
     def __init__(self, galaxy_name, remote_name, missing, **kwargs):
-        #TODO: bulk copy locals into self.attr?
+        # TODO: bulk copy locals into self.attr?
         self.galaxy_name = galaxy_name
         # http://stackoverflow.com/a/1408860
         params = Util.clean_kwargs(locals().copy())
@@ -179,7 +182,8 @@ class InputParameter(XMLParam):
             # TODO: replace with positional attribute
             if len(self.flag()) > 0:
                 if kwargs['label'] is None:
-                    kwargs['label'] = 'Author did not provide help for this parameter... '
+                    kwargs[
+                        'label'] = 'Author did not provide help for this parameter... '
                 if not self.positional:
                     if kwargs['help'] is None:
                         kwargs['help'] = '(%s)' % self.flag()
@@ -218,7 +222,8 @@ class InputParameter(XMLParam):
                 return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
-        # TODO: enhance logic to check up parents for things like repeat>condotion>param
+        # TODO: enhance logic to check up parents for things like
+        # repeat>condotion>param
         return '$' + self.mako_identifier
 
     def flag(self):
@@ -230,12 +235,12 @@ class Repeat(InputParameter):
     name = 'repeat'
 
     def __init__(self, name, title, min=None, max=None, default=None,
-            **kwargs):
+                 **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
         self.command_line_before_override = '#for $i in $%s:' % name
         self.command_line_after_override = '#end for'
-        #self.command_line_override
+        # self.command_line_override
         super(Repeat, self).__init__(**params)
 
     def acceptable_child(self, child):
@@ -246,6 +251,7 @@ class Repeat(InputParameter):
             return self.command_line_override
         else:
             return "%s" % self.mako_name()
+
 
 class Conditional(InputParameter):
     name = 'conditional'
@@ -273,7 +279,8 @@ class Param(InputParameter):
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
-            raise Exception("Param class is not an actual parameter type, use a subclass of Param")
+            raise Exception(
+                "Param class is not an actual parameter type, use a subclass of Param")
 
     def acceptable_child(self, child):
         return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
@@ -283,7 +290,7 @@ class TextParam(Param):
     type = 'text'
 
     def __init__(self, name, optional=None, label=None, help=None, size=None,
-            area=False, **kwargs):
+                 area=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         params['value'] = params['default']
         del params['default']
@@ -293,7 +300,7 @@ class TextParam(Param):
 class _NumericParam(Param):
 
     def __init__(self, name, value, optional=None, label=None, help=None,
-            min=None, max=None, **kwargs):
+                 min=None, max=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -322,7 +329,7 @@ class BooleanParam(Param):
             #
             # Unfortunately, mako_identifier is set as a result of the super
             # call, which we shouldn't call TWICE, so we'll just hack around this :(
-            #params['truevalue'] = '%s%s' % (self.)
+            # params['truevalue'] = '%s%s' % (self.)
             self.node.attrib['truevalue'] = self.flag()
 
         if falsevalue is None:
@@ -348,8 +355,8 @@ class SelectParam(Param):
     type = 'select'
 
     def __init__(self, name, optional=None, label=None, help=None,
-            data_ref=None, display=None, multiple=None, options=None,
-            default=None, **kwargs):
+                 data_ref=None, display=None, multiple=None, options=None,
+                 default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         del params['options']
         del params['default']
@@ -357,10 +364,10 @@ class SelectParam(Param):
         super(SelectParam, self).__init__(**params)
 
         if options is not None and default is not None:
-            if default  not in options:
+            if default not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k,v  in list(options.items()):
+        for k, v in list(options.items()):
             selected = (k == default)
             self.append(SelectOption(k, v, selected=selected))
 
@@ -436,6 +443,7 @@ class OutputParameter(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat)
 
+
 class OutputFilter(XMLParam):
     name = 'filter'
 
@@ -447,6 +455,7 @@ class OutputFilter(XMLParam):
 
     def acceptable_child(self, child):
         return False
+
 
 class ChangeFormat(XMLParam):
     name = 'change_format'

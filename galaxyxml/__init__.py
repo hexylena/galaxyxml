@@ -2,6 +2,7 @@ from builtins import str
 from builtins import object
 from lxml import etree
 
+
 class GalaxyXML(object):
 
     def __init__(self):
