@@ -91,6 +91,56 @@ class AppendParamValue(XMLParam):
         return False
 
 
+class EdamOperations(XMLParam):
+    name = 'edam_operations'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), EdamOperation)
+
+
+class EdamOperation(XMLParam):
+    name = 'edam_operation'
+
+    def __init__(self, value):
+        super(EdamOperation, self).__init__()
+        self.node.text = str(value)
+
+
+class EdamTopics(XMLParam):
+    name = 'edam_topics'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), EdamTopic)
+
+
+class EdamTopic(XMLParam):
+    name = 'edam_topic'
+
+    def __init__(self, value):
+        super(EdamTopic, self).__init__()
+        self.node.text = str(value)
+
+
+class Requirements(XMLParam):
+    name = 'requirements'
+    # This bodes to be an issue -__-
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Requirement)
+
+
+class Requirement(XMLParam):
+    name = 'requirement'
+
+    def __init__(self, type, value, version=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['version'] = params['version']
+        passed_kwargs['type'] = params['type']
+        super(Requirement, self).__init__(**passed_kwargs)
+        self.node.text = str(value)
+
+
 class Inputs(XMLParam):
     name = 'inputs'
     # This bodes to be an issue -__-
@@ -418,3 +468,20 @@ class ChangeFormatWhen(XMLParam):
 
     def acceptable_child(self, child):
         return False
+
+
+class Citations(XMLParam):
+    name = 'citations'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Citation)
+
+
+class Citation(XMLParam):
+    name = 'citation'
+
+    def __init__(self, type, value):
+        passed_kwargs = {}
+        passed_kwargs['type'] = type
+        super(Citation, self).__init__(**passed_kwargs)
+        self.node.text = str(value)
