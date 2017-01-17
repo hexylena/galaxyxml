@@ -4,10 +4,6 @@ These libraries will support building of Tool XML and Tool Dependencies XML.
 We'd be happy to support any other XML that Galaxy supports, just make an issue
 or PR if you're feeling motivated.
 
-## Status
-
-- ToolXML is mostly supported, there
-
 ## Known Bugs
 
 - no validation of unique names
@@ -18,3 +14,12 @@ or PR if you're feeling motivated.
 ## License
 
 - Apache License, v2
+
+## Changelog
+
+- 0.3.0
+	- Travis auto-deploys on new tags
+	- Testing
+	- p3k
+- 0.2.3
+	- First widely used/stable version
