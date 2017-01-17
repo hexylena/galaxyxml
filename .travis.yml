@@ -1,10 +1,8 @@
 language: python
-
 python:
 - '2.7'
 - '3.4'
 - '3.5'
-
 script:
 - pip install -U flake8
 - pip install -r requirements.txt
@@ -12,14 +10,12 @@ script:
 - flake8 galaxyxml
 - python examples/example.py | xmllint --pretty 1 - > tmp.xml
 - diff tmp.xml examples/tool.xml
-
 deploy:
-- provider: pypi
+  provider: pypi
   user: erasche
   password:
-    secure: PjtJXEgtAjPKU/dqlodk/PxR9V6izRc7Ku7Q0jJG8eQcr+u3tGTKWtGSO9ULclfEzRrZmC4ndgJMklV6TWpT9sRJon9+itOrBXxiQMHoqfZ3tRw7Iqgo4sRoTQSu810DYqgWTCTYZLkPGiHjeinAfl9tUQ2jqyhulUPOdssM2UQ=
+    secure: UUC6+XBMr3SHz8V5UeCBsZ7mmjoRukTkqyYGlr1HfCB6RukpnAM4eJ4Y/WMgiNuevah5dkQV/SmPe/u1MzCXZa4x6qz6t1KXg1l7+wYfOR/nvEgxOJjpOlNjqJrKay1mNGoxj8D9q+Sg7294bho6/61BZBrKQQT1WeM9mdH+ex0=
   on:
     tags: true
-    all_branches: true
     distributions: sdist bdist_wheel
     repo: erasche/galaxyxml
