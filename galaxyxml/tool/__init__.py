@@ -87,6 +87,11 @@ class Tool(GalaxyXML):
         except:
             pass
 
+        try:
+            self.append(self.configfiles)
+        except:
+            pass
+
         command_line = []
         try:
             command_line.append(self.inputs.cli())

@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
   <description>Aragorn is a tRNA finder</description>
+  <configfiles>
+    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
+    <inputs name="inputs"/>
+  </configfiles>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
