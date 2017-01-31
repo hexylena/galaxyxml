@@ -17,6 +17,8 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.3.1
+	- configfiles ([#8](https://github.com/erasche/galaxyxml/pull/8))
 - 0.3.0
 	- Travis auto-deploys on new tags
 	- Testing
