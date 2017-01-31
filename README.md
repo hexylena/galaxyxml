@@ -1,4 +1,4 @@
-# Galaxy XML Generation Libraries [![Build Status](https://travis-ci.org/erasche/galaxyxml.svg?branch=master)](https://travis-ci.org/erasche/galaxyxml)
+# Galaxy XML Generation Libraries [![Build Status](https://travis-ci.org/erasche/galaxyxml.svg?branch=master)](https://travis-ci.org/erasche/galaxyxml) [![PyPI](https://img.shields.io/pypi/v/galaxyxml.svg)](https://pypi.python.org/pypi/galaxyxml/)
 
 These libraries will support building of Tool XML and Tool Dependencies XML.
 We'd be happy to support any other XML that Galaxy supports, just make an issue
