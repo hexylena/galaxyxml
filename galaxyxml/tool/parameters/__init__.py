@@ -144,6 +144,34 @@ class Requirement(XMLParam):
         self.node.text = str(value)
 
 
+class Configfiles(XMLParam):
+    name = 'configfile'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Configfile)
+
+
+class Configfile(XMLParam):
+    name = 'configfile'
+
+    def __init__(self, name, text, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['name'] = params['name']
+        super(Configfile, self).__init__(**passed_kwargs)
+        self.node.text = str(text)
+
+
+class DefaultInputs(Configfile):
+    name = 'inputs'
+
+    def __init__(self, name, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['name'] = params['name']
+        super(DefaultInputs, self).__init__(**passed_kwargs)
+
+
 class Inputs(XMLParam):
     name = 'inputs'
     # This bodes to be an issue -__-
