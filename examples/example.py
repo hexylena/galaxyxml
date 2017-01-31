@@ -41,6 +41,13 @@ inputs.append(param_min)
 inputs.append(param_max)
 inputs.append(posint)
 
+# Configfiles
+configfiles = gxtp.Configfiles()
+configfiles.append(gxtp.Configfile(
+    name="testing",
+    text="Hello <> World"
+))
+configfiles.append(gxtp.ConfigfileDefaultInputs(name="inputs"))
 
 # Outputs
 param = gxtp.OutputParameter('output', format="tabular", num_dashes=1)
@@ -50,6 +57,7 @@ outputs.append(param)
 tool.inputs = inputs
 tool.outputs = outputs
 tool.help = 'HI'
+tool.configfiles = configfiles
 
 print(tool.export().decode('utf-8'))
 

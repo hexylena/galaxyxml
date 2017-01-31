@@ -145,10 +145,10 @@ class Requirement(XMLParam):
 
 
 class Configfiles(XMLParam):
-    name = 'configfile'
+    name = 'configfiles'
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Configfile)
+        return issubclass(type(child), Configfile) or issubclass(type(child), ConfigfileDefaultInputs)
 
 
 class Configfile(XMLParam):
@@ -159,17 +159,17 @@ class Configfile(XMLParam):
         passed_kwargs = {}
         passed_kwargs['name'] = params['name']
         super(Configfile, self).__init__(**passed_kwargs)
-        self.node.text = str(text)
+        self.node.text = etree.CDATA(str(text))
 
 
-class DefaultInputs(Configfile):
+class ConfigfileDefaultInputs(XMLParam):
     name = 'inputs'
 
     def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
         passed_kwargs['name'] = params['name']
-        super(DefaultInputs, self).__init__(**passed_kwargs)
+        super(ConfigfileDefaultInputs, self).__init__(**passed_kwargs)
 
 
 class Inputs(XMLParam):
