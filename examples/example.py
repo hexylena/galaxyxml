@@ -59,5 +59,7 @@ tool.outputs = outputs
 tool.help = 'HI'
 tool.configfiles = configfiles
 
+tool.add_comment("This tool descriptor has been generated using galaxyxml.")
+
 print(tool.export().decode('utf-8'))
 
