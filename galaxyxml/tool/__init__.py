@@ -49,6 +49,10 @@ class Tool(GalaxyXML):
         description_node = etree.SubElement(self.root, 'description')
         description_node.text = description
 
+    def add_comment(self, comment_txt):
+        comment = etree.Comment(comment_txt)
+        self.root.insert(0, comment)
+
     def append_version_command(self):
         version_command = etree.SubElement(self.root, 'version_command')
         try:
