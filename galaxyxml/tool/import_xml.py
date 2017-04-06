@@ -1,6 +1,10 @@
+import logging
 import xml.etree.ElementTree as ET
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def init_tool(xml_root):
     """
@@ -63,6 +67,21 @@ def add_edam_operations(tool, operations_root):
     for edam_op in operations_root:
         tool.edam_operations.append(gxtp.EdamOperation(edam_op.text))
 
+def add_citations(tool, citations_root):
+    """ 
+    Add citations to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param citations_root: root of citations tag.
+    :type citations_root: :class:`xml.etree._Element`
+    """
+    tool.citations = gxtp.Citations()
+    for cit in citations_root:
+        cit_type = cit.attrib['type']
+        value = cit.text
+        tool.citations.append(gxtp.Citation(cit_type, value))
+
 def import_galaxyxml(xml_path):
     """
     Load existing xml into the :class:`galaxyxml.tool.Tool` object.
@@ -87,7 +106,15 @@ def import_galaxyxml(xml_path):
         elif child.tag == 'help':
             tool.help = child.text
         elif child.tag == 'citations':
+            add_citations(tool, child)
+        # Need to pass for description, stdio and command which are already taken care of
+        elif child.tag == 'description':
             pass
+        elif child.tag == 'stdio':
+            pass
+        elif child.tag == 'command':
+            pass
+        # Display warning message for unprocessed TAGs
         else:
-            print(child.tag, "is not processed in the import process.")
+            logger.warning(child.tag + " TAG is not processed in the import process.")
     return tool
