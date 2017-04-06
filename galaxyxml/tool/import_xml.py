@@ -21,6 +21,22 @@ def init_tool(xml_root):
     tool = gxt.Tool(name, tool_id, version, description, exe)
     return tool
 
+def add_requirements(tool, requirements_root):
+    """ 
+    Add requirements to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param requirements_root: root of requirements tag.
+    :type requirements_root: :class:`xml.etree._Element`
+    """
+    tool.requirements = gxtp.Requirements()
+    for req in requirements_root:
+        req_type = req.attrib['type']
+        value = req.text
+        version = req.attrib['version']
+        tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
+
 def add_edam_topics(tool, topics_root):
     """ 
     Add edam_topics to the tool.
@@ -59,7 +75,7 @@ def import_galaxyxml(xml_path):
     # Now we import each tag's field
     for child in xml_root:
         if child.tag == 'requirements':
-            pass
+            add_requirements(tool, child)
         elif child.tag == 'edam_topics':
             add_edam_topics(tool, child)
         elif child.tag == 'edam_operations':
