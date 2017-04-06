@@ -21,6 +21,32 @@ def init_tool(xml_root):
     tool = gxt.Tool(name, tool_id, version, description, exe)
     return tool
 
+def add_edam_topics(tool, topics_root):
+    """ 
+    Add edam_topics to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param topics_root: root of edam_topics tag.
+    :type topics_root: :class:`xml.etree._Element`
+    """
+    tool.edam_topics = gxtp.EdamTopics()
+    for edam_topic in topics_root:
+        tool.edam_topics.append(gxtp.EdamTopic(edam_topic.text))
+    
+def add_edam_operations(tool, operations_root):
+    """ 
+    Add edam_operations to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param operations_root: root of edam_operations tag.
+    :type operations_root: :class:`xml.etree._Element`
+    """
+    tool.edam_operations = gxtp.EdamOperations()
+    for edam_op in operations_root:
+        tool.edam_operations.append(gxtp.EdamOperation(edam_op.text))
+
 def import_galaxyxml(xml_path):
     """
     Load existing xml into the :class:`galaxyxml.tool.Tool` object.
@@ -35,9 +61,9 @@ def import_galaxyxml(xml_path):
         if child.tag == 'requirements':
             pass
         elif child.tag == 'edam_topics':
-            pass
+            add_edam_topics(tool, child)
         elif child.tag == 'edam_operations':
-            pass
+            add_edam_operations(tool, child)
         elif child.tag == 'inputs':
             pass
         elif child.tag == 'outputs':
