@@ -67,6 +67,21 @@ def add_edam_operations(tool, operations_root):
     for edam_op in operations_root:
         tool.edam_operations.append(gxtp.EdamOperation(edam_op.text))
 
+def add_configfiles(tool, configfiles_root):
+    """ 
+    Add citations to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param configfiles_root: root of citations tag.
+    :type configfiles_root: :class:`xml.etree._Element`
+    """
+    tool.configfiles = gxtp.Configfiles()
+    for conf in configfiles_root:
+        name = conf.attrib['name']
+        value = conf.text
+        tool.configfiles.append(gxtp.Configfile(name, value))
+
 def add_citations(tool, citations_root):
     """ 
     Add citations to the tool.
@@ -99,6 +114,8 @@ def import_galaxyxml(xml_path):
             add_edam_topics(tool, child)
         elif child.tag == 'edam_operations':
             add_edam_operations(tool, child)
+        elif child.tag == 'configfiles':
+            add_configfiles(tool, child)
         elif child.tag == 'inputs':
             pass
         elif child.tag == 'outputs':
