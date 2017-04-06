@@ -1,3 +1,4 @@
+import copy
 from lxml import etree
 from galaxyxml import Util, GalaxyXML
 from galaxyxml.tool.parameters import XMLParam
@@ -76,72 +77,74 @@ class Tool(GalaxyXML):
 
     def export(self):  # noqa
 
+        export_xml = copy.deepcopy(self)
+
         try:
-            self.append(self.edam_operations)
+            export_xml.append(export_xml.edam_operations)
         except:
             pass
 
         try:
-            self.append(self.edam_topics)
+            export_xml.append(export_xml.edam_topics)
         except:
             pass
 
         try:
-            self.append(self.requirements)
+            export_xml.append(export_xml.requirements)
         except:
             pass
 
         try:
-            self.append(self.configfiles)
+            export_xml.append(export_xml.configfiles)
         except:
             pass
 
         command_line = []
         try:
-            command_line.append(self.inputs.cli())
+            command_line.append(export_xml.inputs.cli())
         except Exception as e:
             print(e)
 
         try:
-            command_line.append(self.outputs.cli())
+            command_line.append(export_xml.outputs.cli())
         except:
             pass
 
         # Add stdio section
-        stdio = etree.SubElement(self.root, 'stdio')
+        stdio = etree.SubElement(export_xml.root, 'stdio')
         etree.SubElement(stdio, 'exit_code', range='1:', level='fatal')
 
         # Append version command
-        self.append_version_command()
+        export_xml.append_version_command()
 
         # Steal interpreter from kwargs
         command_kwargs = {}
-        if self.interpreter is not None:
-            command_kwargs['interpreter'] = self.interpreter
+        if export_xml.interpreter is not None:
+            command_kwargs['interpreter'] = export_xml.interpreter
 
         # Add command section
-        command_node = etree.SubElement(self.root, 'command', **command_kwargs)
+        command_node = etree.SubElement(export_xml.root, 'command', **command_kwargs)
 
         actual_cli = "%s %s" % (
-            self.executable, self.clean_command_string(command_line))
+            export_xml.executable, export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 
         try:
-            self.append(self.inputs)
+            export_xml.append(export_xml.inputs)
         except:
             pass
 
         try:
-            self.append(self.outputs)
+            export_xml.append(export_xml.outputs)
         except:
             pass
 
-        help_element = etree.SubElement(self.root, 'help')
-        help_element.text = etree.CDATA(self.help)
+        help_element = etree.SubElement(export_xml.root, 'help')
+        help_element.text = etree.CDATA(export_xml.help)
 
         try:
-            self.append(self.citations)
+            export_xml.append(export_xml.citations)
         except:
             pass
 
-        return super(Tool, self).export()
+        return super(Tool, export_xml).export()
