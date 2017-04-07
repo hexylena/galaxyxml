@@ -117,6 +117,23 @@ def add_data_param(data_param):
                                 help=inp_help, format=inp_format,
                                 multiple=multiple)
         
+def add_bool_param(bool_param):
+    """
+    Add boolean param to the tool.
+
+    :param bool_param: root of param tag.
+    :type bool_param: :class:`xml.etree._Element`
+    """
+    name = bool_param.attrib['name']
+    optional = bool_param.attrib.get('optional', None)
+    label = bool_param.attrib.get('label', None)
+    inp_help = bool_param.attrib.get('help', None)
+    checked = bool_param.attrib.get('checked', False)
+    truevalue = bool_param.attrib.get('truevalue', None)
+    falsevalue = bool_param.attrib.get('falsevalue', None)
+    return gxtp.BooleanParam(name, optional=optional, label=label, help=inp_help,
+                             checked=checked, truevalue=truevalue, falsevalue=falsevalue)
+
 def add_inputs(tool, inputs_root):
     """
     Add inputs to the tool.
@@ -131,6 +148,8 @@ def add_inputs(tool, inputs_root):
         if inp.tag == 'param':
             if inp.attrib['type'] == 'data':
                 tool.inputs.append(add_data_param(inp))
+            elif inp.attrib['type'] == 'boolean':
+                tool.inputs.append(add_bool_param(inp))
             else:
                 pass
         else:
