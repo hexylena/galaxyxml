@@ -96,6 +96,45 @@ def add_citations(tool, citations_root):
         cit_type = cit.attrib['type']
         value = cit.text
         tool.citations.append(gxtp.Citation(cit_type, value))
+        
+def add_data_param(data_param):
+    """
+    Add <param type='data'> to the tool.
+
+    :param data_param: root of param tag.
+    :type data_param: :class:`xml.etree._Element`
+    :return: Data param object instantiated.
+    :rtype: :class:`galaxyxml.tool.parameters.DataParam`
+    """
+    name = data_param.attrib['name']
+    optional = data_param.attrib.get('optional', None)
+    label = data_param.attrib.get('label', None)
+    inp_help = data_param.attrib.get('help', None)
+    inp_format = data_param.attrib.get('format', None)
+    multiple = data_param.attrib.get('multiple', None)
+    # return DataParam
+    return gxtp.DataParam(name, optional=optional, label=label,
+                                help=inp_help, format=inp_format,
+                                multiple=multiple)
+        
+def add_inputs(tool, inputs_root):
+    """
+    Add inputs to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param inputs_root: root of inputs tag.
+    :type inputs_root: :class:`xml.etree._Element`
+    """
+    tool.inputs = gxtp.Inputs()
+    for inp in inputs_root:
+        if inp.tag == 'param':
+            if inp.attrib['type'] == 'data':
+                tool.inputs.append(add_data_param(inp))
+            else:
+                pass
+        else:
+            pass
 
 def import_galaxyxml(xml_path):
     """
@@ -103,6 +142,8 @@ def import_galaxyxml(xml_path):
 
     :param xml_path: Path of the XML to be loaded.
     :type xml_path: STRING
+    :return: XML content in the galaxyxml model.
+    :rtype: :class:`galaxyxml.tool.Tool`
     """
     xml_root = ET.parse(xml_path).getroot()
     tool = init_tool(xml_root)
@@ -117,7 +158,7 @@ def import_galaxyxml(xml_path):
         elif child.tag == 'configfiles':
             add_configfiles(tool, child)
         elif child.tag == 'inputs':
-            pass
+            add_inputs(tool, child)
         elif child.tag == 'outputs':
             pass
         elif child.tag == 'help':
