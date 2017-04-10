@@ -195,11 +195,7 @@ def import_galaxyxml(xml_path):
         elif child.tag == 'citations':
             add_citations(tool, child)
         # Need to pass for description, stdio and command which are already taken care of
-        elif child.tag == 'description':
-            pass
-        elif child.tag == 'stdio':
-            pass
-        elif child.tag == 'command':
+        elif child.tag in ('description', 'stdio', 'command'):
             pass
         # Display warning message for unprocessed TAGs
         else:
