@@ -6,6 +6,7 @@ import galaxyxml.tool.parameters as gxtp
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def init_tool(xml_root):
     """
     Init tool from existing xml tool.
@@ -25,8 +26,9 @@ def init_tool(xml_root):
     tool = gxt.Tool(name, tool_id, version, description, exe)
     return tool
 
+
 def add_requirements(tool, requirements_root):
-    """ 
+    """
     Add requirements to the tool.
 
     :param tool: Tool object from galaxyxml.
@@ -41,8 +43,9 @@ def add_requirements(tool, requirements_root):
         version = req.attrib['version']
         tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
 
+
 def add_edam_topics(tool, topics_root):
-    """ 
+    """
     Add edam_topics to the tool.
 
     :param tool: Tool object from galaxyxml.
@@ -53,9 +56,10 @@ def add_edam_topics(tool, topics_root):
     tool.edam_topics = gxtp.EdamTopics()
     for edam_topic in topics_root:
         tool.edam_topics.append(gxtp.EdamTopic(edam_topic.text))
-    
+
+
 def add_edam_operations(tool, operations_root):
-    """ 
+    """
     Add edam_operations to the tool.
 
     :param tool: Tool object from galaxyxml.
@@ -67,8 +71,9 @@ def add_edam_operations(tool, operations_root):
     for edam_op in operations_root:
         tool.edam_operations.append(gxtp.EdamOperation(edam_op.text))
 
+
 def add_configfiles(tool, configfiles_root):
-    """ 
+    """
     Add citations to the tool.
 
     :param tool: Tool object from galaxyxml.
@@ -82,8 +87,9 @@ def add_configfiles(tool, configfiles_root):
         value = conf.text
         tool.configfiles.append(gxtp.Configfile(name, value))
 
+
 def add_citations(tool, citations_root):
-    """ 
+    """
     Add citations to the tool.
 
     :param tool: Tool object from galaxyxml.
@@ -96,7 +102,8 @@ def add_citations(tool, citations_root):
         cit_type = cit.attrib['type']
         value = cit.text
         tool.citations.append(gxtp.Citation(cit_type, value))
-        
+
+
 def add_data_param(data_param):
     """
     Add <param type='data'> to the tool.
@@ -114,9 +121,10 @@ def add_data_param(data_param):
     multiple = data_param.attrib.get('multiple', None)
     # return DataParam
     return gxtp.DataParam(name, optional=optional, label=label,
-                                help=inp_help, format=inp_format,
-                                multiple=multiple)
-        
+                          help=inp_help, format=inp_format,
+                          multiple=multiple)
+
+
 def add_bool_param(bool_param):
     """
     Add boolean param to the tool.
@@ -133,6 +141,7 @@ def add_bool_param(bool_param):
     falsevalue = bool_param.attrib.get('falsevalue', None)
     return gxtp.BooleanParam(name, optional=optional, label=label, help=inp_help,
                              checked=checked, truevalue=truevalue, falsevalue=falsevalue)
+
 
 def add_inputs(tool, inputs_root):
     """
@@ -154,6 +163,7 @@ def add_inputs(tool, inputs_root):
                 pass
         else:
             pass
+
 
 def import_galaxyxml(xml_path):
     """
