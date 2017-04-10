@@ -22,8 +22,8 @@ $posint
     <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
     <conditional argument="cond" label="Conditional" name="cond">
       <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select">
-        <option value="hi">1</option>
         <option value="bye">2</option>
+        <option value="hi">1</option>
       </param>
       <when value="hi"/>
       <when value="bye">
@@ -39,4 +39,3 @@ $posint
   </outputs>
   <help><![CDATA[HI]]></help>
 </tool>
-
