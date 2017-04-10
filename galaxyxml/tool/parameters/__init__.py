@@ -294,6 +294,17 @@ class Conditional(InputParameter):
         pass
 
 
+class When(InputParameter):
+    name = 'when'
+
+    def __init__(self, value):
+        params = Util.clean_kwargs(locals().copy())
+        super(When, self).__init__(None, **params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), InputParameter)
+
+
 class Param(InputParameter):
     name = 'param'
 
