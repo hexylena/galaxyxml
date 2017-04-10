@@ -12,6 +12,7 @@
   <version_command>aragorn.exe --version</version_command>
   <command><![CDATA[aragorn.exe $flag
 -float $float
+cond $cond
 -i$int_min,$int_max
 
 $posint
@@ -19,6 +20,16 @@ $posint
   <inputs>
     <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
     <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    <conditional argument="cond" label="Conditional" name="cond">
+      <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select">
+        <option value="bye">2</option>
+        <option value="hi">1</option>
+      </param>
+      <when value="hi"/>
+      <when value="bye">
+        <param argument="-some_int" label="Advanced value" name="some_int" type="integer" value="0"/>
+      </when>
+    </conditional>
     <param argument="-int_min" help="int_min help" label="int_min label" name="int_min" type="integer" value="0"/>
     <param argument="-int_max" help="int_max help" label="int_max label" name="int_max" type="integer" value="0"/>
     <param help="posinthelp" label="posint label" name="posint" type="integer" value="0"/>
