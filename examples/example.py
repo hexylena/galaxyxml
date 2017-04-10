@@ -23,6 +23,16 @@ param.space_between_arg = ' '
 inputs.append(param)
 
 
+param = gxtp.Conditional('cond', label='Conditional')
+param.append(gxtp.SelectParam('Select', options={'hi': '1', 'bye': '2'}))
+when_a = gxtp.When(value='hi')
+when_b = gxtp.When(value='bye')
+when_b.append(gxtp.IntegerParam('some_int', value=0, num_dashes=1, label="Advanced value"))
+param.append(when_a)
+param.append(when_b)
+inputs.append(param)
+
+
 param_min = gxtp.IntegerParam('int_min',
                               label='int_min label',
                               help='int_min help', value=0, num_dashes=1)

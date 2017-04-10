@@ -294,6 +294,17 @@ class Conditional(InputParameter):
         pass
 
 
+class When(InputParameter):
+    name = 'when'
+
+    def __init__(self, value):
+        params = Util.clean_kwargs(locals().copy())
+        super(When, self).__init__(None, **params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), InputParameter)
+
+
 class Param(InputParameter):
     name = 'param'
 
@@ -392,7 +403,7 @@ class SelectParam(Param):
             if default not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k, v in list(options.items()):
+        for k, v in list(sorted(options.items())):
             selected = (k == default)
             self.append(SelectOption(k, v, selected=selected))
 
