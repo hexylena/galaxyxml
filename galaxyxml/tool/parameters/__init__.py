@@ -403,9 +403,9 @@ class SelectParam(Param):
             if default not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k, v in list(sorted(options.items())):
-            selected = (k == default)
-            self.append(SelectOption(k, v, selected=selected))
+            for k, v in list(sorted(options.items())):
+                selected = (k == default)
+                self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
         return issubclass(type(child), SelectOption)

@@ -125,9 +125,9 @@ def add_data_param(data_param):
                           multiple=multiple)
 
 
-def add_bool_param(bool_param):
+def create_bool_param(bool_param):
     """
-    Add boolean param to the tool.
+    Create boolean param from its xml root.
 
     :param bool_param: root of param tag.
     :type bool_param: :class:`xml.etree._Element`
@@ -143,6 +143,29 @@ def add_bool_param(bool_param):
                              checked=checked, truevalue=truevalue, falsevalue=falsevalue)
 
 
+def create_select_param(sel_param):
+    """
+    Create :class:`galaxyxml.tool.parameters.SelectParam` from its xml root.
+
+    :param sel_param: root of param type='select' tag.
+    :type sel_param: :class:`xml.etree._Element`
+    """
+    name = sel_param.attrib['name']
+    optional = sel_param.attrib.get('optional', None)
+    label = sel_param.attrib.get('label', None)
+    inp_help = sel_param.attrib.get('help', None)
+    data_ref = sel_param.attrib.get('data_ref', None)
+    display = sel_param.attrib.get('display', None)
+    multiple = sel_param.attrib.get('multiple', None)
+    select_param = gxtp.SelectParam(name, optional=optional, label=label, help=inp_help,
+                                    data_ref=data_ref, display=display, multiple=multiple)
+    for option in sel_param:
+        select_param.append(gxtp.SelectOption(option.attrib.get('value', None),
+                                              option.text,
+                                              selected=option.attrib.get('selected', False)))
+    return select_param
+
+
 def add_conditional(conditional_root):
     """
     Add conditional to the tool.
@@ -155,29 +178,43 @@ def add_conditional(conditional_root):
     name = conditional_root.attrib['name']
     # Other optional parameters need to be added to conditional object
     conditional = gxtp.Conditional(name)
+    for child in conditional_root:
+        if child.tag == 'param':
+            if child.attrib['type'] == 'select':
+                conditional.append(create_select_param(child))
+            elif child.attrib['type'] == 'boolean':
+                conditional.append(create_bool_param(child))
+            else:
+                logger.warning(child.tag + " TAG is not processed under conditional TAG.")
+        elif child.tag == 'when':
+            when = gxtp.When(child.attrib['value'])
+            add_inputs(when, child)
+            conditional.append(when)
+        else:
+            pass
     return conditional
 
 
-def add_inputs(tool, inputs_root):
+def add_inputs(root, inputs_root):
     """
     Add inputs to the tool.
 
-    :param tool: Tool object from galaxyxml.
-    :type tool: :class:`galaxyxml.tool.Tool`
+    :param root: root to attach inputs to (either <inputs> or <when>).
     :param inputs_root: root of inputs tag.
     :type inputs_root: :class:`xml.etree._Element`
     """
-    tool.inputs = gxtp.Inputs()
     for inp in inputs_root:
         if inp.tag == 'param':
             if inp.attrib['type'] == 'data':
-                tool.inputs.append(add_data_param(inp))
+                root.append(add_data_param(inp))
             elif inp.attrib['type'] == 'boolean':
-                tool.inputs.append(add_bool_param(inp))
+                root.append(create_bool_param(inp))
+            elif inp.attrib['type'] == 'select':
+                root.append(create_select_param(inp))
             else:
                 pass
         elif inp.tag == 'conditional':
-            tool.inputs.append(add_conditional(inp))
+            root.append(add_conditional(inp))
         else:
             pass
 
@@ -204,7 +241,8 @@ def import_galaxyxml(xml_path):
         elif child.tag == 'configfiles':
             add_configfiles(tool, child)
         elif child.tag == 'inputs':
-            add_inputs(tool, child)
+            tool.inputs = gxtp.Inputs()
+            add_inputs(tool.inputs, child)
         elif child.tag == 'outputs':
             pass
         elif child.tag == 'help':
