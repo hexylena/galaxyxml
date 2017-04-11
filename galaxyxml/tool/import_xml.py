@@ -143,6 +143,21 @@ def add_bool_param(bool_param):
                              checked=checked, truevalue=truevalue, falsevalue=falsevalue)
 
 
+def add_conditional(conditional_root):
+    """
+    Add conditional to the tool.
+
+    :param tool: Tool object from galaxyxml.
+    :type tool: :class:`galaxyxml.tool.Tool`
+    :param conditional_root: root of conditional tag.
+    :type conditional_root: :class:`xml.etree._Element`
+    """
+    name = conditional_root.attrib['name']
+    # Other optional parameters need to be added to conditional object
+    conditional = gxtp.Conditional(name)
+    return conditional
+
+
 def add_inputs(tool, inputs_root):
     """
     Add inputs to the tool.
@@ -161,6 +176,8 @@ def add_inputs(tool, inputs_root):
                 tool.inputs.append(add_bool_param(inp))
             else:
                 pass
+        elif inp.tag == 'conditional':
+            tool.inputs.append(add_conditional(inp))
         else:
             pass
 
