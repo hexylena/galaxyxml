@@ -20,8 +20,7 @@ cond $cond
 -i$int_min,$int_max
 
 $posint
-select_local $select_local
--output $output]]></command>
+select_local $select_local]]></command>
   <inputs>
     <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
     <section name="float_section" title="Float section">
@@ -47,6 +46,9 @@ select_local $select_local
   </inputs>
   <outputs>
     <data format="tabular" hidden="false" name="output"/>
+    <collection label="a small label" name="supercollection">
+      <discover_datasets format="fasta" pattern="(?P&amp;lt;designation&amp;gt;.+)\.pdf.fasta"/>
+    </collection>
   </outputs>
   <tests>
     <test>

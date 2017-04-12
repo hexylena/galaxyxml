@@ -80,9 +80,14 @@ configfiles.append(gxtp.Configfile(
 configfiles.append(gxtp.ConfigfileDefaultInputs(name="inputs"))
 
 # Outputs
-param = gxtp.OutputParameter('output', format="tabular", num_dashes=1)
+param = gxtp.OutputData('output', format="tabular", num_dashes=1)
 param.space_between_arg = ' '
 outputs.append(param)
+# Collection
+collection = gxtp.OutputCollection('supercollection', label='a small label')
+discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+)\.pdf.fasta", format='fasta')
+collection.append(discover)
+outputs.append(collection)
 
 tool.inputs = inputs
 tool.outputs = outputs

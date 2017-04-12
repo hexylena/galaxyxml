@@ -493,10 +493,10 @@ class Outputs(XMLParam):
     name = 'outputs'
 
     def acceptable_child(self, child):
-        return issubclass(type(child), OutputParameter)
+        return isinstance(child, OutputData) or isinstance(child, OutputCollection)
 
 
-class OutputParameter(XMLParam):
+class OutputData(XMLParam):
     """Copypasta of InputParameter, needs work
     """
     name = 'data'
@@ -514,7 +514,7 @@ class OutputParameter(XMLParam):
         self.space_between_arg = " "
         params = Util.clean_kwargs(locals().copy())
 
-        super(OutputParameter, self).__init__(**params)
+        super(OutputData, self).__init__(**params)
 
     def command_line(self):
         if hasattr(self, 'command_line_override'):
@@ -566,6 +566,28 @@ class ChangeFormatWhen(XMLParam):
 
     def acceptable_child(self, child):
         return False
+
+
+class OutputCollection(XMLParam):
+    name = 'collection'
+
+    def __init__(self, name, type=None, label=None, format_source=None,
+                 type_source=None, structured_like=None, inherit_format=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(OutputCollection, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return isinstance(child, OutputData) or isinstance(child, OutputFilter) \
+            or isinstance(child, DiscoverDatasets)
+
+
+class DiscoverDatasets(XMLParam):
+    name = 'discover_datasets'
+
+    def __init__(self, pattern, directory=None, format=None, ext=None,
+                 visible=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(DiscoverDatasets, self).__init__(**params)
 
 
 class Tests(XMLParam):
