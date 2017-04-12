@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
   <!--This tool descriptor has been generated using galaxyxml.-->
   <description>Aragorn is a tRNA finder</description>
@@ -43,4 +44,3 @@ select_local $select_local
   </outputs>
   <help><![CDATA[HI]]></help>
 </tool>
-
