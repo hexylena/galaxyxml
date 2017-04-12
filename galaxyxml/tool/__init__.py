@@ -139,6 +139,11 @@ class Tool(GalaxyXML):
         except:
             pass
 
+        try:
+            export_xml.append(export_xml.tests)
+        except:
+            pass
+
         help_element = etree.SubElement(export_xml.root, 'help')
         help_element.text = etree.CDATA(export_xml.help)
 

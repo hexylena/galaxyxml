@@ -557,6 +557,38 @@ class ChangeFormatWhen(XMLParam):
         return False
 
 
+class Tests(XMLParam):
+    name = 'tests'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Test)
+
+
+class Test(XMLParam):
+    name = 'test'
+
+    def acceptable_child(self, child):
+        return isinstance(child, TestParam) or isinstance(child, TestOutput)
+
+
+class TestParam(XMLParam):
+    name = 'param'
+
+    def __init__(self, name, value=None, ftype=None, dbkey=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestParam, self).__init__(**params)
+
+
+class TestOutput(XMLParam):
+    name = 'output'
+
+    def __init__(self, name=None, file=None, ftype=None, sort=None, value=None,
+                 md5=None, checksum=None, compare=None, lines_diff=None,
+                 delta=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestOutput, self).__init__(**params)
+
+
 class Citations(XMLParam):
     name = 'citations'
 

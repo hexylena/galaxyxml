@@ -46,5 +46,11 @@ select_local $select_local
   <outputs>
     <data format="tabular" hidden="false" name="output"/>
   </outputs>
+  <tests>
+    <test>
+      <param name="float" value="5.4"/>
+      <output name="output" value="file.out"/>
+    </test>
+  </tests>
   <help><![CDATA[HI]]></help>
 </tool>
