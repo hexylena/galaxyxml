@@ -9,6 +9,12 @@ tool = gxt.Tool("aragorn", 'se.lu.mbioekol.mbio-serv2.aragorn',
 inputs = gxtp.Inputs()
 outputs = gxtp.Outputs()
 
+# Add requirements
+requirements = gxtp.Requirements()
+requirements.append(gxtp.Requirement('package', 'samtools', version='1.0.0'))
+requirements.append(gxtp.Container('docker', 'one_super_image'))
+tool.requirements = requirements
+
 # A parameter
 param = gxtp.BooleanParam('flag', label='Flag label', help='Flag help', num_dashes=1)
 # Yes I know this is rubbish. Please make a PR!!

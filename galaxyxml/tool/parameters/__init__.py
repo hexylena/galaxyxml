@@ -129,7 +129,7 @@ class Requirements(XMLParam):
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Requirement)
+        return issubclass(type(child), Requirement) or issubclass(type(child), Container)
 
 
 class Requirement(XMLParam):
@@ -141,6 +141,17 @@ class Requirement(XMLParam):
         passed_kwargs['version'] = params['version']
         passed_kwargs['type'] = params['type']
         super(Requirement, self).__init__(**passed_kwargs)
+        self.node.text = str(value)
+
+
+class Container(XMLParam):
+    name = 'container'
+
+    def __init__(self, type, value, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['type'] = params['type']
+        super(Container, self).__init__(**passed_kwargs)
         self.node.text = str(value)
 
 

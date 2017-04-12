@@ -2,6 +2,10 @@
 <tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
   <!--This tool descriptor has been generated using galaxyxml.-->
   <description>Aragorn is a tRNA finder</description>
+  <requirements>
+    <requirement type="package" version="1.0.0">samtools</requirement>
+    <container type="docker">one_super_image</container>
+  </requirements>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
     <inputs name="inputs"/>
