@@ -22,7 +22,7 @@ param = gxtp.FloatParam('float', label='Float label',
 param.space_between_arg = ' '
 inputs.append(param)
 
-
+# A conditional
 param = gxtp.Conditional('cond', label='Conditional')
 param.append(gxtp.SelectParam('Select', options={'hi': '1', 'bye': '2'}))
 when_a = gxtp.When(value='hi')
@@ -32,7 +32,7 @@ param.append(when_a)
 param.append(when_b)
 inputs.append(param)
 
-
+# Integer parameters
 param_min = gxtp.IntegerParam('int_min',
                               label='int_min label',
                               help='int_min help', value=0, num_dashes=1)
@@ -50,6 +50,18 @@ param_max.space_between_arg = ' '
 inputs.append(param_min)
 inputs.append(param_max)
 inputs.append(posint)
+
+# Add Select with options from_file with columns and filter
+param = gxtp.SelectParam('select_local')
+options = gxtp.Options(from_file='loc_file.loc')
+column_a = gxtp.Column('name', 0)
+options.append(column_a)
+column_b = gxtp.Column('value', 1)
+options.append(column_b)
+filter_a = gxtp.Filter('sort_by', name='sorted', column='1')
+options.append(filter_a)
+param.append(options)
+inputs.append(param)
 
 # Configfiles
 configfiles = gxtp.Configfiles()

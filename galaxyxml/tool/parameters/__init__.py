@@ -403,12 +403,13 @@ class SelectParam(Param):
             if default not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k, v in list(sorted(options.items())):
-            selected = (k == default)
-            self.append(SelectOption(k, v, selected=selected))
+            for k, v in list(sorted(options.items())):
+                selected = (k == default)
+                self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
-        return issubclass(type(child), SelectOption)
+        return issubclass(type(child), SelectOption) \
+                or issubclass(type(child), Options)
 
 
 class SelectOption(InputParameter):
@@ -424,6 +425,36 @@ class SelectOption(InputParameter):
 
         super(SelectOption, self).__init__(None, **passed_kwargs)
         self.node.text = str(text)
+
+
+class Options(InputParameter):
+    name = 'options'
+
+    def __init__(self, from_dataset=None, from_file=None, from_data_table=None,
+                 from_parameter=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Options, self).__init__(None, **params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Column) or issubclass(type(child), Filter)
+
+
+class Column(InputParameter):
+    name = 'column'
+
+    def __init__(self, name, index, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Column, self).__init__(**params)
+
+
+class Filter(InputParameter):
+    name = 'filter'
+
+    def __init__(self, type, column=None, name=None, ref=None, key=None,
+                 multiple=None, separator=None, keep=None, value=None,
+                 ref_attribute=None, index=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Filter, self).__init__(**params)
 
 
 class ValidatorParam(InputParameter):
