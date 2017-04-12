@@ -22,11 +22,13 @@ param.space_between_arg = ' '
 inputs.append(param)
 
 
-# A float
+# A float in a section
+section = gxtp.Section('float_section', 'Float section')
 param = gxtp.FloatParam('float', label='Float label',
                         help='Float help', value=0, num_dashes=1)
 param.space_between_arg = ' '
-inputs.append(param)
+section.append(param)
+inputs.append(section)
 
 # A conditional
 param = gxtp.Conditional('cond', label='Conditional')

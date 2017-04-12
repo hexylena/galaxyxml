@@ -15,7 +15,7 @@
   </stdio>
   <version_command>aragorn.exe --version</version_command>
   <command><![CDATA[aragorn.exe $flag
--float $float
+float_section $float_section
 cond $cond
 -i$int_min,$int_max
 
@@ -24,7 +24,9 @@ select_local $select_local
 -output $output]]></command>
   <inputs>
     <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
-    <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    <section name="float_section" title="Float section">
+      <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    </section>
     <conditional argument="cond" label="Conditional" name="cond">
       <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select"/>
       <when value="hi"/>

@@ -267,6 +267,17 @@ class InputParameter(XMLParam):
         return flag + self.mako_identifier
 
 
+class Section(InputParameter):
+    name = 'section'
+
+    def __init__(self, name, title, expanded=None, help=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Section, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), InputParameter)
+
+
 class Repeat(InputParameter):
     name = 'repeat'
 
