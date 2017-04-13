@@ -27,7 +27,10 @@ select_local $select_local]]></command>
       <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
     </section>
     <conditional argument="cond" label="Conditional" name="cond">
-      <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select"/>
+      <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select">
+        <option value="bye">2</option>
+        <option value="hi">1</option>
+      </param>
       <when value="hi"/>
       <when value="bye">
         <param argument="-some_int" label="Advanced value" name="some_int" type="integer" value="0"/>
