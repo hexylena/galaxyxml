@@ -129,7 +129,7 @@ class Requirements(XMLParam):
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Requirement)
+        return issubclass(type(child), Requirement) or issubclass(type(child), Container)
 
 
 class Requirement(XMLParam):
@@ -141,6 +141,17 @@ class Requirement(XMLParam):
         passed_kwargs['version'] = params['version']
         passed_kwargs['type'] = params['type']
         super(Requirement, self).__init__(**passed_kwargs)
+        self.node.text = str(value)
+
+
+class Container(XMLParam):
+    name = 'container'
+
+    def __init__(self, type, value, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['type'] = params['type']
+        super(Container, self).__init__(**passed_kwargs)
         self.node.text = str(value)
 
 
@@ -254,6 +265,17 @@ class InputParameter(XMLParam):
     def flag(self):
         flag = '-' * self.num_dashes
         return flag + self.mako_identifier
+
+
+class Section(InputParameter):
+    name = 'section'
+
+    def __init__(self, name, title, expanded=None, help=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Section, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), InputParameter)
 
 
 class Repeat(InputParameter):
@@ -403,12 +425,14 @@ class SelectParam(Param):
             if default not in options:
                 raise Exception("Specified a default that isn't in options")
 
-        for k, v in list(sorted(options.items())):
-            selected = (k == default)
-            self.append(SelectOption(k, v, selected=selected))
+        if options:
+            for k, v in list(sorted(options.items())):
+                selected = (k == default)
+                self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
-        return issubclass(type(child), SelectOption)
+        return issubclass(type(child), SelectOption) \
+                or issubclass(type(child), Options)
 
 
 class SelectOption(InputParameter):
@@ -426,6 +450,36 @@ class SelectOption(InputParameter):
         self.node.text = str(text)
 
 
+class Options(InputParameter):
+    name = 'options'
+
+    def __init__(self, from_dataset=None, from_file=None, from_data_table=None,
+                 from_parameter=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Options, self).__init__(None, **params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Column) or issubclass(type(child), Filter)
+
+
+class Column(InputParameter):
+    name = 'column'
+
+    def __init__(self, name, index, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Column, self).__init__(**params)
+
+
+class Filter(InputParameter):
+    name = 'filter'
+
+    def __init__(self, type, column=None, name=None, ref=None, key=None,
+                 multiple=None, separator=None, keep=None, value=None,
+                 ref_attribute=None, index=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Filter, self).__init__(**params)
+
+
 class ValidatorParam(InputParameter):
     name = 'validator'
 
@@ -440,10 +494,10 @@ class Outputs(XMLParam):
     name = 'outputs'
 
     def acceptable_child(self, child):
-        return issubclass(type(child), OutputParameter)
+        return isinstance(child, OutputData) or isinstance(child, OutputCollection)
 
 
-class OutputParameter(XMLParam):
+class OutputData(XMLParam):
     """Copypasta of InputParameter, needs work
     """
     name = 'data'
@@ -461,7 +515,7 @@ class OutputParameter(XMLParam):
         self.space_between_arg = " "
         params = Util.clean_kwargs(locals().copy())
 
-        super(OutputParameter, self).__init__(**params)
+        super(OutputData, self).__init__(**params)
 
     def command_line(self):
         if hasattr(self, 'command_line_override'):
@@ -513,6 +567,60 @@ class ChangeFormatWhen(XMLParam):
 
     def acceptable_child(self, child):
         return False
+
+
+class OutputCollection(XMLParam):
+    name = 'collection'
+
+    def __init__(self, name, type=None, label=None, format_source=None,
+                 type_source=None, structured_like=None, inherit_format=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(OutputCollection, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return isinstance(child, OutputData) or isinstance(child, OutputFilter) \
+            or isinstance(child, DiscoverDatasets)
+
+
+class DiscoverDatasets(XMLParam):
+    name = 'discover_datasets'
+
+    def __init__(self, pattern, directory=None, format=None, ext=None,
+                 visible=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(DiscoverDatasets, self).__init__(**params)
+
+
+class Tests(XMLParam):
+    name = 'tests'
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), Test)
+
+
+class Test(XMLParam):
+    name = 'test'
+
+    def acceptable_child(self, child):
+        return isinstance(child, TestParam) or isinstance(child, TestOutput)
+
+
+class TestParam(XMLParam):
+    name = 'param'
+
+    def __init__(self, name, value=None, ftype=None, dbkey=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestParam, self).__init__(**params)
+
+
+class TestOutput(XMLParam):
+    name = 'output'
+
+    def __init__(self, name=None, file=None, ftype=None, sort=None, value=None,
+                 md5=None, checksum=None, compare=None, lines_diff=None,
+                 delta=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestOutput, self).__init__(**params)
 
 
 class Citations(XMLParam):
