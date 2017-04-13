@@ -17,6 +17,13 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.3.3
+	- [@khillion](https://github.com/khillion) implemented the following:
+		- `<options>` with `<filter>` and `<column>`
+		- `<container>` for `<requirements>`
+		- Started to add `<tests>` section
+		- `<section>` in `<inputs>`
+		- `<collection>` with `<discover_datasets>` in `<outputs>`
 - 0.3.2
 	- configfiles ([#8](https://github.com/erasche/galaxyxml/pull/8))
 - 0.3.0
