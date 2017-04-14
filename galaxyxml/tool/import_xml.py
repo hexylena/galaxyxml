@@ -91,7 +91,7 @@ class GalaxyXmlParser(object):
         for req in requirements_root:
             req_type = req.attrib['type']
             value = req.text
-            version = req.attrib['version']
+            version = req.attrib.get('version', None)
             tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
 
     def _load_edam_topics(self, tool, topics_root):
@@ -316,8 +316,13 @@ class InputsParser(object):
         :type conditional_root: :class:`xml.etree._Element`
         """
         name = conditional_root.attrib['name']
+        value_from = conditional_root.attrib.get('value_from', None)
+        value_ref = conditional_root.attrib.get('value_ref', None)
+        value_ref_in_group = conditional_root.attrib.get('value_ref_in_group', None)
+        label = conditional_root.attrib.get('label', None)
         # Other optional parameters need to be added to conditional object
-        conditional = gxtp.Conditional(name)
+        conditional = gxtp.Conditional(name, value_from=value_from, value_ref=value_ref,
+                                       value_ref_in_group=value_ref_in_group, label=label)
         for cond_child in conditional_root:
             try:
                 getattr(self, '_load_{}'.format(cond_child.tag))(conditional, cond_child)
