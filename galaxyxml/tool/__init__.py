@@ -1,10 +1,14 @@
 import copy
+import logging
 from lxml import etree
 from galaxyxml import Util, GalaxyXML
 from galaxyxml.tool.parameters import XMLParam
 
 VALID_TOOL_TYPES = ('data_source', 'data_source_async')
 VALID_URL_METHODS = ('get', 'post')
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class Tool(GalaxyXML):
@@ -129,7 +133,7 @@ class Tool(GalaxyXML):
             if getattr(self, 'command', None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
-                logger.warning('The tool does not have any old command stored. ' + \
+                logger.warning('The tool does not have any old command stored. ' +
                                'Only the command line is written.')
                 command_node.text = export_xml.executable
         else:
