@@ -239,7 +239,24 @@ class InputsParser(object):
         param_min = int_param.attrib.get('min', False)
         param_max = int_param.attrib.get('max', None)
         root.append(gxtp.IntegerParam(name, value, optional=optional, label=label,
-                    help=inp_help, min=param_min, max=param_max))
+                                      help=inp_help, min=param_min, max=param_max))
+
+    def _load_float_param(self, root, float_param):
+        """
+        Create float param from its xml root.
+
+        :param float_param: root of param tag.
+        :type float_param: :class:`xml.etree._Element`
+        """
+        name = float_param.attrib['name']
+        value = float_param.attrib.get('value', None)
+        optional = float_param.attrib.get('optional', None)
+        label = float_param.attrib.get('label', None)
+        inp_help = float_param.attrib.get('help', None)
+        param_min = float_param.attrib.get('min', False)
+        param_max = float_param.attrib.get('max', None)
+        root.append(gxtp.FloatParam(name, value, optional=optional, label=label,
+                                    help=inp_help, min=param_min, max=param_max))
 
     def _load_select_param(self, root, sel_param):
         """
