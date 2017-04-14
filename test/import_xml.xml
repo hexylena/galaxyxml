@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
-<!-- This xml is used to test import. Any change in the order of the tags can make the test to fail -->
+<!-- This xml is used to test import. Any change in the order of the tags might make the test to fail -->
 <tool id="import_test" name="Import" version="1.0">
   <description>description</description>
+  <edam_operations>
+    <edam_operation>operation_0004</edam_operation>
+  </edam_operations>
+  <edam_topics>
+    <edam_topic>topic_0003</edam_topic>
+  </edam_topics>
   <requirements>
     <requirement type="package" version="1">magic_package</requirement>
   </requirements>
@@ -14,10 +20,31 @@
   <version_command>v_command</version_command>
   <command><![CDATA[command]]></command>
   <inputs>
+    <param name="interval_file" type="data" format="interval" label="near intervals in"/>
+    <param checked="false" help="a help" label="a label" name="bool" type="boolean" truevalue="--bool" falsevalue=""/>
+    <param name="int_size" type="integer" value="1" label="a label" />
+    <param name="float_size" type="float" value="1" label="a label" />
+    <param name="upstream_or_down" type="select" label="Get">
+      <option value="u">Upstream</option>
+      <option value="d">Downstream</option>
+    </param>
+    <conditional label="Conditional" name="cond">
+      <param label="a label" name="Select" type="select">
+        <option value="hi">1</option>
+        <option value="bye">2</option>
+      </param>
+      <when value="hi"/>
+      <when value="bye">
+        <param label="Advanced value" name="some_int" type="integer" value="0"/>
+      </when>
+    </conditional>
   </inputs>
   <outputs>
   </outputs>
   <tests>
   </tests>
   <help><![CDATA[help]]></help>
+  <citations>
+    <citation type="doi">10.1007/s10009-015-0392-z</citation>
+  </citations>
 </tool>
