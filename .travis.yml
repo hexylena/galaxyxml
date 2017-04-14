@@ -10,6 +10,7 @@ script:
 - flake8 galaxyxml
 - python examples/example.py | xmllint --pretty 1 - > tmp.xml
 - diff tmp.xml examples/tool.xml
+- nosetests --with-coverage --cover-package=galaxyxml
 deploy:
   provider: pypi
   user: erasche

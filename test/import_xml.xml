@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- This xml is used to test import. Any change in the order of the tags can make the test to fail -->
+<tool id="import_test" name="Import" version="1.0">
+  <description>description</description>
+  <requirements>
+    <requirement type="package" version="1">magic_package</requirement>
+  </requirements>
+  <configfiles>
+    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
+  </configfiles>
+  <stdio>
+    <exit_code level="fatal" range="1:"/>
+  </stdio>
+  <version_command>v_command</version_command>
+  <command><![CDATA[command]]></command>
+  <inputs>
+  </inputs>
+  <outputs>
+  </outputs>
+  <tests>
+  </tests>
+  <help><![CDATA[help]]></help>
+</tool>
