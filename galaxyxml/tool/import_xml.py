@@ -28,10 +28,12 @@ class GalaxyXmlParser(object):
                 break
         for child in xml_root:
             if child.tag == 'command':
-                exe = child.text
+                exe = child.text.split()[0]
+                command = child.text
                 break
 
         tool = gxt.Tool(name, tool_id, version, description, exe)
+        tool.command = command
         return tool
 
     def _load_description(self, tool, desc_root):
