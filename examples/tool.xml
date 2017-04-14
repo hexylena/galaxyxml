@@ -2,6 +2,10 @@
 <tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
   <!--This tool descriptor has been generated using galaxyxml.-->
   <description>Aragorn is a tRNA finder</description>
+  <requirements>
+    <requirement type="package" version="1.0.0">samtools</requirement>
+    <container type="docker">one_super_image</container>
+  </requirements>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
     <inputs name="inputs"/>
@@ -11,15 +15,17 @@
   </stdio>
   <version_command>aragorn.exe --version</version_command>
   <command><![CDATA[aragorn.exe $flag
--float $float
+float_section $float_section
 cond $cond
 -i$int_min,$int_max
 
 $posint
--output $output]]></command>
+select_local $select_local]]></command>
   <inputs>
     <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
-    <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    <section name="float_section" title="Float section">
+      <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    </section>
     <conditional argument="cond" label="Conditional" name="cond">
       <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select">
         <option value="bye">2</option>
@@ -33,9 +39,25 @@ $posint
     <param argument="-int_min" help="int_min help" label="int_min label" name="int_min" type="integer" value="0"/>
     <param argument="-int_max" help="int_max help" label="int_max label" name="int_max" type="integer" value="0"/>
     <param help="posinthelp" label="posint label" name="posint" type="integer" value="0"/>
+    <param argument="select_local" label="Author did not provide help for this parameter... " name="select_local" type="select">
+      <options from_file="loc_file.loc">
+        <column index="0" name="name"/>
+        <column index="1" name="value"/>
+        <filter column="1" name="sorted" type="sort_by"/>
+      </options>
+    </param>
   </inputs>
   <outputs>
     <data format="tabular" hidden="false" name="output"/>
+    <collection label="a small label" name="supercollection">
+      <discover_datasets format="fasta" pattern="(?P&amp;lt;designation&amp;gt;.+)\.pdf.fasta"/>
+    </collection>
   </outputs>
+  <tests>
+    <test>
+      <param name="float" value="5.4"/>
+      <output name="output" value="file.out"/>
+    </test>
+  </tests>
   <help><![CDATA[HI]]></help>
 </tool>
