@@ -50,6 +50,7 @@
         <filter type="multiple_splitter" column="4" separator=","/>
       </options>
     </param>
+    <param name="xlab" size="30" type="text" value="V1" label="Label for x axis"/>
   </inputs>
   <outputs>
   </outputs>

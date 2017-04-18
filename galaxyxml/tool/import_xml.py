@@ -195,6 +195,22 @@ class InputsParser(object):
     Class to parse content of the inputs tag from a Galaxy XML wrapper.
     """
 
+    def _load_text_param(self, root, text_param):
+        """
+        Add <param type='text'> to the root.
+
+        :param root: root to append param to.
+        :param text_param: root of param tag.
+        :type text_param: :class:`xml.etree._Element`
+        """
+        root.append(gxtp.TextParam(text_param.attrib['name'],
+                                   optional=text_param.get('optional', None),
+                                   label=text_param.get('label', None),
+                                   help=text_param.get('help', None),
+                                   size=text_param.get('size', None),
+                                   area=text_param.get('area', False),
+                                   value=text_param.get('value', None)))
+
     def _load_data_param(self, root, data_param):
         """
         Add <param type='data'> to the tool.

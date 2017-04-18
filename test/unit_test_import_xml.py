@@ -120,3 +120,10 @@ class TestInputParser(TestImport):
         self.assertEqual(options[2].attrib['type'], 'param_value')
         self.assertEqual(options[2].attrib['ref'], 'dbnsfp')
         self.assertEqual(options[2].attrib['column'], '3')
+
+    def test_load_text_param(self):
+        text_param = self.tool.inputs.children[8].node
+        self.assertEqual(text_param.attrib['name'], 'xlab')
+        self.assertEqual(text_param.attrib['size'], '30')
+        self.assertEqual(text_param.attrib['type'], 'text')
+        self.assertEqual(text_param.attrib['value'], 'V1')
