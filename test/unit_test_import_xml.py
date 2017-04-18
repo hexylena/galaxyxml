@@ -110,3 +110,13 @@ class TestInputParser(TestImport):
         self.assertEqual(section[0].attrib['name'], 'param_sec')
         self.assertEqual(section[0].attrib['type'], 'data')
         self.assertEqual(section[0].attrib['label'], 'Section param')
+
+    def test_load_select_options(self):
+        options = self.tool.inputs.children[7].node[0]
+        self.assertEqual(options.attrib['from_data_table'], 'snpsift_dbnsfps')
+        # test one column and one filter
+        self.assertEqual(options[0].attrib['name'], 'name')
+        self.assertEqual(options[0].attrib['index'], '4')
+        self.assertEqual(options[2].attrib['type'], 'param_value')
+        self.assertEqual(options[2].attrib['ref'], 'dbnsfp')
+        self.assertEqual(options[2].attrib['column'], '3')

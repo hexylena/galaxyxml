@@ -99,7 +99,7 @@ class GalaxyXmlParser(object):
             elif req.tag == 'container':
                 tool.requirements.append(gxtp.Container(req_type, value))
             else:
-                logger.warning(reg.tag + ' is not a valid tag for requirements child')
+                logger.warning(req.tag + ' is not a valid tag for requirements child')
 
     def _load_edam_topics(self, tool, topics_root):
         """
@@ -265,6 +265,39 @@ class InputsParser(object):
         root.append(gxtp.FloatParam(name, value, optional=optional, label=label,
                                     help=inp_help, min=param_min, max=param_max))
 
+    def _load_option_select(self, root, option):
+        root.append(gxtp.SelectOption(option.attrib.get('value', None),
+                                      option.text,
+                                      selected=option.attrib.get('selected', False)))
+
+    def _load_column_options(self, root, select):
+        root.append(gxtp.Column(select.attrib['name'], select.attrib['index']))
+
+    def _load_filter_options(self, root, filter):
+        root.append(gxtp.Filter(filter.attrib['type'],
+                                column=filter.attrib.get('column', None),
+                                name=filter.attrib.get('name', None),
+                                ref=filter.attrib.get('ref', None),
+                                key=filter.attrib.get('key', None),
+                                multiple=filter.attrib.get('multiple', None),
+                                separator=filter.attrib.get('separator', None),
+                                keep=filter.attrib.get('keep', None),
+                                value=filter.attrib.get('value', None),
+                                ref_attribute=filter.attrib.get('ref_attribute', None),
+                                index=filter.attrib.get('index', None)))
+
+    def _load_options_select(self, root, options):
+        opts = gxtp.Options(from_dataset=options.attrib.get('from_dataset', None),
+                            from_file=options.attrib.get('from_file', None),
+                            from_data_table=options.attrib.get('from_data_table', None),
+                            from_parameter=options.attrib.get('from_parameter', None))
+        for opt_child in options:
+            try:
+                getattr(self, '_load_{}_options'.format(opt_child.tag))(opts, opt_child)
+            except AttributeError:
+                logger.warning(opt_child.tag + " tag is not processed for <options>.")
+        root.append(opts)
+
     def _load_select_param(self, root, sel_param):
         """
         Create :class:`galaxyxml.tool.parameters.SelectParam` from its xml root.
@@ -282,10 +315,11 @@ class InputsParser(object):
         select_param = gxtp.SelectParam(name, optional=optional, label=label, help=inp_help,
                                         data_ref=data_ref, display=display, multiple=multiple)
         # TODO: handle options too and not only option
-        for option in sel_param:
-            select_param.append(gxtp.SelectOption(option.attrib.get('value', None),
-                                                  option.text,
-                                                  selected=option.attrib.get('selected', False)))
+        for sel_child in sel_param:
+            try:
+                getattr(self, '_load_{}_select'.format(sel_child.tag))(select_param, sel_child)
+            except AttributeError:
+                logger.warning(sel_child.tag + " tag is not processed for <param type='select'>")
         root.append(select_param)
 
     def _load_param(self, root, param_root):

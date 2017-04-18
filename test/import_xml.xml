@@ -42,6 +42,14 @@
     <section name="adv" title="Advanced" expanded="False">
       <param name="param_sec" type="data" label="Section param" />
     </section>
+    <param name="annotations" type="select" multiple="true" display="checkboxes" label="Annotate with">
+      <options from_data_table="snpsift_dbnsfps">
+        <column name="name" index="4"/>
+        <column name="value" index="4"/>
+        <filter type="param_value" ref="dbnsfp" column="3" />
+        <filter type="multiple_splitter" column="4" separator=","/>
+      </options>
+    </param>
   </inputs>
   <outputs>
   </outputs>
