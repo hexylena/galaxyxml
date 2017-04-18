@@ -39,6 +39,9 @@
         <param label="Advanced value" name="some_int" type="integer" value="0"/>
       </when>
     </conditional>
+    <section name="adv" title="Advanced" expanded="False">
+      <param name="param_sec" type="data" label="Section param" />
+    </section>
   </inputs>
   <outputs>
   </outputs>

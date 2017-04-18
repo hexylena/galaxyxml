@@ -337,6 +337,26 @@ class InputsParser(object):
                 logger.warning(cond_child.tag + " tag is not processed for <conditional>.")
         root.append(conditional)
 
+    def _load_section(self, root, section_root):
+        """
+        Add section to the root.
+
+        :param root: root to append conditional to.
+        :param section_root: root of section tag.
+        :type section_root: :class:`xml.etree._Element`
+        """
+        name = section_root.attrib['name']
+        title = section_root.attrib['title']
+        expanded = section_root.attrib.get('expanded', None)
+        sec_help = section_root.attrib.get('help', None)
+        section = gxtp.Section(name, title, expanded=expanded, sec_help=sec_help)
+        for sec_child in section_root:
+            try:
+                getattr(self, '_load_{}'.format(sec_child.tag))(section, sec_child)
+            except AttributeError:
+                logger.warning(sec_child.tag + " tag is not processed for <section>.")
+        root.append(section)
+
     def load_inputs(self, root, inputs_root):
         """
         Add inputs to the root.

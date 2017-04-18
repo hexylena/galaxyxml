@@ -100,3 +100,13 @@ class TestInputParser(TestImport):
         # test when
         self.assertEqual(condi[1].attrib['value'], 'hi')
         self.assertEqual(condi[2].attrib['value'], 'bye')
+
+    def test_load_section(self):
+        section = self.tool.inputs.children[6].node 
+        self.assertEqual(section.attrib['name'], 'adv')
+        self.assertEqual(section.attrib['title'], 'Advanced')
+        self.assertEqual(section.attrib['expanded'], 'False')
+        # test param within section
+        self.assertEqual(section[0].attrib['name'], 'param_sec')
+        self.assertEqual(section[0].attrib['type'], 'data')
+        self.assertEqual(section[0].attrib['label'], 'Section param')
