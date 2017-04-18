@@ -127,3 +127,11 @@ class TestInputParser(TestImport):
         self.assertEqual(text_param.attrib['size'], '30')
         self.assertEqual(text_param.attrib['type'], 'text')
         self.assertEqual(text_param.attrib['value'], 'V1')
+
+    def test_load_repeat(self):
+        repeat = self.tool.inputs.children[9].node
+        self.assertEqual(repeat.attrib['name'], 'series')
+        self.assertEqual(repeat.attrib['title'], 'Series')
+        # test param within repeat
+        self.assertEqual(repeat[0].attrib['name'], 'input')
+        self.assertEqual(repeat[0].attrib['type'], 'data')

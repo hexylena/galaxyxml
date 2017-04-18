@@ -407,6 +407,26 @@ class InputsParser(object):
                 logger.warning(sec_child.tag + " tag is not processed for <section>.")
         root.append(section)
 
+    def _load_repeat(self, root, repeat_root):
+        """
+        Add <repeat> to the root.
+
+        :param root: root to append repeat to.
+        :param repeat_root: root of <repeat> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        repeat = gxtp.Repeat(repeat_root.attrib['name'],
+                             repeat_root.attrib['title'],
+                             min=repeat_root.attrib.get('min', None),
+                             max=repeat_root.attrib.get('max', None),
+                             default=repeat_root.attrib.get('default', None))
+        for rep_child in repeat_root:
+            try:
+                getattr(self, '_load_{}'.format(rep_child.tag))(repeat, rep_child)
+            except AttributeError:
+                logger.warning(rep_child.tag + " tag is not processed for <repeat>.")
+        root.append(repeat)
+
     def load_inputs(self, root, inputs_root):
         """
         Add inputs to the root.

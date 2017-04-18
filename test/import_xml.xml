@@ -51,6 +51,9 @@
       </options>
     </param>
     <param name="xlab" size="30" type="text" value="V1" label="Label for x axis"/>
+    <repeat name="series" title="Series">
+      <param name="input" type="data" format="tabular" label="Dataset"/>
+    </repeat>
   </inputs>
   <outputs>
   </outputs>
