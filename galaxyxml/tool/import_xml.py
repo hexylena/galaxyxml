@@ -192,15 +192,15 @@ class GalaxyXmlParser(object):
 
 class InputsParser(object):
     """
-    Class to parse content of the inputs tag from a Galaxy XML wrapper.
+    Class to parse content of the <inputs> tag from a Galaxy XML wrapper.
     """
 
     def _load_text_param(self, root, text_param):
         """
-        Add <param type='text'> to the root.
+        Add <param type="text" /> to the root.
 
-        :param root: root to append param to.
-        :param text_param: root of param tag.
+        :param root: root to append the param to.
+        :param text_param: root of <param> tag.
         :type text_param: :class:`xml.etree._Element`
         """
         root.append(gxtp.TextParam(text_param.attrib['name'],
@@ -213,83 +213,97 @@ class InputsParser(object):
 
     def _load_data_param(self, root, data_param):
         """
-        Add <param type='data'> to the tool.
+        Add <param type="data" /> to the root.
 
-        :param data_param: root of param tag.
+        :param root: root to append the param to.
+        :param data_param: root of <param> tag.
         :type data_param: :class:`xml.etree._Element`
-        :return: Data param object instantiated.
-        :rtype: :class:`galaxyxml.tool.parameters.DataParam`
         """
-        name = data_param.attrib['name']
-        optional = data_param.attrib.get('optional', None)
-        label = data_param.attrib.get('label', None)
-        inp_help = data_param.attrib.get('help', None)
-        inp_format = data_param.attrib.get('format', None)
-        multiple = data_param.attrib.get('multiple', None)
-        root.append(gxtp.DataParam(name, optional=optional, label=label,
-                                   help=inp_help, format=inp_format,
-                                   multiple=multiple))
+        root.append(gxtp.DataParam(data_param.attrib['name'],
+                                   optional=data_param.attrib.get('optional', None),
+                                   label=data_param.attrib.get('label', None),
+                                   help=data_param.attrib.get('help', None),
+                                   format=data_param.attrib.get('format', None),
+                                   multiple=data_param.attrib.get('multiple', None)))
 
     def _load_boolean_param(self, root, bool_param):
         """
-        Create boolean param from its xml root.
+        Add <param type="boolean" /> to the root.
 
-        :param bool_param: root of param tag.
+        :param root: root to append the param to.
+        :param bool_param: root of <param> tag.
         :type bool_param: :class:`xml.etree._Element`
         """
-        name = bool_param.attrib['name']
-        optional = bool_param.attrib.get('optional', None)
-        label = bool_param.attrib.get('label', None)
-        inp_help = bool_param.attrib.get('help', None)
-        checked = bool_param.attrib.get('checked', False)
-        truevalue = bool_param.attrib.get('truevalue', None)
-        falsevalue = bool_param.attrib.get('falsevalue', None)
-        root.append(gxtp.BooleanParam(name, optional=optional, label=label, help=inp_help,
-                    checked=checked, truevalue=truevalue, falsevalue=falsevalue))
+        root.append(gxtp.BooleanParam(bool_param.attrib['name'],
+                                      optional=bool_param.attrib.get('optional', None),
+                                      label=bool_param.attrib.get('label', None),
+                                      help=bool_param.attrib.get('help', None),
+                                      checked=bool_param.attrib.get('checked', False),
+                                      truevalue=bool_param.attrib.get('truevalue', None),
+                                      falsevalue=bool_param.attrib.get('falsevalue', None)))
 
     def _load_integer_param(self, root, int_param):
         """
-        Create integer param from its xml root.
+        Add <param type="integer" /> to the root.
 
-        :param int_param: root of param tag.
+        :param root: root to append the param to.
+        :param int_param: root of <param> tag.
         :type int_param: :class:`xml.etree._Element`
         """
-        name = int_param.attrib['name']
-        value = int_param.attrib.get('value', None)
-        optional = int_param.attrib.get('optional', None)
-        label = int_param.attrib.get('label', None)
-        inp_help = int_param.attrib.get('help', None)
-        param_min = int_param.attrib.get('min', False)
-        param_max = int_param.attrib.get('max', None)
-        root.append(gxtp.IntegerParam(name, value, optional=optional, label=label,
-                                      help=inp_help, min=param_min, max=param_max))
+        root.append(gxtp.IntegerParam(int_param.attrib['name'],
+                                      int_param.attrib.get('value', None),
+                                      optional=int_param.attrib.get('optional', None),
+                                      label=int_param.attrib.get('label', None),
+                                      help=int_param.attrib.get('help', None),
+                                      min=int_param.attrib.get('min', None),
+                                      max=int_param.attrib.get('max', None)))
 
     def _load_float_param(self, root, float_param):
         """
-        Create float param from its xml root.
+        Add <param type="float" /> to the root.
 
-        :param float_param: root of param tag.
+        :param root: root to append the param to.
+        :param float_param: root of <param> tag.
         :type float_param: :class:`xml.etree._Element`
         """
-        name = float_param.attrib['name']
-        value = float_param.attrib.get('value', None)
-        optional = float_param.attrib.get('optional', None)
-        label = float_param.attrib.get('label', None)
-        inp_help = float_param.attrib.get('help', None)
-        param_min = float_param.attrib.get('min', False)
-        param_max = float_param.attrib.get('max', None)
-        root.append(gxtp.FloatParam(name, value, optional=optional, label=label,
-                                    help=inp_help, min=param_min, max=param_max))
+        root.append(gxtp.FloatParam(float_param.attrib['name'],
+                                    float_param.attrib.get('value', None),
+                                    optional=float_param.attrib.get('optional', None),
+                                    label=float_param.attrib.get('label', None),
+                                    help=float_param.attrib.get('help', None),
+                                    min=float_param.attrib.get('min', None),
+                                    max=float_param.attrib.get('max', None)))
 
     def _load_option_select(self, root, option):
+        """
+        Add <option> to the root (usually <param type="select" />).
+
+        :param root: root to append the param to.
+        :param option: root of <option> tag.
+        :type float_param: :class:`xml.etree._Element`
+        """
         root.append(gxtp.SelectOption(option.attrib.get('value', None),
                                       option.text,
                                       selected=option.attrib.get('selected', False)))
 
-    def _load_column_options(self, root, select):
-        root.append(gxtp.Column(select.attrib['name'], select.attrib['index']))
+    def _load_column_options(self, root, column):
+        """
+        Add <column> to the root (usually <options>).
+
+        :param root: root to append the param to.
+        :param option: root of <column> tag.
+        :type float_param: :class:`xml.etree._Element`
+        """
+        root.append(gxtp.Column(column.attrib['name'], column.attrib['index']))
 
     def _load_filter_options(self, root, filter):
+        """
+        Add <filter> to the root (usually <options>).
+
+        :param root: root to append the param to.
+        :param option: root of <filter> tag.
+        :type float_param: :class:`xml.etree._Element`
+        """
         root.append(gxtp.Filter(filter.attrib['type'],
                                 column=filter.attrib.get('column', None),
                                 name=filter.attrib.get('name', None),
@@ -303,10 +317,18 @@ class InputsParser(object):
                                 index=filter.attrib.get('index', None)))
 
     def _load_options_select(self, root, options):
+        """
+        Add <options> to the root (usually <param type="select" />).
+
+        :param root: root to append the param to.
+        :param option: root of <options> tag.
+        :type float_param: :class:`xml.etree._Element`
+        """
         opts = gxtp.Options(from_dataset=options.attrib.get('from_dataset', None),
                             from_file=options.attrib.get('from_file', None),
                             from_data_table=options.attrib.get('from_data_table', None),
                             from_parameter=options.attrib.get('from_parameter', None))
+        # Deal with child nodes (usually filter and column)
         for opt_child in options:
             try:
                 getattr(self, '_load_{}_options'.format(opt_child.tag))(opts, opt_child)
@@ -316,34 +338,33 @@ class InputsParser(object):
 
     def _load_select_param(self, root, sel_param):
         """
-        Create :class:`galaxyxml.tool.parameters.SelectParam` from its xml root.
+        Add <param type="select" /> to the root.
 
-        :param sel_param: root of param type='select' tag.
+        :param root: root to append the param to.
+        :param sel_param: root of <param> tag.
         :type sel_param: :class:`xml.etree._Element`
         """
-        name = sel_param.attrib['name']
-        optional = sel_param.attrib.get('optional', None)
-        label = sel_param.attrib.get('label', None)
-        inp_help = sel_param.attrib.get('help', None)
-        data_ref = sel_param.attrib.get('data_ref', None)
-        display = sel_param.attrib.get('display', None)
-        multiple = sel_param.attrib.get('multiple', None)
-        select_param = gxtp.SelectParam(name, optional=optional, label=label, help=inp_help,
-                                        data_ref=data_ref, display=display, multiple=multiple)
-        # TODO: handle options too and not only option
+        select_param = gxtp.SelectParam(sel_param.attrib['name'],
+                                        optional=sel_param.attrib.get('optional', None),
+                                        label=sel_param.attrib.get('label', None),
+                                        help=sel_param.attrib.get('help', None),
+                                        data_ref=sel_param.attrib.get('data_ref', None),
+                                        display=sel_param.attrib.get('display', None),
+                                        multiple=sel_param.attrib.get('multiple', None))
+        # Deal with child nodes (usually option and options)
         for sel_child in sel_param:
             try:
                 getattr(self, '_load_{}_select'.format(sel_child.tag))(select_param, sel_child)
             except AttributeError:
-                logger.warning(sel_child.tag + " tag is not processed for <param type='select'>")
+                logger.warning(sel_child.tag + " tag is not processed for <param type='select'>.")
         root.append(select_param)
 
     def _load_param(self, root, param_root):
         """
-        Method to select which type of param is being added to the root.
+        Method to select which type of <param> is being added to the root.
 
         :param root: root to attach param to.
-        :param param_root: root of param tag.
+        :param param_root: root of <param> tag.
         :type param_root: :class:`xml.etree._Element`
         """
         param_type = param_root.attrib['type']
@@ -354,57 +375,50 @@ class InputsParser(object):
 
     def _load_when(self, root, when_root):
         """
-        Add when to the root.
+        Add <when> to the root (usually <conditional>).
 
         :param root: root to append when to.
-        :param when_root: root of when tag.
+        :param when_root: root of <when> tag.
         :type when_root: :class:`xml.etree._Element`
         """
         when = gxtp.When(when_root.attrib['value'])
+        # Deal with child nodes
         self.load_inputs(when, when_root)
         root.append(when)
 
     def _load_conditional(self, root, conditional_root):
         """
-        Add conditional to the root.
+        Add <conditional> to the root.
 
         :param root: root to append conditional to.
-        :param conditional_root: root of conditional tag.
+        :param conditional_root: root of <conditional> tag.
         :type conditional_root: :class:`xml.etree._Element`
         """
-        name = conditional_root.attrib['name']
-        value_from = conditional_root.attrib.get('value_from', None)
-        value_ref = conditional_root.attrib.get('value_ref', None)
         value_ref_in_group = conditional_root.attrib.get('value_ref_in_group', None)
-        label = conditional_root.attrib.get('label', None)
         # Other optional parameters need to be added to conditional object
-        conditional = gxtp.Conditional(name, value_from=value_from, value_ref=value_ref,
-                                       value_ref_in_group=value_ref_in_group, label=label)
-        for cond_child in conditional_root:
-            try:
-                getattr(self, '_load_{}'.format(cond_child.tag))(conditional, cond_child)
-            except AttributeError:
-                logger.warning(cond_child.tag + " tag is not processed for <conditional>.")
+        conditional = gxtp.Conditional(conditional_root.attrib['name'],
+                                       value_from=conditional_root.attrib.get('value_from', None),
+                                       value_ref=conditional_root.attrib.get('value_ref', None),
+                                       value_ref_in_group=value_ref_in_group,
+                                       label=conditional_root.attrib.get('label', None))
+        # Deal with child nodes
+        self.load_inputs(conditional, conditional_root)
         root.append(conditional)
 
     def _load_section(self, root, section_root):
         """
-        Add section to the root.
+        Add <section> to the root.
 
         :param root: root to append conditional to.
-        :param section_root: root of section tag.
+        :param section_root: root of <section> tag.
         :type section_root: :class:`xml.etree._Element`
         """
-        name = section_root.attrib['name']
-        title = section_root.attrib['title']
-        expanded = section_root.attrib.get('expanded', None)
-        sec_help = section_root.attrib.get('help', None)
-        section = gxtp.Section(name, title, expanded=expanded, sec_help=sec_help)
-        for sec_child in section_root:
-            try:
-                getattr(self, '_load_{}'.format(sec_child.tag))(section, sec_child)
-            except AttributeError:
-                logger.warning(sec_child.tag + " tag is not processed for <section>.")
+        section = gxtp.Section(section_root.attrib['name'],
+                               section_root.attrib['title'],
+                               expanded=section_root.attrib.get('expanded', None),
+                               help=section_root.attrib.get('help', None))
+        # Deal with child nodes
+        self.load_inputs(section, section_root)
         root.append(section)
 
     def _load_repeat(self, root, repeat_root):
@@ -420,17 +434,14 @@ class InputsParser(object):
                              min=repeat_root.attrib.get('min', None),
                              max=repeat_root.attrib.get('max', None),
                              default=repeat_root.attrib.get('default', None))
-        for rep_child in repeat_root:
-            try:
-                getattr(self, '_load_{}'.format(rep_child.tag))(repeat, rep_child)
-            except AttributeError:
-                logger.warning(rep_child.tag + " tag is not processed for <repeat>.")
+        # Deal with child nodes
+        self.load_inputs(repeat, repeat_root)
         root.append(repeat)
 
     def load_inputs(self, root, inputs_root):
         """
-        Add inputs to the root.
-
+        Add <inputs.tag> to the root (it can be any tags with children such as
+        <inputs>, <repeat>, <section> ...
         :param root: root to attach inputs to (either <inputs> or <when>).
         :param inputs_root: root of inputs tag.
         :type inputs_root: :class:`xml.etree._Element`
@@ -439,4 +450,5 @@ class InputsParser(object):
             try:
                 getattr(self, '_load_{}'.format(inp_child.tag))(root, inp_child)
             except AttributeError:
-                logger.warning(inp_child.tag + " tag is not processed for <inputs>.")
+                logger.warning(inp_child.tag + " tag is not processed for <" +
+                               inputs_root.tag + "> tag.")
