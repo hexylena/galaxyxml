@@ -28,6 +28,7 @@ class TestImport(unittest.TestCase):
         self.assertEqual(requirement.text, 'magic_package')
         self.assertEqual(requirement.attrib['type'], 'package')
         self.assertEqual(requirement.attrib['version'], '1')
+        container = self.tool.requirements.children[1].node
 
     def test_load_edam_topics(self):
         topic = self.tool.edam_topics.children[0].node

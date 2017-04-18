@@ -10,6 +10,7 @@
   </edam_topics>
   <requirements>
     <requirement type="package" version="1">magic_package</requirement>
+    <container type="docker">a_container</container>
   </requirements>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>

@@ -93,8 +93,13 @@ class GalaxyXmlParser(object):
         for req in requirements_root:
             req_type = req.attrib['type']
             value = req.text
-            version = req.attrib.get('version', None)
-            tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
+            if req.tag == 'requirement':
+                version = req.attrib.get('version', None)
+                tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
+            elif req.tag == 'container':
+                tool.requirements.append(gxtp.Container(req_type, value))
+            else:
+                logger.warning(reg.tag + ' is not a valid tag for requirements child')
 
     def _load_edam_topics(self, tool, topics_root):
         """
