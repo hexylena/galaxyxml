@@ -19,20 +19,25 @@ class GalaxyXmlParser(object):
         :param xml_root: root of the galaxy xml file.
         :type xml_root: :class:`xml.etree._Element`
         """
-        name = xml_root.attrib['name']
-        tool_id = xml_root.attrib['id']
-        version = xml_root.attrib['version']
         for child in xml_root:
             if child.tag == 'description':
                 description = child.text
-                break
-        for child in xml_root:
-            if child.tag == 'command':
-                exe = child.text.split()[0]
+            elif child.tag == 'command':
+                executable = child.text.split()[0]
                 command = child.text
-                break
+            elif child.tag == 'version_command':
+                version_cmd = child.text
 
-        tool = gxt.Tool(name, tool_id, version, description, exe)
+        tool = gxt.Tool(xml_root.attrib['name'],
+                        xml_root.attrib['id'],
+                        xml_root.attrib.get('version', None),
+                        description,
+                        executable,
+                        hidden=xml_root.attrib.get('hidden', False),
+                        tool_type=xml_root.attrib.get('tool_type', None),
+                        URL_method=xml_root.attrib.get('URL_method', None),
+                        workflow_compatible=xml_root.attrib.get('workflow_compatible', True),
+                        version_command=version_cmd)
         tool.command = command
         return tool
 
@@ -46,6 +51,17 @@ class GalaxyXmlParser(object):
         :type desc_root: :class:`xml.etree._Element`
         """
         logger.info("<description> is loaded during initiation of the object.")
+
+    def _load_version_command(self, tool, vers_root):
+        """
+        <version_command> is already loaded during initiation.
+
+        :param tool: Tool object from galaxyxml.
+        :type tool: :class:`galaxyxml.tool.Tool`
+        :param vers_root: root of <version_command> tag.
+        :type vers_root: :class:`xml.etree._Element`
+        """
+        logger.info("<version_command> is loaded during initiation of the object.")
 
     def _load_stdio(self, tool, stdio_root):
         """
