@@ -17,6 +17,9 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.4.0
+	- Add feature to import existing Galaxy xml
+
 - 0.3.3
 	- [@khillion](https://github.com/khillion) implemented the following:
 		- `<options>` with `<filter>` and `<column>`

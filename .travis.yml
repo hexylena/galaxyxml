@@ -4,12 +4,14 @@ python:
 - '3.4'
 - '3.5'
 script:
+- pip install coverage
 - pip install -U flake8
 - pip install -r requirements.txt
 - python setup.py install
 - flake8 galaxyxml
 - python examples/example.py | xmllint --pretty 1 - > tmp.xml
 - diff tmp.xml examples/tool.xml
+- nosetests --with-coverage --cover-package=galaxyxml
 deploy:
   provider: pypi
   user: erasche

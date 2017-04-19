@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!-- This xml is used to test import. Any change in the order of the tags might make the test to fail -->
+<tool id="import_test" name="Import" version="1.0">
+  <description>description</description>
+  <edam_operations>
+    <edam_operation>operation_0004</edam_operation>
+  </edam_operations>
+  <edam_topics>
+    <edam_topic>topic_0003</edam_topic>
+  </edam_topics>
+  <requirements>
+    <requirement type="package" version="1">magic_package</requirement>
+    <container type="docker">a_container</container>
+  </requirements>
+  <configfiles>
+    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
+  </configfiles>
+  <stdio>
+    <exit_code level="fatal" range="1:"/>
+  </stdio>
+  <version_command>v_command</version_command>
+  <command><![CDATA[command]]></command>
+  <inputs>
+    <param name="interval_file" type="data" format="interval" label="near intervals in"/>
+    <param checked="false" help="a help" label="a label" name="bool" type="boolean" truevalue="--bool" falsevalue=""/>
+    <param name="int_size" type="integer" value="1" label="a label" />
+    <param name="float_size" type="float" value="1" label="a label" />
+    <param name="upstream_or_down" type="select" label="Get">
+      <option value="u">Upstream</option>
+      <option value="d">Downstream</option>
+    </param>
+    <conditional label="Conditional" name="cond">
+      <param label="a label" name="Select" type="select">
+        <option value="hi">1</option>
+        <option value="bye">2</option>
+      </param>
+      <when value="hi"/>
+      <when value="bye">
+        <param label="Advanced value" name="some_int" type="integer" value="0"/>
+      </when>
+    </conditional>
+    <section name="adv" title="Advanced" expanded="False">
+      <param name="param_sec" type="data" label="Section param" />
+    </section>
+    <param name="annotations" type="select" multiple="true" display="checkboxes" label="Annotate with">
+      <options from_data_table="snpsift_dbnsfps">
+        <column name="name" index="4"/>
+        <column name="value" index="4"/>
+        <filter type="param_value" ref="dbnsfp" column="3" />
+        <filter type="multiple_splitter" column="4" separator=","/>
+      </options>
+    </param>
+    <param name="xlab" size="30" type="text" value="V1" label="Label for x axis"/>
+    <repeat name="series" title="Series">
+      <param name="input" type="data" format="tabular" label="Dataset"/>
+    </repeat>
+  </inputs>
+  <outputs>
+    <data format="fasta" name="out_file">
+      <change_format>
+        <when input="out_format" value="interval" format="interval" />
+      </change_format>
+    </data>
+    <data format="vcf" label="a_filter" name="output_vcf">
+      <filter>filter content</filter>
+    </data> 
+    <collection type="list" label="Graphic" name="pdf_out">
+      <discover_datasets pattern="(?P&lt;designation&gt;.+)\.pdf" format="pdf" visible="false" directory="Res" />
+    </collection>
+  </outputs>
+  <tests>
+    <test>
+      <param name="sequence" value="seq.fasta"/>
+      <output file="file.gbk" name="genbank"/>
+    </test>
+  </tests>
+  <help><![CDATA[help]]></help>
+  <citations>
+    <citation type="doi">10.1007/s10009-015-0392-z</citation>
+  </citations>
+</tool>
