@@ -56,6 +56,17 @@
     </repeat>
   </inputs>
   <outputs>
+    <data format="fasta" name="out_file">
+      <change_format>
+        <when input="out_format" value="interval" format="interval" />
+      </change_format>
+    </data>
+    <data format="vcf" label="a_filter" name="output_vcf">
+      <filter>filter content</filter>
+    </data> 
+    <collection type="list" label="Graphic" name="pdf_out">
+      <discover_datasets pattern="(?P&lt;designation&gt;.+)\.pdf" format="pdf" visible="false" directory="Res" />
+    </collection>
   </outputs>
   <tests>
     <test>

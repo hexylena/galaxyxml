@@ -170,6 +170,19 @@ class GalaxyXmlParser(object):
         inp_parser = InputsParser()
         inp_parser.load_inputs(tool.inputs, inputs_root)
 
+    def _load_outputs(self, tool, outputs_root):
+        """
+        Add <outputs> to the tool using the :class:`galaxyxml.tool.import_xml.OutputsParser` object.
+
+        :param tool: Tool object from galaxyxml.
+        :type tool: :class:`galaxyxml.tool.Tool`
+        :param outputs_root: root of <outputs> tag.
+        :type outputs_root: :class:`xml.etree._Element`
+        """
+        tool.outputs = gxtp.Outputs()
+        out_parser = OutputsParser()
+        out_parser.load_outputs(tool.outputs, outputs_root)
+
     def _load_tests(self, tool, tests_root):
         """
         Add <tests> to the tool.
@@ -466,6 +479,114 @@ class InputsParser(object):
             except AttributeError:
                 logger.warning(inp_child.tag + " tag is not processed for <" +
                                inputs_root.tag + "> tag.")
+
+
+class OutputsParser(object):
+    """
+    Class to parse content of the <outputs> tag from a Galaxy XML wrapper.
+    """
+
+    def _load_data(self, outputs_root, data_root):
+        """
+        Add <data> to <outputs>.
+
+        :param outputs_root: <outputs> root to append <data> to.
+        :param data_root: root of <data> tag.
+        :param data_root: :class:`xml.etree._Element`
+        """
+        data = gxtp.OutputData(data_root.attrib.get('name', None),
+                               data_root.attrib.get('format', None),
+                               format_source=data_root.attrib.get('format_source', None),
+                               metadata_source=data_root.attrib.get('metadata_source', None),
+                               label=data_root.attrib.get('label', None),
+                               from_work_dir=data_root.attrib.get('from_work_dir', None),
+                               hidden=data_root.attrib.get('hidden', False))
+        # Deal with child nodes
+        for data_child in data_root:
+            try:
+                getattr(self, '_load_{}'.format(data_child.tag))(data, data_child)
+            except AttributeError:
+                logger.warning(data_child.tag + " tag is not processed for <data>.")
+        outputs_root.append(data)
+
+    def _load_change_format(self, root, chfmt_root):
+        """
+        Add <change_format> to root (<data>).
+
+        :param root: root to append <change_format> to.
+        :param chfm_root: root of <change_format> tag.
+        :param chfm_root: :class:`xml.etree._Element`
+        """
+        change_format = gxtp.ChangeFormat()
+        for chfmt_child in chfmt_root:
+            change_format.append(gxtp.ChangeFormatWhen(chfmt_child.attrib['input'],
+                                                       chfmt_child.attrib['format'],
+                                                       chfmt_child.attrib['value']))
+        root.append(change_format)
+
+    def _load_collection(self, outputs_root, coll_root):
+        """
+        Add <collection> to <outputs>.
+
+        :param outputs_root: <outputs> root to append <collection> to.
+        :param coll_root: root of <collection> tag.
+        :param coll_root: :class:`xml.etree._Element`
+        """
+        collection = gxtp.OutputCollection(coll_root.attrib['name'],
+                                           type=coll_root.attrib.get('type', None),
+                                           label=coll_root.attrib.get('label', None),
+                                           format_source=coll_root.attrib.get('format_source',
+                                                                              None),
+                                           type_source=coll_root.attrib.get('type_source', None),
+                                           structured_like=coll_root.attrib.get('structured_like',
+                                                                                None),
+                                           inherit_format=coll_root.attrib.get('inherit_format',
+                                                                               None))
+        # Deal with child nodes
+        for coll_child in coll_root:
+            try:
+                getattr(self, '_load_{}'.format(coll_child.tag))(collection, coll_child)
+            except AttributeError:
+                logger.warning(coll_child.tag + " tag is not processed for <collection>.")
+        outputs_root.append(collection)
+
+    def _load_discover_datasets(self, root, disc_root):
+        """
+        Add <discover_datasets> to root (<collection>).
+
+        :param root: root to append <collection> to.
+        :param disc_root: root of <discover_datasets> tag.
+        :param disc_root: :class:`xml.etree._Element`
+        """
+        root.append(gxtp.DiscoverDatasets(disc_root.attrib['pattern'],
+                                          directory=disc_root.attrib.get('directory', None),
+                                          format=disc_root.attrib.get('format', None),
+                                          ext=disc_root.attrib.get('ext', None),
+                                          visible=disc_root.attrib.get('visible', None)))
+
+    def _load_filter(self, root, filter_root):
+        """
+        Add <filter> to root (<collection> or <data>).
+
+        :param root: root to append <collection> to.
+        :param coll_root: root of <filter> tag.
+        :param coll_root: :class:`xml.etree._Element`
+        """
+        root.append(gxtp.OutputFilter(filter_root.text))
+
+    def load_outputs(self, root, outputs_root):
+        """
+        Add <outputs> to the root.
+
+        :param root: root to attach <outputs> to (<tool>).
+        :param tests_root: root of <outputs> tag.
+        :type tests_root: :class:`xml.etree._Element`
+        """
+        for out_child in outputs_root:
+            try:
+                getattr(self, '_load_{}'.format(out_child.tag))(root, out_child)
+            except AttributeError:
+                logger.warning(out_child.tag + " tag is not processed for <outputs>.")
 
 
 class TestsParser(object):

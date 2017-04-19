@@ -137,6 +137,37 @@ class TestInputsParser(TestImport):
         self.assertEqual(repeat[0].attrib['name'], 'input')
         self.assertEqual(repeat[0].attrib['type'], 'data')
 
+
+class TestOutputsParser(TestImport):
+
+    def test_load_data_change_format(self):
+        data = self.tool.outputs.children[0].node
+        self.assertEqual(data.attrib['format'], 'fasta')
+        self.assertEqual(data.attrib['name'], 'out_file')
+        # test when in change_format
+        self.assertEqual(data[0][0].attrib['input'], 'out_format')
+        self.assertEqual(data[0][0].attrib['value'], 'interval')
+        self.assertEqual(data[0][0].attrib['format'], 'interval')
+
+    def test_load_data_filter(self):
+        data = self.tool.outputs.children[1].node
+        self.assertEqual(data.attrib['format'], 'vcf')
+        self.assertEqual(data.attrib['name'], 'output_vcf')
+        self.assertEqual(data.attrib['label'], 'a_filter')
+        # test filter
+        self.assertEqual(data[0].text, 'filter content')
+
+    def test_load_collection(self):
+        collection = self.tool.outputs.children[2].node
+        self.assertEqual(collection.attrib['type'], 'list')
+        self.assertEqual(collection.attrib['label'], 'Graphic')
+        self.assertEqual(collection.attrib['name'], 'pdf_out')
+        # test discover_dataset
+        self.assertEqual(collection[0].attrib['format'], 'pdf')
+        self.assertEqual(collection[0].attrib['visible'], 'false')
+        self.assertEqual(collection[0].attrib['directory'], 'Res')
+
+
 class TestTestsParser(TestImport):
 
     def test_load_param(self):
