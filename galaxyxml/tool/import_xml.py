@@ -170,6 +170,19 @@ class GalaxyXmlParser(object):
         inp_parser = InputsParser()
         inp_parser.load_inputs(tool.inputs, inputs_root)
 
+    def _load_tests(self, tool, tests_root):
+        """
+        Add <tests> to the tool.
+
+        :param tool: Tool object from galaxyxml.
+        :type tool: :class:`galaxyxml.tool.Tool`
+        :param tests_root: root of <tests> tag.
+        :type tests_root: :class:`xml.etree._Element`
+        """
+        tool.tests = gxtp.Tests()
+        tests_parser = TestsParser()
+        tests_parser.load_tests(tool.tests, tests_root)
+
     def import_xml(self, xml_path):
         """
         Load existing xml into the :class:`galaxyxml.tool.Tool` object.
@@ -441,7 +454,8 @@ class InputsParser(object):
     def load_inputs(self, root, inputs_root):
         """
         Add <inputs.tag> to the root (it can be any tags with children such as
-        <inputs>, <repeat>, <section> ...
+        <inputs>, <repeat>, <section> ...)
+
         :param root: root to attach inputs to (either <inputs> or <when>).
         :param inputs_root: root of inputs tag.
         :type inputs_root: :class:`xml.etree._Element`
@@ -452,3 +466,58 @@ class InputsParser(object):
             except AttributeError:
                 logger.warning(inp_child.tag + " tag is not processed for <" +
                                inputs_root.tag + "> tag.")
+
+
+class TestsParser(object):
+    """
+    Class to parse content of the <tests> tag from a Galaxy XML wrapper.
+    """
+
+    def _load_param(self, test_root, param_root):
+        """
+        Add <param> to the <test>.
+
+        :param root: <test> root to append <param> to.
+        :param repeat_root: root of <param> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        test_root.append(gxtp.TestParam(param_root.attrib['name'],
+                                        value=param_root.attrib.get('value', None),
+                                        ftype=param_root.attrib.get('ftype', None),
+                                        dbkey=param_root.attrib.get('dbkey', None)))
+
+    def _load_output(self, test_root, output_root):
+        """
+        Add <output> to the <test>.
+
+        :param root: <test> root to append <output> to.
+        :param repeat_root: root of <output> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        test_root.append(gxtp.TestOutput(name=output_root.attrib.get('name', None),
+                                         file=output_root.attrib.get('file', None),
+                                         ftype=output_root.attrib.get('ftype', None),
+                                         sort=output_root.attrib.get('sort', None),
+                                         value=output_root.attrib.get('value', None),
+                                         md5=output_root.attrib.get('md5', None),
+                                         checksum=output_root.attrib.get('checksum', None),
+                                         compare=output_root.attrib.get('compare', None),
+                                         lines_diff=output_root.attrib.get('lines_diff', None),
+                                         delta=output_root.attrib.get('delta', None)))
+
+    def load_tests(self, root, tests_root):
+        """
+        Add <tests> to the root.
+
+        :param root: root to attach <tests> to (<tool>).
+        :param tests_root: root of <tests> tag.
+        :type tests_root: :class:`xml.etree._Element`
+        """
+        for test_root in tests_root:
+            test = gxtp.Test()
+            for test_child in test_root:
+                try:
+                    getattr(self, '_load_{}'.format(test_child.tag))(test, test_child)
+                except AttributeError:
+                    logger.warning(test_child.tag + " tag is not processed within <test>.")
+            root.append(test)

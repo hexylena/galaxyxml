@@ -58,6 +58,10 @@
   <outputs>
   </outputs>
   <tests>
+    <test>
+      <param name="sequence" value="seq.fasta"/>
+      <output file="file.gbk" name="genbank"/>
+    </test>
   </tests>
   <help><![CDATA[help]]></help>
   <citations>

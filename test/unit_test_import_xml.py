@@ -5,12 +5,13 @@ Unit tests for the import of existing Galaxy XML to galaxyxml.
 import unittest
 from galaxyxml.tool.import_xml import GalaxyXmlParser
 
-
 class TestImport(unittest.TestCase):
 
     def setUp(self):
         gxp = GalaxyXmlParser()
         self.tool = gxp.import_xml('test/import_xml.xml')
+
+class TestImportXml(TestImport):
 
     def test_init_tool(self):
         xml_root = self.tool.root
@@ -49,7 +50,7 @@ class TestImport(unittest.TestCase):
         self.assertEqual(citation.attrib['type'], 'doi')
 
 
-class TestInputParser(TestImport):
+class TestInputsParser(TestImport):
 
     def test_load_data_param(self):
         param = self.tool.inputs.children[0].node
@@ -135,3 +136,15 @@ class TestInputParser(TestImport):
         # test param within repeat
         self.assertEqual(repeat[0].attrib['name'], 'input')
         self.assertEqual(repeat[0].attrib['type'], 'data')
+
+class TestTestsParser(TestImport):
+
+    def test_load_param(self):
+        param = self.tool.tests.children[0].node[0]
+        self.assertEqual(param.attrib['name'], 'sequence')
+        self.assertEqual(param.attrib['value'], 'seq.fasta')
+
+    def test_load_output(self):
+        output = self.tool.tests.children[0].node[1]
+        self.assertEqual(output.attrib['file'], 'file.gbk')
+        self.assertEqual(output.attrib['name'], 'genbank')
