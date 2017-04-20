@@ -27,6 +27,7 @@ or PR if you're feeling motivated.
 		- Started to add `<tests>` section
 		- `<section>` in `<inputs>`
 		- `<collection>` with `<discover_datasets>` in `<outputs>`
+	- Please note that `tool.parameters.OutputParam()` has been changed to `tool.parameters.OutputData()`
 - 0.3.2
 	- configfiles ([#8](https://github.com/erasche/galaxyxml/pull/8))
 - 0.3.0
