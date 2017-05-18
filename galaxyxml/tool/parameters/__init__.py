@@ -187,6 +187,11 @@ class Inputs(XMLParam):
     name = 'inputs'
     # This bodes to be an issue -__-
 
+    def __init__(self, action=None, check_value=None, method=None,
+                 target=None, nginx_upload=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Inputs, self).__init__(**params)
+
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
 
