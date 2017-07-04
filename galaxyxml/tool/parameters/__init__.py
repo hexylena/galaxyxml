@@ -100,6 +100,17 @@ class EdamOperations(XMLParam):
     def acceptable_child(self, child):
         return issubclass(type(child), EdamOperation)
 
+    def has_operation(self, edam_operation):
+        """
+        Check the presence of a given edam_operation.
+
+        :type edam_operation: STRING
+        """
+        for operation in self.children:
+            if operation.node.text == edam_operation:
+                return True
+        return False
+
 
 class EdamOperation(XMLParam):
     name = 'edam_operation'
@@ -114,6 +125,17 @@ class EdamTopics(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic)
+
+    def has_topic(self, edam_topic):
+        """
+        Check the presence of a given edam_topic.
+
+        :type edam_topic: STRING
+        """
+        for topic in self.children:
+            if topic.node.text == edam_topic:
+                return True
+        return False
 
 
 class EdamTopic(XMLParam):
