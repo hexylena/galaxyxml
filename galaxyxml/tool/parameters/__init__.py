@@ -654,6 +654,18 @@ class Citations(XMLParam):
     def acceptable_child(self, child):
         return issubclass(type(child), Citation)
 
+    def has_citation(self, type, value):
+        """
+        Check the presence of a given citation.
+
+        :type type: STRING
+        :type value: STRING
+        """
+        for citation in self.children:
+            if citation.node.attrib['type'] == type and citation.node.text == value:
+                return True
+        return False
+
 
 class Citation(XMLParam):
     name = 'citation'
