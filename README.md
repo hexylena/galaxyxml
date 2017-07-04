@@ -17,6 +17,9 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.4.1
+	- Add methods to check presence of EDAM and citation
+
 - 0.4.0
 	- Add feature to import existing Galaxy xml
 
