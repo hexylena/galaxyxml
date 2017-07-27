@@ -100,6 +100,17 @@ class EdamOperations(XMLParam):
     def acceptable_child(self, child):
         return issubclass(type(child), EdamOperation)
 
+    def has_operation(self, edam_operation):
+        """
+        Check the presence of a given edam_operation.
+
+        :type edam_operation: STRING
+        """
+        for operation in self.children:
+            if operation.node.text == edam_operation:
+                return True
+        return False
+
 
 class EdamOperation(XMLParam):
     name = 'edam_operation'
@@ -114,6 +125,17 @@ class EdamTopics(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic)
+
+    def has_topic(self, edam_topic):
+        """
+        Check the presence of a given edam_topic.
+
+        :type edam_topic: STRING
+        """
+        for topic in self.children:
+            if topic.node.text == edam_topic:
+                return True
+        return False
 
 
 class EdamTopic(XMLParam):
@@ -186,6 +208,11 @@ class ConfigfileDefaultInputs(XMLParam):
 class Inputs(XMLParam):
     name = 'inputs'
     # This bodes to be an issue -__-
+
+    def __init__(self, action=None, check_value=None, method=None,
+                 target=None, nginx_upload=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Inputs, self).__init__(**params)
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
@@ -626,6 +653,18 @@ class Citations(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Citation)
+
+    def has_citation(self, type, value):
+        """
+        Check the presence of a given citation.
+
+        :type type: STRING
+        :type value: STRING
+        """
+        for citation in self.children:
+            if citation.node.attrib['type'] == type and citation.node.text == value:
+                return True
+        return False
 
 
 class Citation(XMLParam):
