@@ -20,6 +20,7 @@ class GalaxyXmlParser(object):
         :type xml_root: :class:`xml.etree._Element`
         """
         version_cmd = None
+        description = None
         for child in xml_root:
             if child.tag == 'description':
                 description = child.text
