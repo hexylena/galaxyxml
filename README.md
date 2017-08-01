@@ -17,6 +17,10 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.4.3
+        - Bug fixes:
+                - Allow `<discover_dataset>` within `<data>` in `<outputs>`
+                - Allow import of existing XML with no description
 - 0.4.2
 	- Add methods to check presence of EDAM and citation ([@khillion](https://github.com/khillion))
 - 0.4.0
