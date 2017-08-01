@@ -556,7 +556,9 @@ class OutputData(XMLParam):
         return flag + self.mako_identifier
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat)
+        return isinstance(child, OutputFilter) or \
+               isinstance(child, ChangeFormat) or \
+               isinstance(child, DiscoverDatasets)
 
 
 class OutputFilter(XMLParam):
