@@ -17,6 +17,11 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
+- 0.4.4
+        - Bug fixes:
+                - Write catched error to STDERR instead of STDOUT
+                - Fix Travis: install `xmllint`
+                - Fix Travis: Deal with new `flake8` restrictions for exceptions
 - 0.4.3
         - Bug fixes:
                 - Allow `<discover_dataset>` within `<data>` in `<outputs>`

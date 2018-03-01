@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name="galaxyxml",
-        version='0.4.3',
+        version='0.4.4',
         description='Galaxy XML generation library',
         author='E. Rasche',
         author_email='hxr@hx42.org',
