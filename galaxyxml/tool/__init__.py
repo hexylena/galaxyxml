@@ -1,5 +1,6 @@
 import copy
 import logging
+import sys
 from lxml import etree
 from galaxyxml import Util, GalaxyXML
 from galaxyxml.tool.parameters import XMLParam
@@ -107,7 +108,7 @@ class Tool(GalaxyXML):
         try:
             command_line.append(export_xml.inputs.cli())
         except Exception as e:
-            print(e)
+            sys.stderr.write(e)
 
         try:
             command_line.append(export_xml.outputs.cli())
