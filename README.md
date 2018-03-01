@@ -17,15 +17,15 @@ or PR if you're feeling motivated.
 
 ## Changelog
 
-- 0.4.4
-        - Bug fixes:
-                - Write catched error to STDERR instead of STDOUT
-                - Fix Travis: install `xmllint`
-                - Fix Travis: Deal with new `flake8` restrictions for exceptions
+- 0.4.5
+	- Bug fixes:
+		- Write catched error to logger instead of STDOUT
+		- Fix Travis: install `xmllint`
+		- Fix Travis: Deal with new `flake8` restrictions for exceptions
 - 0.4.3
-        - Bug fixes:
-                - Allow `<discover_dataset>` within `<data>` in `<outputs>`
-                - Allow import of existing XML with no description
+	- Bug fixes:
+		- Allow `<discover_dataset>` within `<data>` in `<outputs>`
+		- Allow import of existing XML with no description
 - 0.4.2
 	- Add methods to check presence of EDAM and citation ([@khillion](https://github.com/khillion))
 - 0.4.0
