@@ -62,7 +62,7 @@ class Tool(GalaxyXML):
         version_command = etree.SubElement(self.root, 'version_command')
         try:
             version_command.text = self.version_command
-        except:
+        except Exception:
             pass
 
     def append(self, sub_node):
@@ -85,33 +85,33 @@ class Tool(GalaxyXML):
 
         try:
             export_xml.append(export_xml.edam_operations)
-        except:
+        except Exception:
             pass
 
         try:
             export_xml.append(export_xml.edam_topics)
-        except:
+        except Exception:
             pass
 
         try:
             export_xml.append(export_xml.requirements)
-        except:
+        except Exception:
             pass
 
         try:
             export_xml.append(export_xml.configfiles)
-        except:
+        except Exception:
             pass
 
         command_line = []
         try:
             command_line.append(export_xml.inputs.cli())
         except Exception as e:
-            print(e)
+            logger.warning(str(e))
 
         try:
             command_line.append(export_xml.outputs.cli())
-        except:
+        except Exception:
             pass
 
         # Add stdio section
@@ -143,17 +143,17 @@ class Tool(GalaxyXML):
 
         try:
             export_xml.append(export_xml.inputs)
-        except:
+        except Exception:
             pass
 
         try:
             export_xml.append(export_xml.outputs)
-        except:
+        except Exception:
             pass
 
         try:
             export_xml.append(export_xml.tests)
-        except:
+        except Exception:
             pass
 
         help_element = etree.SubElement(export_xml.root, 'help')
@@ -161,7 +161,7 @@ class Tool(GalaxyXML):
 
         try:
             export_xml.append(export_xml.citations)
-        except:
+        except Exception:
             pass
 
         return super(Tool, export_xml).export()

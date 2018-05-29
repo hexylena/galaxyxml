@@ -266,19 +266,19 @@ class InputParameter(XMLParam):
     def command_line_before(self):
         try:
             return self.command_line_before_override
-        except:
+        except Exception:
             return None
 
     def command_line_after(self):
         try:
             return self.command_line_after_override
-        except:
+        except Exception:
             return None
 
     def command_line_actual(self):
         try:
             return self.command_line_override
-        except:
+        except Exception:
             if self.positional:
                 return self.mako_name()
             else:
@@ -556,7 +556,9 @@ class OutputData(XMLParam):
         return flag + self.mako_identifier
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat)
+        return isinstance(child, OutputFilter) or \
+               isinstance(child, ChangeFormat) or \
+               isinstance(child, DiscoverDatasets)
 
 
 class OutputFilter(XMLParam):
