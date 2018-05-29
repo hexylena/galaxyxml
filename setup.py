@@ -4,7 +4,7 @@ from setuptools import setup
 setup(name="galaxyxml",
         version='0.4.2',
         description='Galaxy XML generation library',
-        author='E. Rasche',
+        author='Helena Rasche',
         author_email='hxr@hx42.org',
         install_requires=['lxml', 'future'],
         packages=["galaxyxml", "galaxyxml.tool", "galaxyxml.tool.parameters"],
