@@ -81,6 +81,27 @@ class Stdio(XMLParam):
         super(Stdio, self).__init__(**params)
 
 
+class Macros(XMLParam):
+    name = "macros"
+
+    def acceptable_child(self, child):
+        return isinstance(child, Macro)
+
+
+class Macro(XMLParam):
+    name = "xml"
+
+    def __init__(self, name):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['name'] = params['name']
+        super(Expand, self).__init__(**passed_kwargs)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), XMLParam) \
+               and not isinstance(child, Macro)
+
+
 class Expand(XMLParam):
     """
     <expand macro="...">
