@@ -374,8 +374,8 @@ class Param(InputParameter):
 class TextParam(Param):
     type = 'text'
 
-    def __init__(self, name, optional=None, label=None, help=None, size=None,
-                 area=False, value=None, **kwargs):
+    def __init__(self, name, optional=None, label=None, help=None,
+                 value=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 

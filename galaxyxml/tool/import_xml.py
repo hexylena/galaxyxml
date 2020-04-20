@@ -251,8 +251,6 @@ class InputsParser(object):
                                    optional=text_param.get('optional', None),
                                    label=text_param.get('label', None),
                                    help=text_param.get('help', None),
-                                   size=text_param.get('size', None),
-                                   area=text_param.get('area', False),
                                    value=text_param.get('value', None)))
 
     def _load_data_param(self, root, data_param):
