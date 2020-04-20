@@ -9,7 +9,7 @@ class GalaxyXML(object):
         self.root = etree.Element('root')
 
     def export(self):
-        return etree.tostring(self.root, pretty_print=True)
+        return etree.tostring(self.root, pretty_print=True, encoding='unicode')
 
 
 class Util(object):
