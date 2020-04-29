@@ -1,8 +1,16 @@
 import copy
 import logging
 
+from lxml import etree
 from galaxyxml import GalaxyXML, Util
-from galaxyxml.tool.parameters import XMLParam
+from galaxyxml.tool.parameters import (
+    Import,
+    Inputs,
+    Macro,
+    Macros,
+    Outputs,
+    XMLParam
+)
 
 from lxml import etree
 
@@ -28,8 +36,10 @@ class Tool(GalaxyXML):
         interpreter=None,
         version_command="interpreter filename.exe --version",
         command_override=None,
+        macros=None,
     ):
 
+        self.id = id
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
@@ -65,6 +75,15 @@ class Tool(GalaxyXML):
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
+        if macros:
+            self.macros = Macros()
+            if isinstance(macros, list):
+                for m in macros:
+                    self.macros.append(Import(m))
+            else:
+                self.macros.append(Import(macros))
+        self.inputs = Inputs()
+        self.outputs = Outputs()
 
     def add_comment(self, comment_txt):
         comment = etree.Comment(comment_txt)
@@ -88,12 +107,15 @@ class Tool(GalaxyXML):
         for x in command_line:
             if x is not [] and x is not [""]:
                 clean.append(x)
-
         return "\n".join(clean)
 
     def export(self, keep_old_command=False):
         # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
+        try:
+            export_xml.append(export_xml.macros)
+        except Exception:
+            pass
 
         try:
             export_xml.append(export_xml.edam_operations)
@@ -180,6 +202,58 @@ class Tool(GalaxyXML):
 
         try:
             export_xml.append(export_xml.citations)
+        except Exception:
+            pass
+
+        return super(Tool, export_xml).export()
+
+
+class MacrosTool(Tool):
+
+    def __init__(self, *args, **kwargs):
+        super(MacrosTool, self).__init__(*args, **kwargs)
+        self.root = etree.Element('macros')
+        self.inputs = Macro("%s_inmacro" % self.id)
+        self.outputs = Macro("%s_outmacro" % self.id)
+
+
+    def export(self, keep_old_command=False):  # noqa
+
+        export_xml = copy.deepcopy(self)
+
+        try:
+            for child in export_xml.macros:
+                export_xml.append(child)
+        except Exception:
+            pass
+
+        command_line = []
+        try:
+            command_line.append(export_xml.inputs.cli())
+        except Exception as e:
+            logger.warning(str(e))
+
+        # Add command section
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
+        actual_cli = "%s" % (export_xml.clean_command_string(command_line))
+        command_node.text = etree.CDATA(actual_cli.strip())
+
+        command_line = []
+        try:
+            command_line.append(export_xml.outputs.cli())
+        except Exception:
+            pass
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_OUTMACRO" % self.id.upper()})
+        actual_cli = "%s" % (export_xml.clean_command_string(command_line))
+        command_node.text = etree.CDATA(actual_cli.strip())
+
+        try:
+            export_xml.append(export_xml.inputs)
+        except Exception:
+            pass
+
+        try:
+            export_xml.append(export_xml.outputs)
         except Exception:
             pass
 

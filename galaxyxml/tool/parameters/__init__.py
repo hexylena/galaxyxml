@@ -85,7 +85,8 @@ class Macros(XMLParam):
     name = "macros"
 
     def acceptable_child(self, child):
-        return isinstance(child, Macro)
+        return isinstance(child, Macro) \
+               or isinstance(child, Import)
 
 
 class Macro(XMLParam):
@@ -95,7 +96,19 @@ class Macro(XMLParam):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
         passed_kwargs['name'] = params['name']
-        super(Expand, self).__init__(**passed_kwargs)
+        super(Macro, self).__init__(**passed_kwargs)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), XMLParam) \
+               and not isinstance(child, Macro)
+
+
+class Import(XMLParam):
+    name = "import"
+
+    def __init__(self, value):
+        super(Import, self).__init__()
+        self.node.text = value
 
     def acceptable_child(self, child):
         return issubclass(type(child), XMLParam) \
@@ -113,6 +126,13 @@ class Expand(XMLParam):
         passed_kwargs = {}
         passed_kwargs['macro'] = params['macro']
         super(Expand, self).__init__(**passed_kwargs)
+
+    def command_line(self):
+        """
+        need to define empty command line contribution
+        since Expand can be child of Inputs/Outputs
+        """
+        return ""
 
 
 class ExpandIO(Expand):
@@ -214,7 +234,6 @@ class EdamTopics(XMLParam):
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic) \
                or isinstance(child, Expand)
-
 
     def has_topic(self, edam_topic):
         """
@@ -410,7 +429,6 @@ class Section(InputParameter):
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
                or isinstance(child, Expand)
-
 
 
 class Repeat(InputParameter):
