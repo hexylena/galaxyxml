@@ -2,6 +2,7 @@ import copy
 import logging
 
 from lxml import etree
+
 from galaxyxml import GalaxyXML, Util
 from galaxyxml.tool.parameters import (
     Import,
