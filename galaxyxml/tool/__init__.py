@@ -5,11 +5,13 @@ from lxml import etree
 
 from galaxyxml import GalaxyXML, Util
 from galaxyxml.tool.parameters import (
+    Expand,
     Import,
     Inputs,
     Macro,
     Macros,
     Outputs,
+    Requirements,
     XMLParam
 )
 
@@ -37,7 +39,7 @@ class Tool(GalaxyXML):
         interpreter=None,
         version_command="interpreter filename.exe --version",
         command_override=None,
-        macros=None,
+        macros=[],
     ):
 
         self.id = id
@@ -76,13 +78,10 @@ class Tool(GalaxyXML):
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
-        if macros:
+        if len(macros) > 0:
             self.macros = Macros()
-            if isinstance(macros, list):
-                for m in macros:
-                    self.macros.append(Import(m))
-            else:
-                self.macros.append(Import(macros))
+            for m in macros:
+                self.macros.append(Import(m))
         self.inputs = Inputs()
         self.outputs = Outputs()
 
@@ -131,7 +130,7 @@ class Tool(GalaxyXML):
         try:
             export_xml.append(export_xml.requirements)
         except Exception:
-            pass
+            export_xml.append(Expand(macro="requirements"))
 
         # Add stdio section - now an XMLParameter
         try:
@@ -141,7 +140,10 @@ class Tool(GalaxyXML):
         if not stdio_element:
             stdio_element = etree.SubElement(export_xml.root, "stdio")
             etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
-        export_xml.append(stdio_element)
+        try:
+            export_xml.append(export_xml.stdio)
+        except Exception:
+            export_xml.append(Expand(macro="stdio"))
 
         # Append version command
         export_xml.append_version_command()
@@ -195,7 +197,7 @@ class Tool(GalaxyXML):
         try:
             export_xml.append(export_xml.tests)
         except Exception:
-            pass
+            export_xml.append(Expand(macro="%s_tests" % self.id))
 
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)
@@ -204,7 +206,7 @@ class Tool(GalaxyXML):
         try:
             export_xml.append(export_xml.citations)
         except Exception:
-            pass
+            export_xml.append(Expand(macro="citations"))
 
         return super(Tool, export_xml).export()
 
