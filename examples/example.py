@@ -107,5 +107,5 @@ tool.tests.append(test_a)
 # Add comment to the wrapper
 tool.add_comment("This tool descriptor has been generated using galaxyxml.")
 
-print(tool.export().decode('utf-8'))
+print(tool.export())
 
