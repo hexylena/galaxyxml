@@ -13,7 +13,7 @@
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
-  <version_command>aragorn.exe --version</version_command>
+  <version_command><![CDATA[aragorn.exe --version]]></version_command>
   <command><![CDATA[aragorn.exe $flag
 float_section $float_section
 cond $cond

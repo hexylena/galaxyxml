@@ -61,7 +61,7 @@ class Tool(GalaxyXML):
     def append_version_command(self):
         version_command = etree.SubElement(self.root, 'version_command')
         try:
-            version_command.text = self.version_command
+            version_command.text = etree.CDATA(self.version_command)
         except Exception:
             pass
 
