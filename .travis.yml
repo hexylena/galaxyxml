@@ -16,9 +16,9 @@ script:
 - nosetests --with-coverage --cover-package=galaxyxml
 deploy:
   provider: pypi
-  user: erasche
-  password:
-    secure: UUC6+XBMr3SHz8V5UeCBsZ7mmjoRukTkqyYGlr1HfCB6RukpnAM4eJ4Y/WMgiNuevah5dkQV/SmPe/u1MzCXZa4x6qz6t1KXg1l7+wYfOR/nvEgxOJjpOlNjqJrKay1mNGoxj8D9q+Sg7294bho6/61BZBrKQQT1WeM9mdH+ex0=
+  username: __token__
   on:
     tags: true
   distributions: sdist bdist_wheel
+  edge: true
+  skip_existing: true
