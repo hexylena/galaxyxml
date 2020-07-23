@@ -5,7 +5,7 @@ from galaxyxml import Util
 
 
 class XMLParam(object):
-    name = 'node'
+    name = "node"
 
     def __init__(self, *args, **kwargs):
         # http://stackoverflow.com/a/12118700
@@ -22,11 +22,13 @@ class XMLParam(object):
                 self.node.append(sub_node.node)
                 self.children.append(sub_node)
             else:
-                raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (
-                    type(self), type(sub_node)))
+                raise Exception(
+                    "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
+                )
         else:
-            raise Exception("Child was unacceptable to parent (%s is not appropriate for %s)" % (
-                type(self), type(sub_node)))
+            raise Exception(
+                "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
+            )
 
     def validate(self):
         # Very few need validation, but some nodes we may want to have
@@ -42,14 +44,14 @@ class XMLParam(object):
         for child in self.children:
             lines.append(child.command_line())
             # lines += child.command_line()
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def command_line(self):
         return None
 
 
 class RequestParamTranslation(XMLParam):
-    name = 'request_param_translation'
+    name = "request_param_translation"
 
     def __init__(self, **kwargs):
         self.node = etree.Element(self.name)
@@ -59,7 +61,7 @@ class RequestParamTranslation(XMLParam):
 
 
 class RequestParam(XMLParam):
-    name = 'request_param'
+    name = "request_param"
 
     def __init__(self, galaxy_name, remote_name, missing, **kwargs):
         # TODO: bulk copy locals into self.attr?
@@ -73,7 +75,7 @@ class RequestParam(XMLParam):
 
 
 class AppendParam(XMLParam):
-    name = 'append_param'
+    name = "append_param"
 
     def __init__(self, separator="&amp;", first_separator="?", join="=", **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -84,7 +86,7 @@ class AppendParam(XMLParam):
 
 
 class AppendParamValue(XMLParam):
-    name = 'value'
+    name = "value"
 
     def __init__(self, name="_export", missing="1", **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -95,7 +97,7 @@ class AppendParamValue(XMLParam):
 
 
 class EdamOperations(XMLParam):
-    name = 'edam_operations'
+    name = "edam_operations"
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamOperation)
@@ -113,7 +115,7 @@ class EdamOperations(XMLParam):
 
 
 class EdamOperation(XMLParam):
-    name = 'edam_operation'
+    name = "edam_operation"
 
     def __init__(self, value):
         super(EdamOperation, self).__init__()
@@ -121,7 +123,7 @@ class EdamOperation(XMLParam):
 
 
 class EdamTopics(XMLParam):
-    name = 'edam_topics'
+    name = "edam_topics"
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic)
@@ -139,7 +141,7 @@ class EdamTopics(XMLParam):
 
 
 class EdamTopic(XMLParam):
-    name = 'edam_topic'
+    name = "edam_topic"
 
     def __init__(self, value):
         super(EdamTopic, self).__init__()
@@ -147,7 +149,7 @@ class EdamTopic(XMLParam):
 
 
 class Requirements(XMLParam):
-    name = 'requirements'
+    name = "requirements"
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
@@ -155,62 +157,61 @@ class Requirements(XMLParam):
 
 
 class Requirement(XMLParam):
-    name = 'requirement'
+    name = "requirement"
 
     def __init__(self, type, value, version=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs['version'] = params['version']
-        passed_kwargs['type'] = params['type']
+        passed_kwargs["version"] = params["version"]
+        passed_kwargs["type"] = params["type"]
         super(Requirement, self).__init__(**passed_kwargs)
         self.node.text = str(value)
 
 
 class Container(XMLParam):
-    name = 'container'
+    name = "container"
 
     def __init__(self, type, value, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs['type'] = params['type']
+        passed_kwargs["type"] = params["type"]
         super(Container, self).__init__(**passed_kwargs)
         self.node.text = str(value)
 
 
 class Configfiles(XMLParam):
-    name = 'configfiles'
+    name = "configfiles"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Configfile) or issubclass(type(child), ConfigfileDefaultInputs)
 
 
 class Configfile(XMLParam):
-    name = 'configfile'
+    name = "configfile"
 
     def __init__(self, name, text, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs['name'] = params['name']
+        passed_kwargs["name"] = params["name"]
         super(Configfile, self).__init__(**passed_kwargs)
         self.node.text = etree.CDATA(str(text))
 
 
 class ConfigfileDefaultInputs(XMLParam):
-    name = 'inputs'
+    name = "inputs"
 
     def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs['name'] = params['name']
+        passed_kwargs["name"] = params["name"]
         super(ConfigfileDefaultInputs, self).__init__(**passed_kwargs)
 
 
 class Inputs(XMLParam):
-    name = 'inputs'
+    name = "inputs"
     # This bodes to be an issue -__-
 
-    def __init__(self, action=None, check_value=None, method=None,
-                 target=None, nginx_upload=None, **kwargs):
+    def __init__(self, action=None, check_value=None, method=None, target=None, nginx_upload=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Inputs, self).__init__(**params)
 
@@ -219,24 +220,23 @@ class Inputs(XMLParam):
 
 
 class InputParameter(XMLParam):
-
     def __init__(self, name, **kwargs):
         # TODO: look at
         self.mako_identifier = name
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
         if name is not None:
-            kwargs['name'] = name
+            kwargs["name"] = name
 
         # Handle positional parameters
-        if 'positional' in kwargs and kwargs['positional']:
+        if "positional" in kwargs and kwargs["positional"]:
             self.positional = True
         else:
             self.positional = False
 
-        if 'num_dashes' in kwargs:
-            self.num_dashes = kwargs['num_dashes']
-            del kwargs['num_dashes']
+        if "num_dashes" in kwargs:
+            self.num_dashes = kwargs["num_dashes"]
+            del kwargs["num_dashes"]
         else:
             self.num_dashes = 0
 
@@ -244,14 +244,13 @@ class InputParameter(XMLParam):
 
         # Not sure about this :(
         # https://wiki.galaxyproject.org/Tools/BestPractices#Parameter_help
-        if 'label' in kwargs:
+        if "label" in kwargs:
             # TODO: replace with positional attribute
             if len(self.flag()) > 0:
-                if kwargs['label'] is None:
-                    kwargs[
-                        'label'] = 'Author did not provide help for this parameter... '
+                if kwargs["label"] is None:
+                    kwargs["label"] = "Author did not provide help for this parameter... "
                 if not self.positional:
-                    kwargs['argument'] = self.flag()
+                    kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
@@ -261,7 +260,7 @@ class InputParameter(XMLParam):
         after = self.command_line_after()
 
         complete = [x for x in (before, cli, after) if x is not None]
-        return '\n'.join(complete)
+        return "\n".join(complete)
 
     def command_line_before(self):
         try:
@@ -287,15 +286,15 @@ class InputParameter(XMLParam):
     def mako_name(self):
         # TODO: enhance logic to check up parents for things like
         # repeat>condotion>param
-        return '$' + self.mako_identifier
+        return "$" + self.mako_identifier
 
     def flag(self):
-        flag = '-' * self.num_dashes
+        flag = "-" * self.num_dashes
         return flag + self.mako_identifier
 
 
 class Section(InputParameter):
-    name = 'section'
+    name = "section"
 
     def __init__(self, name, title, expanded=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -306,14 +305,13 @@ class Section(InputParameter):
 
 
 class Repeat(InputParameter):
-    name = 'repeat'
+    name = "repeat"
 
-    def __init__(self, name, title, min=None, max=None, default=None,
-                 **kwargs):
+    def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         # Allow overriding
-        self.command_line_before_override = '#for $i in $%s:' % name
-        self.command_line_after_override = '#end for'
+        self.command_line_before_override = "#for $i in $%s:" % name
+        self.command_line_after_override = "#end for"
         # self.command_line_override
         super(Repeat, self).__init__(**params)
 
@@ -321,22 +319,21 @@ class Repeat(InputParameter):
         return issubclass(type(child), InputParameter)
 
     def command_line_actual(self):
-        if hasattr(self, 'command_line_override'):
+        if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
             return "%s" % self.mako_name()
 
 
 class Conditional(InputParameter):
-    name = 'conditional'
+    name = "conditional"
 
     def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Conditional, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) \
-            and not isinstance(child, Conditional)
+        return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
 
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
@@ -344,7 +341,7 @@ class Conditional(InputParameter):
 
 
 class When(InputParameter):
-    name = 'when'
+    name = "when"
 
     def __init__(self, value):
         params = Util.clean_kwargs(locals().copy())
@@ -355,27 +352,25 @@ class When(InputParameter):
 
 
 class Param(InputParameter):
-    name = 'param'
+    name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
     def __init__(self, name, optional=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        params['type'] = self.type
+        params["type"] = self.type
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
-            raise Exception(
-                "Param class is not an actual parameter type, use a subclass of Param")
+            raise Exception("Param class is not an actual parameter type, use a subclass of Param")
 
     def acceptable_child(self, child):
         return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
 
 
 class TextParam(Param):
-    type = 'text'
+    type = "text"
 
-    def __init__(self, name, optional=None, label=None, help=None,
-                 value=None, **kwargs):
+    def __init__(self, name, optional=None, label=None, help=None, value=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
@@ -390,26 +385,25 @@ class TextParam(Param):
 
 
 class _NumericParam(Param):
-
-    def __init__(self, name, value, optional=None, label=None, help=None,
-                 min=None, max=None, **kwargs):
+    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
 
 class IntegerParam(_NumericParam):
-    type = 'integer'
+    type = "integer"
 
 
 class FloatParam(_NumericParam):
-    type = 'float'
+    type = "float"
 
 
 class BooleanParam(Param):
-    type = 'boolean'
+    type = "boolean"
 
-    def __init__(self, name, optional=None, label=None, help=None,
-                 checked=False, truevalue=None, falsevalue=None, **kwargs):
+    def __init__(
+        self, name, optional=None, label=None, help=None, checked=False, truevalue=None, falsevalue=None, **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
 
         super(BooleanParam, self).__init__(**params)
@@ -422,36 +416,45 @@ class BooleanParam(Param):
             # Unfortunately, mako_identifier is set as a result of the super
             # call, which we shouldn't call TWICE, so we'll just hack around this :(
             # params['truevalue'] = '%s%s' % (self.)
-            self.node.attrib['truevalue'] = self.flag()
+            self.node.attrib["truevalue"] = self.flag()
 
         if falsevalue is None:
-            self.node.attrib['falsevalue'] = ""
+            self.node.attrib["falsevalue"] = ""
 
     def command_line_actual(self):
-        if hasattr(self, 'command_line_override'):
+        if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
             return "%s" % self.mako_name()
 
 
 class DataParam(Param):
-    type = 'data'
+    type = "data"
 
-    def __init__(self, name, optional=None, label=None, help=None, format=None,
-                 multiple=None, **kwargs):
+    def __init__(self, name, optional=None, label=None, help=None, format=None, multiple=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
 
 class SelectParam(Param):
-    type = 'select'
+    type = "select"
 
-    def __init__(self, name, optional=None, label=None, help=None,
-                 data_ref=None, display=None, multiple=None, options=None,
-                 default=None, **kwargs):
+    def __init__(
+        self,
+        name,
+        optional=None,
+        label=None,
+        help=None,
+        data_ref=None,
+        display=None,
+        multiple=None,
+        options=None,
+        default=None,
+        **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
-        del params['options']
-        del params['default']
+        del params["options"]
+        del params["default"]
 
         super(SelectParam, self).__init__(**params)
 
@@ -461,34 +464,32 @@ class SelectParam(Param):
 
         if options:
             for k, v in list(sorted(options.items())):
-                selected = (k == default)
+                selected = k == default
                 self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
-        return issubclass(type(child), SelectOption) \
-                or issubclass(type(child), Options)
+        return issubclass(type(child), SelectOption) or issubclass(type(child), Options)
 
 
 class SelectOption(InputParameter):
-    name = 'option'
+    name = "option"
 
     def __init__(self, value, text, selected=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
 
         passed_kwargs = {}
         if selected:
-            passed_kwargs['selected'] = "true"
-        passed_kwargs['value'] = params['value']
+            passed_kwargs["selected"] = "true"
+        passed_kwargs["value"] = params["value"]
 
         super(SelectOption, self).__init__(None, **passed_kwargs)
         self.node.text = str(text)
 
 
 class Options(InputParameter):
-    name = 'options'
+    name = "options"
 
-    def __init__(self, from_dataset=None, from_file=None, from_data_table=None,
-                 from_parameter=None, **kwargs):
+    def __init__(self, from_dataset=None, from_file=None, from_data_table=None, from_parameter=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Options, self).__init__(None, **params)
 
@@ -497,7 +498,7 @@ class Options(InputParameter):
 
 
 class Column(InputParameter):
-    name = 'column'
+    name = "column"
 
     def __init__(self, name, index, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -505,27 +506,48 @@ class Column(InputParameter):
 
 
 class Filter(InputParameter):
-    name = 'filter'
+    name = "filter"
 
-    def __init__(self, type, column=None, name=None, ref=None, key=None,
-                 multiple=None, separator=None, keep=None, value=None,
-                 ref_attribute=None, index=None, **kwargs):
+    def __init__(
+        self,
+        type,
+        column=None,
+        name=None,
+        ref=None,
+        key=None,
+        multiple=None,
+        separator=None,
+        keep=None,
+        value=None,
+        ref_attribute=None,
+        index=None,
+        **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
         super(Filter, self).__init__(**params)
 
 
 class ValidatorParam(InputParameter):
-    name = 'validator'
+    name = "validator"
 
-    def __init__(self, type, message=None, filename=None, metadata_name=None,
-                 metadata_column=None, line_startswith=None, min=None,
-                 max=None, **kwargs):
+    def __init__(
+        self,
+        type,
+        message=None,
+        filename=None,
+        metadata_name=None,
+        metadata_column=None,
+        line_startswith=None,
+        min=None,
+        max=None,
+        **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
         super(ValidatorParam, self).__init__(**params)
 
 
 class Outputs(XMLParam):
-    name = 'outputs'
+    name = "outputs"
 
     def acceptable_child(self, child):
         return isinstance(child, OutputData) or isinstance(child, OutputCollection)
@@ -534,16 +556,26 @@ class Outputs(XMLParam):
 class OutputData(XMLParam):
     """Copypasta of InputParameter, needs work
     """
-    name = 'data'
 
-    def __init__(self, name, format, format_source=None, metadata_source=None,
-                 label=None, from_work_dir=None, hidden=False, **kwargs):
+    name = "data"
+
+    def __init__(
+        self,
+        name,
+        format,
+        format_source=None,
+        metadata_source=None,
+        label=None,
+        from_work_dir=None,
+        hidden=False,
+        **kwargs
+    ):
         # TODO: validate format_source&metadata_source against something in the
         # XMLParam children tree.
         self.mako_identifier = name
-        if 'num_dashes' in kwargs:
-            self.num_dashes = kwargs['num_dashes']
-            del kwargs['num_dashes']
+        if "num_dashes" in kwargs:
+            self.num_dashes = kwargs["num_dashes"]
+            del kwargs["num_dashes"]
         else:
             self.num_dashes = 0
         self.space_between_arg = " "
@@ -552,30 +584,28 @@ class OutputData(XMLParam):
         super(OutputData, self).__init__(**params)
 
     def command_line(self):
-        if hasattr(self, 'command_line_override'):
+        if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
             return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
-        return '$' + self.mako_identifier
+        return "$" + self.mako_identifier
 
     def flag(self):
-        flag = '-' * self.num_dashes
+        flag = "-" * self.num_dashes
         return flag + self.mako_identifier
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputFilter) or \
-               isinstance(child, ChangeFormat) or \
-               isinstance(child, DiscoverDatasets)
+        return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat) or isinstance(child, DiscoverDatasets)
 
 
 class OutputFilter(XMLParam):
-    name = 'filter'
+    name = "filter"
 
     def __init__(self, text, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        del params['text']
+        del params["text"]
         super(OutputFilter, self).__init__(**params)
         self.node.text = text
 
@@ -584,7 +614,7 @@ class OutputFilter(XMLParam):
 
 
 class ChangeFormat(XMLParam):
-    name = 'change_format'
+    name = "change_format"
 
     def __init__(self, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -595,7 +625,7 @@ class ChangeFormat(XMLParam):
 
 
 class ChangeFormatWhen(XMLParam):
-    name = 'when'
+    name = "when"
 
     def __init__(self, input, format, value, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -606,43 +636,50 @@ class ChangeFormatWhen(XMLParam):
 
 
 class OutputCollection(XMLParam):
-    name = 'collection'
+    name = "collection"
 
-    def __init__(self, name, type=None, label=None, format_source=None,
-                 type_source=None, structured_like=None, inherit_format=None, **kwargs):
+    def __init__(
+        self,
+        name,
+        type=None,
+        label=None,
+        format_source=None,
+        type_source=None,
+        structured_like=None,
+        inherit_format=None,
+        **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
         super(OutputCollection, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputData) or isinstance(child, OutputFilter) \
-            or isinstance(child, DiscoverDatasets)
+        return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
 
 class DiscoverDatasets(XMLParam):
-    name = 'discover_datasets'
+    name = "discover_datasets"
 
-    def __init__(self, pattern, directory=None, format=None, ext=None,
-                 visible=None, **kwargs):
+    def __init__(self, pattern, directory=None, format=None, ext=None, visible=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DiscoverDatasets, self).__init__(**params)
 
 
 class Tests(XMLParam):
-    name = 'tests'
+    name = "tests"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Test)
 
 
 class Test(XMLParam):
-    name = 'test'
+    name = "test"
 
     def acceptable_child(self, child):
         return isinstance(child, TestParam) or isinstance(child, TestOutput)
 
 
 class TestParam(XMLParam):
-    name = 'param'
+    name = "param"
 
     def __init__(self, name, value=None, ftype=None, dbkey=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -650,17 +687,28 @@ class TestParam(XMLParam):
 
 
 class TestOutput(XMLParam):
-    name = 'output'
+    name = "output"
 
-    def __init__(self, name=None, file=None, ftype=None, sort=None, value=None,
-                 md5=None, checksum=None, compare=None, lines_diff=None,
-                 delta=None, **kwargs):
+    def __init__(
+        self,
+        name=None,
+        file=None,
+        ftype=None,
+        sort=None,
+        value=None,
+        md5=None,
+        checksum=None,
+        compare=None,
+        lines_diff=None,
+        delta=None,
+        **kwargs
+    ):
         params = Util.clean_kwargs(locals().copy())
         super(TestOutput, self).__init__(**params)
 
 
 class Citations(XMLParam):
-    name = 'citations'
+    name = "citations"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Citation)
@@ -673,16 +721,16 @@ class Citations(XMLParam):
         :type value: STRING
         """
         for citation in self.children:
-            if citation.node.attrib['type'] == type and citation.node.text == value:
+            if citation.node.attrib["type"] == type and citation.node.text == value:
                 return True
         return False
 
 
 class Citation(XMLParam):
-    name = 'citation'
+    name = "citation"
 
     def __init__(self, type, value):
         passed_kwargs = {}
-        passed_kwargs['type'] = type
+        passed_kwargs["type"] = type
         super(Citation, self).__init__(**passed_kwargs)
         self.node.text = str(value)
