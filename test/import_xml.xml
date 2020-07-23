@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- This xml is used to test import. Any change in the order of the tags might make the test to fail -->
 <tool id="import_test" name="Import" version="1.0">
   <description>description</description>
   <edam_operations>
@@ -63,7 +62,7 @@
     </data>
     <data format="vcf" label="a_filter" name="output_vcf">
       <filter>filter content</filter>
-    </data> 
+    </data>
     <collection type="list" label="Graphic" name="pdf_out">
       <discover_datasets pattern="(?P&lt;designation&gt;.+)\.pdf" format="pdf" visible="false" directory="Res" />
     </collection>

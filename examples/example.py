@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 
@@ -108,4 +107,3 @@ tool.tests.append(test_a)
 tool.add_comment("This tool descriptor has been generated using galaxyxml.")
 
 print(tool.export())
-
