@@ -21,6 +21,12 @@ License
 Changelog
 ---------
 
+-  0.4.7
+
+   - Fix travis deploy process
+   - Fix testing
+   - py36 only
+
 -  0.4.6
 
    -  Deprecate py2
