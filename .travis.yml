@@ -1,6 +1,7 @@
 language: python
 python:
 - '3.5'
+- '3.6'
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y libxml2-utils
@@ -20,5 +21,4 @@ deploy:
     secure: UUC6+XBMr3SHz8V5UeCBsZ7mmjoRukTkqyYGlr1HfCB6RukpnAM4eJ4Y/WMgiNuevah5dkQV/SmPe/u1MzCXZa4x6qz6t1KXg1l7+wYfOR/nvEgxOJjpOlNjqJrKay1mNGoxj8D9q+Sg7294bho6/61BZBrKQQT1WeM9mdH+ex0=
   on:
     tags: true
-    distributions: sdist bdist_wheel
-    repo: erasche/galaxyxml
+  distributions: sdist bdist_wheel
