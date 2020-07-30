@@ -379,6 +379,15 @@ class TextParam(Param):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
+    def command_line_actual(self):
+        try:
+            return self.command_line_override
+        except Exception:
+            if self.positional:
+                return self.mako_name()
+            else:
+                return f"{self.flag}{self.space_between_arg}'{self.mako_name()}'"
+
 
 class _NumericParam(Param):
 
