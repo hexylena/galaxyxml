@@ -379,7 +379,7 @@ class TextParam(Param):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
-    def command_line_actual(self): 
+    def command_line_actual(self):
         try:
             return self.command_line_override
         except Exception:
