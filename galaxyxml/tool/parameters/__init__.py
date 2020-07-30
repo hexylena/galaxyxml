@@ -386,7 +386,7 @@ class TextParam(Param):
             if self.positional:
                 return self.mako_name()
             else:
-                return f'{self.flag}{self.space_between_arg}"{self.mako_name()}"'
+                return f"{self.flag}{self.space_between_arg}'{self.mako_name()}'"
 
 
 class _NumericParam(Param):
