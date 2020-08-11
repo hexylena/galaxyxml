@@ -1,7 +1,10 @@
-from builtins import str
 from builtins import object
-from lxml import etree
+from builtins import str
+
 from galaxyxml import Util
+
+from lxml import etree
+
 
 
 class XMLParam(object):

@@ -1,8 +1,10 @@
 import copy
 import logging
-from lxml import etree
-from galaxyxml import Util, GalaxyXML
+
+from galaxyxml import GalaxyXML, Util
 from galaxyxml.tool.parameters import XMLParam
+
+from lxml import etree
 
 VALID_TOOL_TYPES = ("data_source", "data_source_async")
 VALID_URL_METHODS = ("get", "post")
