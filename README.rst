@@ -21,6 +21,10 @@ License
 Changelog
 ---------
 
+-  0.4.9
+
+   - Fix quoting of text params (thanks Ross!)
+
 -  0.4.8
 
    - Fix travis deploy process
