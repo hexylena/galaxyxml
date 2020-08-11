@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Tool(GalaxyXML):
+
     def __init__(
         self,
         name,
@@ -25,10 +26,12 @@ class Tool(GalaxyXML):
         workflow_compatible=True,
         interpreter=None,
         version_command="interpreter filename.exe --version",
+        command_line_override=None,
     ):
 
         self.executable = executable
         self.interpreter = interpreter
+        self.command_line_override = command_line_override
         kwargs = {
             "name": name,
             "id": id,
@@ -111,16 +114,19 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-        command_line = []
-        try:
-            command_line.append(export_xml.inputs.cli())
-        except Exception as e:
-            logger.warning(str(e))
+        if self.command_line_override:
+            command_line = self.command_line_override
+        else:
+            command_line = []
+            try:
+                command_line.append(export_xml.inputs.cli())
+            except Exception as e:
+                logger.warning(str(e))
 
-        try:
-            command_line.append(export_xml.outputs.cli())
-        except Exception:
-            pass
+            try:
+                command_line.append(export_xml.outputs.cli())
+            except Exception:
+                pass
 
         # Add stdio section
         stdio = etree.SubElement(export_xml.root, "stdio")
