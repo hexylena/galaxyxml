@@ -29,7 +29,6 @@ class Tool(GalaxyXML):
         command_line_override=None,
     ):
 
-
         self.executable = executable
         self.interpreter = interpreter
         self.command_line_override = command_line_override
@@ -115,7 +114,7 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-        if self.command_line_override != None:
+        if self.command_line_override:
             command_line = self.command_line_override
         else:
             command_line = []
