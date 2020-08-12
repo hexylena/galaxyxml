@@ -21,9 +21,13 @@ License
 Changelog
 ---------
 
+-  0.4.10
+
+   - Allow overriding of comand line in support of positional args (thanks @fubar2)
+
 -  0.4.9
 
-   - Fix quoting of text params (thanks Ross!)
+   - Fix quoting of text params (thanks @fubar2!)
 
 -  0.4.8
 
