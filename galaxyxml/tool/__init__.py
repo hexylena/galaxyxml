@@ -152,7 +152,10 @@ class Tool(GalaxyXML):
                 logger.warning("The tool does not have any old command stored. " + "Only the command line is written.")
                 command_node.text = export_xml.executable
         else:
-            actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
+            if self.command_line_override:
+                actual_cli = clean_command_string(command_line)
+            else:
+                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
             command_node.text = etree.CDATA(actual_cli.strip())
 
         try:
