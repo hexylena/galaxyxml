@@ -153,7 +153,7 @@ class Tool(GalaxyXML):
                 command_node.text = export_xml.executable
         else:
             if self.command_line_override:
-                actual_cli = clean_command_string(command_line)
+                actual_cli = export_xml.clean_command_string(command_line)
             else:
                 actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
             command_node.text = etree.CDATA(actual_cli.strip())
