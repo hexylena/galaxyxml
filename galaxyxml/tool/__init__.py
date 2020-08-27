@@ -29,7 +29,6 @@ class Tool(GalaxyXML):
         interpreter=None,
         version_command="interpreter filename.exe --version",
         command_override=None,
-        test_override=None,
     ):
 
         self.executable = executable
@@ -118,7 +117,7 @@ class Tool(GalaxyXML):
             pass
 
         if self.command_override:
-            command_line = self.command_override
+            command_line = self.command_override.split(' ')
         else:
             command_line = []
             try:
@@ -169,13 +168,10 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-        if self.test_override:
-            export_xml.append(self.test_override)
-        else:
-            try:
-                export_xml.append(export_xml.tests)
-            except Exception:
-                pass
+        try:
+            export_xml.append(export_xml.tests)
+        except Exception:
+            pass
 
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)

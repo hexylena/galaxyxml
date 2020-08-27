@@ -3,14 +3,24 @@ Unit tests for the import of existing Galaxy XML to galaxyxml.
 """
 
 import unittest
-from galaxyxml.tool.import_xml import GalaxyXmlParser
 
+from galaxyxml.tool.import_xml import GalaxyXmlParser
+import galaxyxml.tool as gxt
+import galaxyxml.tool.parameters as gxtp
 
 class TestImport(unittest.TestCase):
     def setUp(self):
         gxp = GalaxyXmlParser()
         self.tool = gxp.import_xml("test/import_xml.xml")
-
+    
+class TestOverrides(TestImport):
+    def test_override(self):
+        co = "bash foo.sh > output1"
+        self.tool.command_override = co
+        exml = self.tool.export()
+        self.assertTrue(self.tool.command_override==co)
+        exml = exml.replace('\n',' ')
+        self.assertTrue(co in exml)
 
 class TestImportXml(TestImport):
     def test_init_tool(self):
@@ -19,7 +29,6 @@ class TestImportXml(TestImport):
         self.assertEqual(xml_root.attrib["name"], "Import")
         self.assertEqual(xml_root.attrib["version"], "1.0")
         self.assertEqual(xml_root[0].text, "description")
-        self.assertEqual(self.tool.command, "command")
 
     def test_load_help(self):
         self.assertEqual(self.tool.help, "help")
