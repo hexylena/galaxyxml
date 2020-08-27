@@ -16,9 +16,10 @@ class TestImport(unittest.TestCase):
 class TestOverrides(TestImport):
     def test_override(self):
         co = "bash foo.sh > output1"
-        self.tool.command_override = co
+        col = co.split(' ')
+        self.tool.command_override = col
         exml = self.tool.export()
-        self.assertTrue(self.tool.command_override == co)
+        self.assertTrue(self.tool.command_override == col)
         exml = exml.replace("\n", " ")
         self.assertTrue(co in exml)
 
