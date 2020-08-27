@@ -117,7 +117,7 @@ class Tool(GalaxyXML):
             pass
 
         if self.command_override:
-            command_line = self.command_override.split(' ')
+            command_line = self.command_override.split('\n')
         else:
             command_line = []
             try:
