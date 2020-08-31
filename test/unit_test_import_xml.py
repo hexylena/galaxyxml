@@ -19,7 +19,7 @@ class TestOverrides(TestImport):
         col = co.split(' ')
         self.tool.command_override = col
         exml = self.tool.export()
-        self.assertTrue(self.tool.command_override == col)
+        self.assertEqual(self.tool.command_override, col)
         exml = exml.replace("\n", " ")
         self.assertTrue(co in exml)
 
