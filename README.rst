@@ -21,9 +21,13 @@ License
 Changelog
 ---------
 
+-  0.4.11
+
+   - Update to command line override (thanks @fubar2)
+
 -  0.4.10
 
-   - Allow overriding of comand line in support of positional args (thanks @fubar2)
+   - Allow overriding of command line in support of positional args (thanks @fubar2)
 
 -  0.4.9
 
