@@ -28,12 +28,12 @@ class Tool(GalaxyXML):
         workflow_compatible=True,
         interpreter=None,
         version_command="interpreter filename.exe --version",
-        command_line_override=None,
+        command_override=None,
     ):
 
         self.executable = executable
         self.interpreter = interpreter
-        self.command_line_override = command_line_override
+        self.command_override = command_override
         kwargs = {
             "name": name,
             "id": id,
@@ -116,8 +116,8 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-        if self.command_line_override:
-            command_line = self.command_line_override
+        if self.command_override:
+            command_line = self.command_override
         else:
             command_line = []
             try:
@@ -152,7 +152,10 @@ class Tool(GalaxyXML):
                 logger.warning("The tool does not have any old command stored. " + "Only the command line is written.")
                 command_node.text = export_xml.executable
         else:
-            actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
+            if self.command_override:
+                actual_cli = export_xml.clean_command_string(command_line)
+            else:
+                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
             command_node.text = etree.CDATA(actual_cli.strip())
 
         try:

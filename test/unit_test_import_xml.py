@@ -3,6 +3,7 @@ Unit tests for the import of existing Galaxy XML to galaxyxml.
 """
 
 import unittest
+
 from galaxyxml.tool.import_xml import GalaxyXmlParser
 
 
@@ -12,6 +13,17 @@ class TestImport(unittest.TestCase):
         self.tool = gxp.import_xml("test/import_xml.xml")
 
 
+class TestOverrides(TestImport):
+    def test_override(self):
+        co = "bash foo.sh > output1"
+        col = co.split(' ')
+        self.tool.command_override = col
+        exml = self.tool.export()
+        self.assertTrue(self.tool.command_override == col)
+        exml = exml.replace("\n", " ")
+        self.assertTrue(co in exml)
+
+
 class TestImportXml(TestImport):
     def test_init_tool(self):
         xml_root = self.tool.root
@@ -19,7 +31,6 @@ class TestImportXml(TestImport):
         self.assertEqual(xml_root.attrib["name"], "Import")
         self.assertEqual(xml_root.attrib["version"], "1.0")
         self.assertEqual(xml_root[0].text, "description")
-        self.assertEqual(self.tool.command, "command")
 
     def test_load_help(self):
         self.assertEqual(self.tool.help, "help")
@@ -29,7 +40,7 @@ class TestImportXml(TestImport):
         self.assertEqual(requirement.text, "magic_package")
         self.assertEqual(requirement.attrib["type"], "package")
         self.assertEqual(requirement.attrib["version"], "1")
-        container = self.tool.requirements.children[1].node
+        # never used ? container = self.tool.requirements.children[1].node
 
     def test_load_edam_topics(self):
         topic = self.tool.edam_topics.children[0].node
