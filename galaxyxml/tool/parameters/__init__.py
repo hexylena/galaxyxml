@@ -14,6 +14,7 @@ class XMLParam(object):
     def __init__(self, *args, **kwargs):
         # http://stackoverflow.com/a/12118700
         self.children = []
+        self.parent = None
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
@@ -38,6 +39,7 @@ class XMLParam(object):
             if issubclass(type(sub_node), XMLParam):
                 self.node.append(sub_node.node)
                 self.children.append(sub_node)
+                self.children[-1].parent = self
             else:
                 raise Exception(
                     "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
@@ -404,9 +406,14 @@ class InputParameter(XMLParam):
                 return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
-        # TODO: enhance logic to check up parents for things like
-        # repeat>condotion>param
-        return "$" + self.mako_identifier
+        parent_identifiers = []
+        p = self.parent
+        while p is not None and hasattr(p, "mako_identifier"):
+            parent_identifiers.append(p.mako_identifier)
+            p = p.parent
+        if len(parent_identifiers) > 0:
+            parent_identifiers.append("")
+        return "$"+ ".".join(parent_identifiers) + self.mako_identifier
 
     def flag(self):
         flag = "-" * self.num_dashes
@@ -421,10 +428,10 @@ class Section(InputParameter):
         super(Section, self).__init__(**params)
 
     def command_line(self):
-        lines = []
-        for c in self.children:
-            lines.append(c.command_line())
-        return "\n".join(lines)
+        cli = []
+        for child in self.children:
+            cli.append(child.command_line())
+        return "\n".join(cli)
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
@@ -534,7 +541,7 @@ class TextParam(Param):
             if self.positional:
                 return self.mako_name()
             else:
-                return f"{self.flag}{self.space_between_arg}'{self.mako_name()}'"
+                return f"{self.flag()}{self.space_between_arg}'{self.mako_name()}'"
 
 
 class _NumericParam(Param):
