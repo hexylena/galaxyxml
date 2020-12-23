@@ -758,7 +758,7 @@ class OutputData(XMLParam):
             return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
-        return "$" + self.mako_identifier
+        return "'$" + self.mako_identifier + "'"
 
     def flag(self):
         flag = "-" * self.num_dashes
