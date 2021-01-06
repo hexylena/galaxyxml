@@ -15,21 +15,20 @@ logger = logging.getLogger(__name__)
 
 class Tool(GalaxyXML):
     def __init__(
-        self,
-        name,
-        id,
-        version,
-        description,
-        executable,
-        hidden=False,
-        tool_type=None,
-        URL_method=None,
-        workflow_compatible=True,
-        interpreter=None,
-        version_command="interpreter filename.exe --version",
-        command_override=None,
+            self,
+            name,
+            id,
+            version,
+            description,
+            executable,
+            hidden=False,
+            tool_type=None,
+            URL_method=None,
+            workflow_compatible=True,
+            interpreter=None,
+            version_command="interpreter filename.exe --version",
+            command_override=None,
     ):
-
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
@@ -95,8 +94,8 @@ class Tool(GalaxyXML):
 
         return "\n".join(clean)
 
-    def export(self, keep_old_command=False):
-        """see lib/galaxy/tool_util/linters/xml_order.py"""
+    def export(self, keep_old_command=False): # noqa
+        # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
         try:
             export_xml.append(export_xml.edam_operations)
@@ -124,7 +123,6 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.inputs.cli())
             except Exception as e:
                 logger.warning(str(e))
-
             try:
                 command_line.append(export_xml.outputs.cli())
             except Exception:
@@ -135,14 +133,13 @@ class Tool(GalaxyXML):
             command_kwargs["interpreter"] = export_xml.interpreter
         # Add command section
         command_node = etree.SubElement(export_xml.root, "command", **command_kwargs)
-
         if keep_old_command:
             if getattr(self, "command", None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
                 logger.warning(
-                    "The tool does not have any old command stored. "
-                    + "Only the command line is written."
+                    "The tool does not have any old command stored. " + \
+                    "Only the command line is written."
                 )
                 command_node.text = export_xml.executable
         else:
