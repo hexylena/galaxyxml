@@ -109,10 +109,10 @@ class Tool(GalaxyXML):
             export_xml.append(export_xml.requirements)
         except Exception:
             pass
-        # Add stdio section
-        stdio = etree.SubElement(export_xml.root, "stdio")
-        etree.SubElement(stdio, "exit_code", range="1:", level="fatal")
-        export_xml.append(stdio)
+        # Add stdio section - TODO: make into an XMLParameter
+        stdio_element = etree.SubElement(export_xml.root, "stdio")
+        etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
+        export_xml.append(stdio_element)
         # Append version command
         export_xml.append_version_command()
         if self.command_override:
@@ -138,7 +138,7 @@ class Tool(GalaxyXML):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
                 logger.warning(
-                    "The tool does not have any old command stored. " + \
+                    "The tool does not have any old command stored. " +
                     "Only the command line is written."
                 )
                 command_node.text = export_xml.executable

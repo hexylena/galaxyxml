@@ -661,8 +661,8 @@ class OutputData(XMLParam):
 
     def acceptable_child(self, child):
         return (
-            isinstance(child, OutputFilter) \
-            or isinstance(child, ChangeFormat) \
+            isinstance(child, OutputFilter)
+            or isinstance(child, ChangeFormat)
             or isinstance(child, DiscoverDatasets)
         )
 
@@ -721,8 +721,8 @@ class OutputCollection(XMLParam):
 
     def acceptable_child(self, child):
         return (
-            isinstance(child, OutputData) \
-            or isinstance(child, OutputFilter) \
+            isinstance(child, OutputData)
+            or isinstance(child, OutputFilter)
             or isinstance(child, DiscoverDatasets)
         )
 
