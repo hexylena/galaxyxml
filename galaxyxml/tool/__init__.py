@@ -109,9 +109,14 @@ class Tool(GalaxyXML):
             export_xml.append(export_xml.requirements)
         except Exception:
             pass
-        # Add stdio section - TODO: make into an XMLParameter
-        stdio_element = etree.SubElement(export_xml.root, "stdio")
-        etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
+        # Add stdio section - now an XMLParameter
+        try:
+            stdio_element = export_xml.stdios
+        except Exception:
+            stdio_element = None
+        if not stdio_element:
+            stdio_element = etree.SubElement(export_xml.root, "stdio")
+            etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
         export_xml.append(stdio_element)
         # Append version command
         export_xml.append_version_command()
