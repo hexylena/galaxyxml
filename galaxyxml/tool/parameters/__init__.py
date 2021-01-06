@@ -591,6 +591,26 @@ class Filter(InputParameter):
         super(Filter, self).__init__(**params)
 
 
+class Stdios(XMLParam):
+    name = "stdio"
+
+    def acceptable_child(self, child):
+        return isinstance(child, Stdio)
+
+
+class Stdio(XMLParam):
+    name = "exit_code"
+
+    def __init__(
+        self,
+        range="1:",
+        level="fatal",
+        **kwargs,
+    ):
+        params = Util.clean_kwargs(locals().copy())
+        super(Stdio, self).__init__(**params)
+
+
 class ValidatorParam(InputParameter):
     name = "validator"
 
