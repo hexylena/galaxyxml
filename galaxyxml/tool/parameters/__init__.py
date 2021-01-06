@@ -696,7 +696,6 @@ class TestOutput(XMLParam):
         self,
         name=None,
         file=None,
-        ftype=None,
         sort=None,
         value=None,
         md5=None,

@@ -93,6 +93,32 @@ class Tool(GalaxyXML):
         return "\n".join(clean)
 
     def export(self, keep_old_command=False):  # noqa
+        # from lib/galaxy/tool_util/linters/xml_order.py
+        # """This module contains a linting functions for tool XML block order.
+
+        # For more information on the IUC standard for XML block order see -
+        # https://github.com/galaxy-iuc/standards.
+        # """
+        # # https://github.com/galaxy-iuc/standards
+        # # https://github.com/galaxy-iuc/standards/pull/7/files
+        # TAG_ORDER = [
+            # 'description',
+            # 'macros',
+            # 'parallelism',
+            # 'requirements',
+            # 'code',
+            # 'stdio',
+            # 'version_command',
+            # 'command',
+            # 'environment_variables',
+            # 'configfiles',
+            # 'inputs',
+            # 'outputs',
+            # 'tests',
+            # 'help',
+            # 'citations',
+        # ]
+
 
         export_xml = copy.deepcopy(self)
 
@@ -111,10 +137,13 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-        try:
-            export_xml.append(export_xml.configfiles)
-        except Exception:
-            pass
+        # Add stdio section
+        stdio = etree.SubElement(export_xml.root, "stdio")
+        etree.SubElement(stdio, "exit_code", range="1:", level="fatal")
+        export_xml.append(stdio)
+
+        # Append version command
+        export_xml.append_version_command()
 
         if self.command_override:
             command_line = self.command_override
@@ -129,13 +158,6 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.outputs.cli())
             except Exception:
                 pass
-
-        # Add stdio section
-        stdio = etree.SubElement(export_xml.root, "stdio")
-        etree.SubElement(stdio, "exit_code", range="1:", level="fatal")
-
-        # Append version command
-        export_xml.append_version_command()
 
         # Steal interpreter from kwargs
         command_kwargs = {}
@@ -158,6 +180,13 @@ class Tool(GalaxyXML):
                 actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
             command_node.text = etree.CDATA(actual_cli.strip())
 
+        export_xml.append(command_node)
+
+        try:
+            export_xml.append(export_xml.configfiles)
+        except Exception:
+            pass
+
         try:
             export_xml.append(export_xml.inputs)
         except Exception:
@@ -175,7 +204,7 @@ class Tool(GalaxyXML):
 
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)
-
+        export_xml.append(help_element)
         try:
             export_xml.append(export_xml.citations)
         except Exception:
