@@ -139,7 +139,7 @@ class Tool(GalaxyXML):
             else:
                 logger.warning(
                     "The tool does not have any old command stored. " + \
-                    "Only the command line is written."
+                      "Only the command line is written."
                 )
                 command_node.text = export_xml.executable
         else:
