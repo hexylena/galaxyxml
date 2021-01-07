@@ -13,6 +13,12 @@ class TestImport(unittest.TestCase):
         self.tool = gxp.import_xml("test/import_xml.xml")
 
 
+class TestStdios(TestImport):
+    def test_stdio(self):
+        std = self.tool.stdios.children[0].node
+        self.assertEqual(std.attrib["level"], "fatal")
+        self.assertEqual(std.attrib["range"], "1:")
+
 class TestOverrides(TestImport):
     def test_override(self):
         co = "bash foo.sh > output1"
