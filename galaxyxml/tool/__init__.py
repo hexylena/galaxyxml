@@ -148,7 +148,7 @@ class Tool(GalaxyXML):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
                 logger.warning(
-                    "The tool does not have any old command stored. " +
+                    "The tool does not have any old command stored. "
                     "Only the command line is written."
                 )
                 command_node.text = export_xml.executable
