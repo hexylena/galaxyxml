@@ -21,9 +21,10 @@ License
 Changelog
 ---------
 
--  0.4.12 (pre)
+-  0.4.12
 
    - Correct the ordering of elements for planemo (thanks @fubar2)
+   - Properly read stdio on loading tools (thanks @fubar2)
 
 -  0.4.11
 
@@ -66,8 +67,7 @@ Changelog
 
 -  0.4.2
 
-   -  Add methods to check presence of EDAM and citation
-      ([@khillion](https://github.com/khillion))
+   -  Add methods to check presence of EDAM and citations (thanks @khillion)
 
 -  0.4.0
 
@@ -75,7 +75,7 @@ Changelog
 
 -  0.3.3
 
-   -  [@khillion](https://github.com/khillion) implemented the
+   -  @khillion implemented the
       following:
 
       -  ``<options>`` with ``<filter>`` and ``<column>``
