@@ -14,21 +14,23 @@ logger = logging.getLogger(__name__)
 
 
 class Tool(GalaxyXML):
+
     def __init__(
-            self,
-            name,
-            id,
-            version,
-            description,
-            executable,
-            hidden=False,
-            tool_type=None,
-            URL_method=None,
-            workflow_compatible=True,
-            interpreter=None,
-            version_command="interpreter filename.exe --version",
-            command_override=None,
+        self,
+        name,
+        id,
+        version,
+        description,
+        executable,
+        hidden=False,
+        tool_type=None,
+        URL_method=None,
+        workflow_compatible=True,
+        interpreter=None,
+        version_command="interpreter filename.exe --version",
+        command_override=None,
     ):
+
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
@@ -52,9 +54,7 @@ class Tool(GalaxyXML):
 
         if tool_type is not None:
             if tool_type not in VALID_TOOL_TYPES:
-                raise Exception(
-                    "Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES)
-                )
+                raise Exception("Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES))
             else:
                 kwargs["tool_type"] = tool_type
 
@@ -62,9 +62,7 @@ class Tool(GalaxyXML):
                     if URL_method in VALID_URL_METHODS:
                         kwargs["URL_method"] = URL_method
                     else:
-                        raise Exception(
-                            "URL_method must be one of %s" % ",".join(VALID_URL_METHODS)
-                        )
+                        raise Exception("URL_method must be one of %s" % ",".join(VALID_URL_METHODS))
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
@@ -94,21 +92,26 @@ class Tool(GalaxyXML):
 
         return "\n".join(clean)
 
+
     def export(self, keep_old_command=False): # noqa
         # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
+
         try:
             export_xml.append(export_xml.edam_operations)
         except Exception:
             pass
+
         try:
             export_xml.append(export_xml.edam_topics)
         except Exception:
             pass
+
         try:
             export_xml.append(export_xml.requirements)
         except Exception:
             pass
+
         # Add stdio section - now an XMLParameter
         try:
             stdio_element = export_xml.stdios
@@ -118,8 +121,10 @@ class Tool(GalaxyXML):
             stdio_element = etree.SubElement(export_xml.root, "stdio")
             etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
         export_xml.append(stdio_element)
+
         # Append version command
         export_xml.append_version_command()
+
         if self.command_override:
             command_line = self.command_override
         else:
@@ -157,10 +162,12 @@ class Tool(GalaxyXML):
                 )
             command_node.text = etree.CDATA(actual_cli.strip())
         export_xml.append(command_node)
+
         try:
             export_xml.append(export_xml.configfiles)
         except Exception:
             pass
+
         try:
             export_xml.append(export_xml.inputs)
         except Exception:
@@ -169,15 +176,19 @@ class Tool(GalaxyXML):
             export_xml.append(export_xml.outputs)
         except Exception:
             pass
+
         try:
             export_xml.append(export_xml.tests)
         except Exception:
             pass
+
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)
         export_xml.append(help_element)
+
         try:
             export_xml.append(export_xml.citations)
         except Exception:
             pass
+
         return super(Tool, export_xml).export()

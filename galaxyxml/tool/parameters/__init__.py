@@ -25,13 +25,11 @@ class XMLParam(object):
                 self.children.append(sub_node)
             else:
                 raise Exception(
-                    "Child was unacceptable to parent (%s is not appropriate for %s)"
-                    % (type(self), type(sub_node))
+                    "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
                 )
         else:
             raise Exception(
-                "Child was unacceptable to parent (%s is not appropriate for %s)"
-                % (type(self), type(sub_node))
+                "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
             )
 
     def validate(self):
@@ -52,6 +50,26 @@ class XMLParam(object):
 
     def command_line(self):
         return None
+
+
+class Stdios(XMLParam):
+    name = "stdio"
+
+    def acceptable_child(self, child):
+        return isinstance(child, Stdio)
+
+
+class Stdio(XMLParam):
+    name = "exit_code"
+
+    def __init__(
+        self,
+        range="1:",
+        level="fatal",
+        **kwargs,
+    ):
+        params = Util.clean_kwargs(locals().copy())
+        super(Stdio, self).__init__(**params)
 
 
 class RequestParamTranslation(XMLParam):
@@ -157,9 +175,7 @@ class Requirements(XMLParam):
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Requirement) or issubclass(
-            type(child), Container
-        )
+        return issubclass(type(child), Requirement) or issubclass(type(child), Container)
 
 
 class Requirement(XMLParam):
@@ -189,9 +205,7 @@ class Configfiles(XMLParam):
     name = "configfiles"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Configfile) or issubclass(
-            type(child), ConfigfileDefaultInputs
-        )
+        return issubclass(type(child), Configfile) or issubclass(type(child), ConfigfileDefaultInputs)
 
 
 class Configfile(XMLParam):
@@ -219,15 +233,7 @@ class Inputs(XMLParam):
     name = "inputs"
     # This bodes to be an issue -__-
 
-    def __init__(
-        self,
-        action=None,
-        check_value=None,
-        method=None,
-        target=None,
-        nginx_upload=None,
-        **kwargs,
-    ):
+    def __init__(self, action=None, check_value=None, method=None, target=None, nginx_upload=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Inputs, self).__init__(**params)
 
@@ -264,9 +270,7 @@ class InputParameter(XMLParam):
             # TODO: replace with positional attribute
             if len(self.flag()) > 0:
                 if kwargs["label"] is None:
-                    kwargs[
-                        "label"
-                    ] = "Author did not provide help for this parameter... "
+                    kwargs["label"] = "Author did not provide help for this parameter... "
                 if not self.positional:
                     kwargs["argument"] = self.flag()
 
@@ -299,11 +303,7 @@ class InputParameter(XMLParam):
             if self.positional:
                 return self.mako_name()
             else:
-                return "%s%s%s" % (
-                    self.flag(),
-                    self.space_between_arg,
-                    self.mako_name(),
-                )
+                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
 
     def mako_name(self):
         # TODO: enhance logic to check up parents for things like
@@ -355,9 +355,7 @@ class Conditional(InputParameter):
         super(Conditional, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) and not isinstance(
-            child, Conditional
-        )
+        return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
 
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
@@ -385,22 +383,16 @@ class Param(InputParameter):
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
-            raise Exception(
-                "Param class is not an actual parameter type, use a subclass of Param"
-            )
+            raise Exception("Param class is not an actual parameter type, use a subclass of Param")
 
     def acceptable_child(self, child):
-        return issubclass(
-            type(child, InputParameter) or isinstance(child), ValidatorParam
-        )
+        return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
 
 
 class TextParam(Param):
     type = "text"
 
-    def __init__(
-        self, name, optional=None, label=None, help=None, value=None, **kwargs
-    ):
+    def __init__(self, name, optional=None, label=None, help=None, value=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
@@ -415,17 +407,7 @@ class TextParam(Param):
 
 
 class _NumericParam(Param):
-    def __init__(
-        self,
-        name,
-        value,
-        optional=None,
-        label=None,
-        help=None,
-        min=None,
-        max=None,
-        **kwargs,
-    ):
+    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -442,15 +424,7 @@ class BooleanParam(Param):
     type = "boolean"
 
     def __init__(
-        self,
-        name,
-        optional=None,
-        label=None,
-        help=None,
-        checked=False,
-        truevalue=None,
-        falsevalue=None,
-        **kwargs,
+        self, name, optional=None, label=None, help=None, checked=False, truevalue=None, falsevalue=None, **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
 
@@ -479,16 +453,7 @@ class BooleanParam(Param):
 class DataParam(Param):
     type = "data"
 
-    def __init__(
-        self,
-        name,
-        optional=None,
-        label=None,
-        help=None,
-        format=None,
-        multiple=None,
-        **kwargs,
-    ):
+    def __init__(self, name, optional=None, label=None, help=None, format=None, multiple=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -507,7 +472,7 @@ class SelectParam(Param):
         multiple=None,
         options=None,
         default=None,
-        **kwargs,
+        **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
         del params["options"]
@@ -546,14 +511,7 @@ class SelectOption(InputParameter):
 class Options(InputParameter):
     name = "options"
 
-    def __init__(
-        self,
-        from_dataset=None,
-        from_file=None,
-        from_data_table=None,
-        from_parameter=None,
-        **kwargs,
-    ):
+    def __init__(self, from_dataset=None, from_file=None, from_data_table=None, from_parameter=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Options, self).__init__(None, **params)
 
@@ -585,30 +543,10 @@ class Filter(InputParameter):
         value=None,
         ref_attribute=None,
         index=None,
-        **kwargs,
+        **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
         super(Filter, self).__init__(**params)
-
-
-class Stdios(XMLParam):
-    name = "stdio"
-
-    def acceptable_child(self, child):
-        return isinstance(child, Stdio)
-
-
-class Stdio(XMLParam):
-    name = "exit_code"
-
-    def __init__(
-        self,
-        range="1:",
-        level="fatal",
-        **kwargs,
-    ):
-        params = Util.clean_kwargs(locals().copy())
-        super(Stdio, self).__init__(**params)
 
 
 class ValidatorParam(InputParameter):
@@ -624,7 +562,7 @@ class ValidatorParam(InputParameter):
         line_startswith=None,
         min=None,
         max=None,
-        **kwargs,
+        **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
         super(ValidatorParam, self).__init__(**params)
@@ -638,7 +576,8 @@ class Outputs(XMLParam):
 
 
 class OutputData(XMLParam):
-    """Copypasta of InputParameter, needs work"""
+    """Copypasta of InputParameter, needs work
+    """
 
     name = "data"
 
@@ -651,7 +590,7 @@ class OutputData(XMLParam):
         label=None,
         from_work_dir=None,
         hidden=False,
-        **kwargs,
+        **kwargs
     ):
         # TODO: validate format_source&metadata_source against something in the
         # XMLParam children tree.
@@ -680,11 +619,7 @@ class OutputData(XMLParam):
         return flag + self.mako_identifier
 
     def acceptable_child(self, child):
-        return (
-            isinstance(child, OutputFilter)
-            or isinstance(child, ChangeFormat)
-            or isinstance(child, DiscoverDatasets)
-        )
+        return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat) or isinstance(child, DiscoverDatasets)
 
 
 class OutputFilter(XMLParam):
@@ -734,25 +669,19 @@ class OutputCollection(XMLParam):
         type_source=None,
         structured_like=None,
         inherit_format=None,
-        **kwargs,
+        **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
         super(OutputCollection, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return (
-            isinstance(child, OutputData)
-            or isinstance(child, OutputFilter)
-            or isinstance(child, DiscoverDatasets)
-        )
+        return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
 
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"
 
-    def __init__(
-        self, pattern, directory=None, format=None, ext=None, visible=None, **kwargs
-    ):
+    def __init__(self, pattern, directory=None, format=None, ext=None, visible=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DiscoverDatasets, self).__init__(**params)
 
@@ -786,6 +715,7 @@ class TestOutput(XMLParam):
         self,
         name=None,
         file=None,
+        ftype=None,
         sort=None,
         value=None,
         md5=None,
@@ -793,7 +723,7 @@ class TestOutput(XMLParam):
         compare=None,
         lines_diff=None,
         delta=None,
-        **kwargs,
+        **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
         super(TestOutput, self).__init__(**params)
