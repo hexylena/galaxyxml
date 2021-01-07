@@ -1,17 +1,12 @@
-<?xml version="1.0"?>
-<tool id="se.lu.mbioekol.mbio-serv2.aragorn" name="aragorn" version="1.2.36">
+<tool name="aragorn" id="se.lu.mbioekol.mbio-serv2.aragorn" version="1.2.36">
   <!--This tool descriptor has been generated using galaxyxml.-->
   <description>Aragorn is a tRNA finder</description>
   <requirements>
-    <requirement type="package" version="1.0.0">samtools</requirement>
+    <requirement version="1.0.0" type="package">samtools</requirement>
     <container type="docker">one_super_image</container>
   </requirements>
-  <configfiles>
-    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
-    <inputs name="inputs"/>
-  </configfiles>
   <stdio>
-    <exit_code level="fatal" range="1:"/>
+    <exit_code range="1:" level="fatal"/>
   </stdio>
   <version_command><![CDATA[aragorn.exe --version]]></version_command>
   <command><![CDATA[aragorn.exe $flag
@@ -21,36 +16,40 @@ cond $cond
 
 $posint
 select_local $select_local]]></command>
+  <configfiles>
+    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
+    <inputs name="inputs"/>
+  </configfiles>
   <inputs>
-    <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
-    <section name="float_section" title="Float section">
-      <param argument="-float" help="Float help" label="Float label" name="float" type="float" value="0"/>
+    <param label="Flag label" help="Flag help" checked="false" type="boolean" name="flag" argument="-flag" truevalue="-flag" falsevalue=""/>
+    <section title="Float section" name="float_section">
+      <param label="Float label" help="Float help" value="0" type="float" name="float" argument="-float"/>
     </section>
-    <conditional argument="cond" label="Conditional" name="cond">
-      <param argument="Select" label="Author did not provide help for this parameter... " name="Select" type="select">
+    <conditional label="Conditional" name="cond" argument="cond">
+      <param label="Author did not provide help for this parameter... " type="select" name="Select" argument="Select">
         <option value="bye">2</option>
         <option value="hi">1</option>
       </param>
       <when value="hi"/>
       <when value="bye">
-        <param argument="-some_int" label="Advanced value" name="some_int" type="integer" value="0"/>
+        <param label="Advanced value" value="0" type="integer" name="some_int" argument="-some_int"/>
       </when>
     </conditional>
-    <param argument="-int_min" help="int_min help" label="int_min label" name="int_min" type="integer" value="0"/>
-    <param argument="-int_max" help="int_max help" label="int_max label" name="int_max" type="integer" value="0"/>
-    <param help="posinthelp" label="posint label" name="posint" type="integer" value="0"/>
-    <param argument="select_local" label="Author did not provide help for this parameter... " name="select_local" type="select">
+    <param label="int_min label" help="int_min help" value="0" type="integer" name="int_min" argument="-int_min"/>
+    <param label="int_max label" help="int_max help" value="0" type="integer" name="int_max" argument="-int_max"/>
+    <param label="posint label" help="posinthelp" value="0" type="integer" name="posint"/>
+    <param label="Author did not provide help for this parameter... " type="select" name="select_local" argument="select_local">
       <options from_file="loc_file.loc">
         <column index="0" name="name"/>
         <column index="1" name="value"/>
-        <filter column="1" name="sorted" type="sort_by"/>
+        <filter type="sort_by" column="1" name="sorted"/>
       </options>
     </param>
   </inputs>
   <outputs>
-    <data format="tabular" hidden="false" name="output"/>
-    <collection label="a small label" name="supercollection">
-      <discover_datasets format="fasta" pattern="(?P&amp;lt;designation&amp;gt;.+)\.pdf.fasta"/>
+    <data name="output" format="tabular" hidden="false"/>
+    <collection name="supercollection" label="a small label">
+      <discover_datasets pattern="(?P&amp;lt;designation&amp;gt;.+)\.pdf.fasta" format="fasta"/>
     </collection>
   </outputs>
   <tests>
@@ -61,3 +60,4 @@ select_local $select_local]]></command>
   </tests>
   <help><![CDATA[HI]]></help>
 </tool>
+

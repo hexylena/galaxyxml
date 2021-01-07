@@ -63,10 +63,7 @@ class Stdio(XMLParam):
     name = "exit_code"
 
     def __init__(
-        self,
-        range="1:",
-        level="fatal",
-        **kwargs,
+        self, range="1:", level="fatal", **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         super(Stdio, self).__init__(**params)
@@ -472,7 +469,7 @@ class SelectParam(Param):
         multiple=None,
         options=None,
         default=None,
-        **kwargs
+        **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         del params["options"]
@@ -543,7 +540,7 @@ class Filter(InputParameter):
         value=None,
         ref_attribute=None,
         index=None,
-        **kwargs
+        **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         super(Filter, self).__init__(**params)
@@ -562,7 +559,7 @@ class ValidatorParam(InputParameter):
         line_startswith=None,
         min=None,
         max=None,
-        **kwargs
+        **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         super(ValidatorParam, self).__init__(**params)
@@ -590,7 +587,7 @@ class OutputData(XMLParam):
         label=None,
         from_work_dir=None,
         hidden=False,
-        **kwargs
+        **kwargs,
     ):
         # TODO: validate format_source&metadata_source against something in the
         # XMLParam children tree.
@@ -669,7 +666,7 @@ class OutputCollection(XMLParam):
         type_source=None,
         structured_like=None,
         inherit_format=None,
-        **kwargs
+        **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         super(OutputCollection, self).__init__(**params)
@@ -723,7 +720,7 @@ class TestOutput(XMLParam):
         compare=None,
         lines_diff=None,
         delta=None,
-        **kwargs
+        **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
         super(TestOutput, self).__init__(**params)
