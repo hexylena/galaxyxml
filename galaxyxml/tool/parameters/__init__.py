@@ -6,7 +6,6 @@ from galaxyxml import Util
 from lxml import etree
 
 
-
 class XMLParam(object):
     name = "node"
 
@@ -51,6 +50,26 @@ class XMLParam(object):
 
     def command_line(self):
         return None
+
+
+class Stdios(XMLParam):
+    name = "stdio"
+
+    def acceptable_child(self, child):
+        return isinstance(child, Stdio)
+
+
+class Stdio(XMLParam):
+    name = "exit_code"
+
+    def __init__(
+        self,
+        range="1:",
+        level="fatal",
+        **kwargs,
+    ):
+        params = Util.clean_kwargs(locals().copy())
+        super(Stdio, self).__init__(**params)
 
 
 class RequestParamTranslation(XMLParam):

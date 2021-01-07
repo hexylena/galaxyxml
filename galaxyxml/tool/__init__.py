@@ -92,8 +92,9 @@ class Tool(GalaxyXML):
 
         return "\n".join(clean)
 
-    def export(self, keep_old_command=False):  # noqa
 
+    def export(self, keep_old_command=False): # noqa
+        # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
 
         try:
@@ -111,10 +112,18 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
+        # Add stdio section - now an XMLParameter
         try:
-            export_xml.append(export_xml.configfiles)
+            stdio_element = export_xml.stdios
         except Exception:
-            pass
+            stdio_element = None
+        if not stdio_element:
+            stdio_element = etree.SubElement(export_xml.root, "stdio")
+            etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
+        export_xml.append(stdio_element)
+
+        # Append version command
+        export_xml.append_version_command()
 
         if self.command_override:
             command_line = self.command_override
@@ -124,45 +133,45 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.inputs.cli())
             except Exception as e:
                 logger.warning(str(e))
-
             try:
                 command_line.append(export_xml.outputs.cli())
             except Exception:
                 pass
-
-        # Add stdio section
-        stdio = etree.SubElement(export_xml.root, "stdio")
-        etree.SubElement(stdio, "exit_code", range="1:", level="fatal")
-
-        # Append version command
-        export_xml.append_version_command()
-
         # Steal interpreter from kwargs
         command_kwargs = {}
         if export_xml.interpreter is not None:
             command_kwargs["interpreter"] = export_xml.interpreter
-
         # Add command section
         command_node = etree.SubElement(export_xml.root, "command", **command_kwargs)
-
         if keep_old_command:
             if getattr(self, "command", None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
-                logger.warning("The tool does not have any old command stored. " + "Only the command line is written.")
+                logger.warning(
+                    "The tool does not have any old command stored. "
+                    "Only the command line is written."
+                )
                 command_node.text = export_xml.executable
         else:
             if self.command_override:
                 actual_cli = export_xml.clean_command_string(command_line)
             else:
-                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line))
+                actual_cli = "%s %s" % (
+                    export_xml.executable,
+                    export_xml.clean_command_string(command_line),
+                )
             command_node.text = etree.CDATA(actual_cli.strip())
+        export_xml.append(command_node)
+
+        try:
+            export_xml.append(export_xml.configfiles)
+        except Exception:
+            pass
 
         try:
             export_xml.append(export_xml.inputs)
         except Exception:
             pass
-
         try:
             export_xml.append(export_xml.outputs)
         except Exception:
@@ -175,6 +184,7 @@ class Tool(GalaxyXML):
 
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)
+        export_xml.append(help_element)
 
         try:
             export_xml.append(export_xml.citations)
