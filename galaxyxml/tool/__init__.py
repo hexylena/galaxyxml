@@ -92,8 +92,7 @@ class Tool(GalaxyXML):
 
         return "\n".join(clean)
 
-
-    def export(self, keep_old_command=False): # noqa
+    def export(self, keep_old_command=False):
         # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
 
