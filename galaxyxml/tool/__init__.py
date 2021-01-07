@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 class Tool(GalaxyXML):
-
     def __init__(
         self,
         name,
@@ -146,19 +145,13 @@ class Tool(GalaxyXML):
             if getattr(self, "command", None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
-                logger.warning(
-                    "The tool does not have any old command stored. "
-                    "Only the command line is written."
-                )
+                logger.warning("The tool does not have any old command stored. Only the command line is written.")
                 command_node.text = export_xml.executable
         else:
             if self.command_override:
                 actual_cli = export_xml.clean_command_string(command_line)
             else:
-                actual_cli = "%s %s" % (
-                    export_xml.executable,
-                    export_xml.clean_command_string(command_line),
-                )
+                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line),)
             command_node.text = etree.CDATA(actual_cli.strip())
         export_xml.append(command_node)
 
