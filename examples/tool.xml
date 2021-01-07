@@ -6,10 +6,6 @@
     <requirement type="package" version="1.0.0">samtools</requirement>
     <container type="docker">one_super_image</container>
   </requirements>
-  <configfiles>
-    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
-    <inputs name="inputs"/>
-  </configfiles>
   <stdio>
     <exit_code level="fatal" range="1:"/>
   </stdio>
@@ -21,6 +17,10 @@ cond $cond
 
 $posint
 select_local $select_local]]></command>
+  <configfiles>
+    <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
+    <inputs name="inputs"/>
+  </configfiles>
   <inputs>
     <param argument="-flag" checked="false" help="Flag help" label="Flag label" name="flag" type="boolean" truevalue="-flag" falsevalue=""/>
     <section name="float_section" title="Float section">
