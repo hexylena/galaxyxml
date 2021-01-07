@@ -79,7 +79,7 @@ class GalaxyXmlParser(object):
         for std in stdio_root:
             slevel = std.attrib['level']
             srange = std.attrib['range']
-        tool.stdios.append(gxtp.Stdio(level=slevel, range=srange))
+            tool.stdios.append(gxtp.Stdio(level=slevel, range=srange))
         logger.info("<stdio> loaded.")
 
     def _load_command(self, tool, desc_root):
