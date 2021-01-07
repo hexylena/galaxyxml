@@ -21,6 +21,10 @@ License
 Changelog
 ---------
 
+-  0.4.12 (pre)
+
+   - Correct the ordering of elements for planemo (thanks @fubar2)
+
 -  0.4.11
 
    - Update to command line override (thanks @fubar2)
