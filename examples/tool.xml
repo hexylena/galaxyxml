@@ -21,28 +21,29 @@ select_local $select_local]]></command>
     <inputs name="inputs"/>
   </configfiles>
   <inputs>
-    <param label="Flag label" help="Flag help" checked="false" type="boolean" name="flag" argument="-flag" truevalue="-flag" falsevalue=""/>
-    <section title="Float section" name="float_section">
-      <param label="Float label" help="Float help" value="0" type="float" name="float" argument="-float"/>
+    <param name="flag" type="boolean" label="Flag label" help="Flag help" checked="false" truevalue="-flag" falsevalue=""/>
+    <section name="float_section" title="Float section">
+      <param name="float" type="float" value="0" label="Float label" help="Float help"/>
+      <param argument="--float-fromarg" type="float" value="0" label="Float label" help="Float help"/>
     </section>
-    <conditional label="Conditional" name="cond" argument="cond">
-      <param label="Author did not provide help for this parameter... " type="select" name="Select" argument="Select">
+    <conditional name="cond" label="Conditional" argument="cond">
+      <param name="Select" type="select" label="Author did not provide help for this parameter... ">
         <option value="bye">2</option>
         <option value="hi">1</option>
       </param>
       <when value="hi"/>
       <when value="bye">
-        <param label="Advanced value" value="0" type="integer" name="some_int" argument="-some_int"/>
+        <param name="some_int" type="integer" value="0" label="Advanced value"/>
       </when>
     </conditional>
-    <param label="int_min label" help="int_min help" value="0" type="integer" name="int_min" argument="-int_min"/>
-    <param label="int_max label" help="int_max help" value="0" type="integer" name="int_max" argument="-int_max"/>
-    <param label="posint label" help="posinthelp" value="0" type="integer" name="posint"/>
-    <param label="Author did not provide help for this parameter... " type="select" name="select_local" argument="select_local">
+    <param name="int_min" type="integer" value="0" label="int_min label" help="int_min help"/>
+    <param name="int_max" type="integer" value="0" label="int_max label" help="int_max help"/>
+    <param name="posint" type="integer" value="0" label="posint label" help="posinthelp"/>
+    <param name="select_local" type="select" label="Author did not provide help for this parameter... ">
       <options from_file="loc_file.loc">
-        <column index="0" name="name"/>
-        <column index="1" name="value"/>
-        <filter type="sort_by" column="1" name="sorted"/>
+        <column name="name" index="0"/>
+        <column name="value" index="1"/>
+        <filter name="sorted" type="sort_by" column="1"/>
       </options>
     </param>
   </inputs>

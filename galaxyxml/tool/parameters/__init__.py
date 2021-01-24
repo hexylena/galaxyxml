@@ -1,10 +1,12 @@
-from builtins import object
-from builtins import str
+from builtins import (
+    str,
+    object
+)
 
 from galaxyxml import Util
 
+from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
-
 
 class XMLParam(object):
     name = "node"
@@ -15,6 +17,7 @@ class XMLParam(object):
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
+        
         self.node = etree.Element(self.name, **kwargs)
 
     def append(self, sub_node):
@@ -241,11 +244,18 @@ class Inputs(XMLParam):
 class InputParameter(XMLParam):
     def __init__(self, name, **kwargs):
         # TODO: look at
-        self.mako_identifier = name
+        if "argument" in kwargs and kwargs['argument']:
+            self.flag_identifier = kwargs['argument'].lstrip()
+            self.num_dashes = len(kwargs['argument'])-len(self.flag_identifier) 
+            self.mako_identifier = _parse_name(name, kwargs['argument'])
+        else:
+            self.flag_identifier = name
+            self.mako_identifier = name
+
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
         if name is not None:
-            kwargs["name"] = name
+            kwargs = dict([("name", name)] + list(kwargs.items()) )
 
         # Handle positional parameters
         if "positional" in kwargs and kwargs["positional"]:
@@ -268,7 +278,7 @@ class InputParameter(XMLParam):
             if len(self.flag()) > 0:
                 if kwargs["label"] is None:
                     kwargs["label"] = "Author did not provide help for this parameter... "
-                if not self.positional:
+                if not self.positional and "argument" not in kwargs:
                     kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
@@ -309,7 +319,7 @@ class InputParameter(XMLParam):
 
     def flag(self):
         flag = "-" * self.num_dashes
-        return flag + self.mako_identifier
+        return flag + self.flag_identifier
 
 
 class Section(InputParameter):
@@ -374,13 +384,17 @@ class Param(InputParameter):
     name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
-    def __init__(self, name, optional=None, label=None, help=None, **kwargs):
+    def __init__(self, name, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        params["type"] = self.type
+        params = dict([("name", params["name"]), 
+            ("argument", params["argument"]),
+            ("type", self.type)] + list(params.items()))
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
             raise Exception("Param class is not an actual parameter type, use a subclass of Param")
+
+
 
     def acceptable_child(self, child):
         return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
@@ -389,7 +403,7 @@ class Param(InputParameter):
 class TextParam(Param):
     type = "text"
 
-    def __init__(self, name, optional=None, label=None, help=None, value=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, value=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
@@ -404,7 +418,7 @@ class TextParam(Param):
 
 
 class _NumericParam(Param):
-    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None, **kwargs):
+    def __init__(self, name, value, argument=None, optional=None, min=None, max=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -421,7 +435,7 @@ class BooleanParam(Param):
     type = "boolean"
 
     def __init__(
-        self, name, optional=None, label=None, help=None, checked=False, truevalue=None, falsevalue=None, **kwargs
+        self, name, argument=None, optional=None, checked=False, truevalue=None, falsevalue=None, label=None, help=None, **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
 
@@ -450,7 +464,7 @@ class BooleanParam(Param):
 class DataParam(Param):
     type = "data"
 
-    def __init__(self, name, optional=None, label=None, help=None, format=None, multiple=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, format=None, multiple=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -461,14 +475,15 @@ class SelectParam(Param):
     def __init__(
         self,
         name,
+        argument=None,
         optional=None,
-        label=None,
-        help=None,
         data_ref=None,
         display=None,
         multiple=None,
         options=None,
         default=None,
+        label=None,
+        help=None,
         **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())

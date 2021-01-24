@@ -29,8 +29,10 @@ inputs.append(param)
 
 # A float in a section
 section = gxtp.Section("float_section", "Float section")
-param = gxtp.FloatParam("float", label="Float label", help="Float help", value=0, num_dashes=1)
+param = gxtp.FloatParam("float", value=0, label="Float label", help="Float help", num_dashes=1)
 param.space_between_arg = " "
+section.append(param)
+param = gxtp.FloatParam(None, argument="--float-fromarg", value=0, label="Float label", help="Float help")
 section.append(param)
 inputs.append(section)
 
