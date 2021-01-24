@@ -502,7 +502,7 @@ class When(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-               or isinstance(child, Expand)
+                          or isinstance(child, Expand)
 
 
 class Param(InputParameter):
@@ -523,8 +523,8 @@ class Param(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-               or isinstance(child, ValidatorParam) \
-               or isinstance(child, Expand)
+                          or isinstance(child, ValidatorParam) \
+                          or isinstance(child, Expand)
 
 
 class TextParam(Param):
@@ -630,8 +630,8 @@ class SelectParam(Param):
 
     def acceptable_child(self, child):
         return issubclass(type(child), SelectOption) \
-               or issubclass(type(child), Options) \
-               or isinstance(child, Expand)
+                          or issubclass(type(child), Options) \
+                          or isinstance(child, Expand)
 
 
 class SelectOption(InputParameter):
@@ -658,8 +658,8 @@ class Options(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Column) \
-               or issubclass(type(child), Filter) \
-               or isinstance(child, Expand)
+                          or issubclass(type(child), Filter) \
+                          or isinstance(child, Expand)
 
 
 class Column(InputParameter):
@@ -716,9 +716,9 @@ class Outputs(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, OutputData) \
-               or isinstance(child, OutputCollection) \
-               or isinstance(child, Expand) \
-               or isinstance(child, ExpandIO)
+                          or isinstance(child, OutputCollection) \
+                          or isinstance(child, Expand) \
+                          or isinstance(child, ExpandIO)
 
 
 class OutputData(XMLParam):
@@ -766,9 +766,9 @@ class OutputData(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, OutputFilter) \
-               or isinstance(child, ChangeFormat) \
-               or isinstance(child, DiscoverDatasets) \
-               or isinstance(child, Expand)
+                          or isinstance(child, ChangeFormat) \
+                          or isinstance(child, DiscoverDatasets) \
+                          or isinstance(child, Expand)
 
 
 class OutputFilter(XMLParam):
@@ -793,7 +793,7 @@ class ChangeFormat(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, ChangeFormatWhen) \
-               or isinstance(child, Expand)
+                          or isinstance(child, Expand)
 
 
 class ChangeFormatWhen(XMLParam):
@@ -841,7 +841,7 @@ class Tests(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Test) \
-               or isinstance(child, Expand)
+                          or isinstance(child, Expand)
 
 
 class Test(XMLParam):
@@ -849,8 +849,8 @@ class Test(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, TestParam) \
-               or isinstance(child, TestOutput) \
-               or isinstance(child, Expand)
+                          or isinstance(child, TestOutput) \
+                          or isinstance(child, Expand)
 
 
 class TestParam(XMLParam):
@@ -887,7 +887,7 @@ class Citations(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Citation) \
-               or isinstance(child, Expand)
+                          or isinstance(child, Expand)
 
     def has_citation(self, type, value):
         """
