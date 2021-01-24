@@ -17,7 +17,6 @@ class XMLParam(object):
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
-        
         self.node = etree.Element(self.name, **kwargs)
 
     def append(self, sub_node):
@@ -245,7 +244,7 @@ class InputParameter(XMLParam):
         # TODO: look at
         if "argument" in kwargs and kwargs['argument']:
             self.flag_identifier = kwargs['argument'].lstrip()
-            self.num_dashes = len(kwargs['argument'])-len(self.flag_identifier) 
+            self.num_dashes = len(kwargs['argument']) - len(self.flag_identifier)
             self.mako_identifier = _parse_name(name, kwargs['argument'])
         else:
             self.flag_identifier = name
@@ -374,7 +373,7 @@ class Conditional(InputParameter):
         else:
             return False
 #         return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
-    
+
     def command_line(self):
         lines = []
         for c in self.children[1:]:
@@ -408,9 +407,9 @@ class Param(InputParameter):
     # This...isn't really valid as-is, and shouldn't be used.
     def __init__(self, name, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        params = dict([("name", params["name"]), 
-            ("argument", params["argument"]),
-            ("type", self.type)] + list(params.items()))
+        params = dict([("name", params["name"]),
+                      ("argument", params["argument"]),
+                      ("type", self.type)] + list(params.items()))
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
