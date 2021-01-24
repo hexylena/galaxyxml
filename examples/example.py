@@ -72,6 +72,11 @@ options.append(filter_a)
 param.append(options)
 inputs.append(param)
 
+param = gxtp.Repeat("repeat", "repeat title")
+data = gxtp.DataParam("data", argument="--data", optional=True, format="fasta", multiple=True, label="data label", help="data help")
+param.append(data)
+inputs.append(param)
+
 # Configfiles
 configfiles = gxtp.Configfiles()
 configfiles.append(gxtp.Configfile(name="testing", text="Hello <> World"))

@@ -48,7 +48,6 @@ class XMLParam(object):
         lines = []
         for child in self.children:
             lines.append(child.command_line())
-            # lines += child.command_line()
         return "\n".join(lines)
 
     def command_line(self):
@@ -278,8 +277,8 @@ class InputParameter(XMLParam):
             if len(self.flag()) > 0:
                 if kwargs["label"] is None:
                     kwargs["label"] = "Author did not provide help for this parameter... "
-                if not self.positional and "argument" not in kwargs:
-                    kwargs["argument"] = self.flag()
+#                 if not self.positional and "argument" not in kwargs:
+#                     kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
@@ -329,6 +328,12 @@ class Section(InputParameter):
         params = Util.clean_kwargs(locals().copy())
         super(Section, self).__init__(**params)
 
+    def command_line(self):
+        lines = []
+        for c in self.children:
+            lines.append(c.command_line())
+        return "\n".join(lines)
+
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
 
@@ -348,10 +353,10 @@ class Repeat(InputParameter):
         return issubclass(type(child), InputParameter)
 
     def command_line_actual(self):
-        if hasattr(self, "command_line_override"):
-            return self.command_line_override
-        else:
-            return "%s" % self.mako_name()
+        lines = []
+        for c in self.children:
+            lines.append(c.command_line())
+        return "\n".join(lines)
 
 
 class Conditional(InputParameter):
@@ -362,7 +367,23 @@ class Conditional(InputParameter):
         super(Conditional, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+        if len(self.children) == 0 and issubclass(type(child), SelectParam):
+            return True
+        elif len(self.children) > 0 and issubclass(type(child), When):
+            return True
+        else:
+            return False
+#         return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+    
+    def command_line(self):
+        lines = []
+        for c in self.children[1:]:
+            if len(c.children) == 0:
+                continue
+            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(), c.value))
+            lines.append(c.cli())
+            lines.append('#end if')
+        return "\n".join(lines)
 
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
@@ -373,6 +394,7 @@ class When(InputParameter):
     name = "when"
 
     def __init__(self, value):
+        self.value = value
         params = Util.clean_kwargs(locals().copy())
         super(When, self).__init__(None, **params)
 

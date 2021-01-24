@@ -10,12 +10,18 @@
   </stdio>
   <version_command><![CDATA[aragorn.exe --version]]></version_command>
   <command><![CDATA[aragorn.exe $flag
-float_section $float_section
-cond $cond
+-float $float
+--float-fromarg $float_fromarg
+#if str($Select) == "bye"
+-some_int $some_int
+#end if
 -i$int_min,$int_max
 
 $posint
-select_local $select_local]]></command>
+select_local $select_local
+#for $i in $repeat:
+--data $data
+#end for]]></command>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
     <inputs name="inputs"/>
@@ -26,7 +32,7 @@ select_local $select_local]]></command>
       <param name="float" type="float" value="0" label="Float label" help="Float help"/>
       <param argument="--float-fromarg" type="float" value="0" label="Float label" help="Float help"/>
     </section>
-    <conditional name="cond" label="Conditional" argument="cond">
+    <conditional name="cond" label="Conditional">
       <param name="Select" type="select" label="Author did not provide help for this parameter... ">
         <option value="bye">2</option>
         <option value="hi">1</option>
@@ -46,6 +52,9 @@ select_local $select_local]]></command>
         <filter name="sorted" type="sort_by" column="1"/>
       </options>
     </param>
+    <repeat name="repeat" title="repeat title">
+      <param name="data" argument="--data" type="data" optional="true" label="data label" help="data help" format="fasta" multiple="true"/>
+    </repeat>
   </inputs>
   <outputs>
     <data name="output" format="tabular" hidden="false"/>
