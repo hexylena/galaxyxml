@@ -87,8 +87,7 @@ class Macros(XMLParam):
     name = "macros"
 
     def acceptable_child(self, child):
-        return isinstance(child, Macro) \
-               or isinstance(child, Import)
+        return isinstance(child, (Macro, Import))
 
 
 class Macro(XMLParam):
@@ -101,8 +100,7 @@ class Macro(XMLParam):
         super(Macro, self).__init__(**passed_kwargs)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), XMLParam) \
-               and not isinstance(child, Macro)
+        return issubclass(type(child), XMLParam) and not isinstance(child, Macro)
 
 
 class Import(XMLParam):
@@ -113,8 +111,7 @@ class Import(XMLParam):
         self.node.text = value
 
     def acceptable_child(self, child):
-        return issubclass(type(child), XMLParam) \
-               and not isinstance(child, Macro)
+        return issubclass(type(child), XMLParam) and not isinstance(child, Macro)
 
 
 class Expand(XMLParam):
@@ -827,6 +824,8 @@ class OutputCollection(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
+    def command_line(self):
+        return "## TODO CLI for OutputCollection %s" % self.name
 
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"

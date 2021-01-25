@@ -9,6 +9,8 @@ script:
 - flake8 galaxyxml --ignore=E2,E3,E4,E5,W3,W505,C901,E501
 - python examples/example.py > tmp.xml
 - xmldiff tmp.xml examples/tool.xml
+- python examples/example_macros.py > tmp.xml
+- xmldiff tmp.xml examples/example_macros.xml
 - nosetests --with-coverage --cover-package=galaxyxml
 deploy:
   provider: pypi

@@ -212,7 +212,22 @@ class Tool(GalaxyXML):
 
 
 class MacrosTool(Tool):
+    """
+    creates a <macros> tag containing macros and tokens
+    for the inputs and outputs:
 
+    for the inputs 
+
+    - a macro `<xml name="ID_inmacro">` containing all the inputs
+    - a token `<token name="ID_INMACRO">` containing the CLI for the inputs
+
+    where ID is the id used in initialization.
+
+    analogously for the outputs `ID_outmacro` and `ID_OUTMACRO`
+    are created.
+
+    TODO all other elements, like requirements are currently ignored
+    """
     def __init__(self, *args, **kwargs):
         super(MacrosTool, self).__init__(*args, **kwargs)
         self.root = etree.Element('macros')
@@ -235,6 +250,7 @@ class MacrosTool(Tool):
             command_line.append(export_xml.inputs.cli())
         except Exception as e:
             logger.warning(str(e))
+            raise
 
         # Add command section
         command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
