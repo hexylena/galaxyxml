@@ -19,6 +19,19 @@ class XMLParam(object):
         kwargs = Util.clean_kwargs(kwargs, final=True)
         self.node = etree.Element(self.name, **kwargs)
 
+    def __getattr__(self, name):
+        """
+        Allow to access keys of the node "attributes" (i.e. the dict
+        self.node.attrib) as attributes.
+        """
+        # https://stackoverflow.com/questions/47299243/recursionerror-when-python-copy-deepcopy
+        if name == "__setstate__":
+            raise AttributeError(name)
+        try:
+            return self.node.attrib[name]
+        except KeyError:
+            raise AttributeError(name)
+
     def append(self, sub_node):
         if self.acceptable_child(sub_node):
             # If one of ours, they aren't etree nodes, they're custom objects
@@ -63,9 +76,7 @@ class Stdios(XMLParam):
 class Stdio(XMLParam):
     name = "exit_code"
 
-    def __init__(
-        self, range="1:", level="fatal", **kwargs,
-    ):
+    def __init__(self, range="1:", level="fatal", **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Stdio, self).__init__(**params)
 
@@ -393,7 +404,6 @@ class When(InputParameter):
     name = "when"
 
     def __init__(self, value):
-        self.value = value
         params = Util.clean_kwargs(locals().copy())
         super(When, self).__init__(None, **params)
 
