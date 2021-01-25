@@ -1,8 +1,6 @@
 import copy
 import logging
 
-from lxml import etree
-
 from galaxyxml import GalaxyXML, Util
 from galaxyxml.tool.parameters import (
     Expand,
@@ -11,7 +9,6 @@ from galaxyxml.tool.parameters import (
     Macro,
     Macros,
     Outputs,
-    Requirements,
     XMLParam
 )
 
@@ -216,7 +213,7 @@ class MacrosTool(Tool):
     creates a <macros> tag containing macros and tokens
     for the inputs and outputs:
 
-    for the inputs 
+    for the inputs
 
     - a macro `<xml name="ID_inmacro">` containing all the inputs
     - a token `<token name="ID_INMACRO">` containing the CLI for the inputs
