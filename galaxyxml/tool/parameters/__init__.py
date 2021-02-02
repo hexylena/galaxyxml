@@ -1,10 +1,12 @@
-from builtins import object
-from builtins import str
+from builtins import (
+    str,
+    object
+)
 
 from galaxyxml import Util
 
+from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
-
 
 class XMLParam(object):
     name = "node"
@@ -16,6 +18,19 @@ class XMLParam(object):
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
         self.node = etree.Element(self.name, **kwargs)
+
+    def __getattr__(self, name):
+        """
+        Allow to access keys of the node "attributes" (i.e. the dict
+        self.node.attrib) as attributes.
+        """
+        # https://stackoverflow.com/questions/47299243/recursionerror-when-python-copy-deepcopy
+        if name == "__setstate__":
+            raise AttributeError(name)
+        try:
+            return self.node.attrib[name]
+        except KeyError:
+            raise AttributeError(name)
 
     def append(self, sub_node):
         if self.acceptable_child(sub_node):
@@ -45,7 +60,6 @@ class XMLParam(object):
         lines = []
         for child in self.children:
             lines.append(child.command_line())
-            # lines += child.command_line()
         return "\n".join(lines)
 
     def command_line(self):
@@ -62,9 +76,7 @@ class Stdios(XMLParam):
 class Stdio(XMLParam):
     name = "exit_code"
 
-    def __init__(
-        self, range="1:", level="fatal", **kwargs,
-    ):
+    def __init__(self, range="1:", level="fatal", **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Stdio, self).__init__(**params)
 
@@ -241,11 +253,18 @@ class Inputs(XMLParam):
 class InputParameter(XMLParam):
     def __init__(self, name, **kwargs):
         # TODO: look at
-        self.mako_identifier = name
+        if "argument" in kwargs and kwargs['argument']:
+            self.flag_identifier = kwargs['argument'].lstrip()
+            self.num_dashes = len(kwargs['argument']) - len(self.flag_identifier)
+            self.mako_identifier = _parse_name(name, kwargs['argument'])
+        else:
+            self.flag_identifier = name
+            self.mako_identifier = name
+
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
         if name is not None:
-            kwargs["name"] = name
+            kwargs = dict([("name", name)] + list(kwargs.items()) )
 
         # Handle positional parameters
         if "positional" in kwargs and kwargs["positional"]:
@@ -268,8 +287,8 @@ class InputParameter(XMLParam):
             if len(self.flag()) > 0:
                 if kwargs["label"] is None:
                     kwargs["label"] = "Author did not provide help for this parameter... "
-                if not self.positional:
-                    kwargs["argument"] = self.flag()
+#                 if not self.positional and "argument" not in kwargs:
+#                     kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
@@ -309,7 +328,7 @@ class InputParameter(XMLParam):
 
     def flag(self):
         flag = "-" * self.num_dashes
-        return flag + self.mako_identifier
+        return flag + self.flag_identifier
 
 
 class Section(InputParameter):
@@ -318,6 +337,12 @@ class Section(InputParameter):
     def __init__(self, name, title, expanded=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Section, self).__init__(**params)
+
+    def command_line(self):
+        lines = []
+        for c in self.children:
+            lines.append(c.command_line())
+        return "\n".join(lines)
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter)
@@ -338,10 +363,10 @@ class Repeat(InputParameter):
         return issubclass(type(child), InputParameter)
 
     def command_line_actual(self):
-        if hasattr(self, "command_line_override"):
-            return self.command_line_override
-        else:
-            return "%s" % self.mako_name()
+        lines = []
+        for c in self.children:
+            lines.append(c.command_line())
+        return "\n".join(lines)
 
 
 class Conditional(InputParameter):
@@ -352,7 +377,23 @@ class Conditional(InputParameter):
         super(Conditional, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+        if len(self.children) == 0 and issubclass(type(child), SelectParam):
+            return True
+        elif len(self.children) > 0 and issubclass(type(child), When):
+            return True
+        else:
+            return False
+#         return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+
+    def command_line(self):
+        lines = []
+        for c in self.children[1:]:
+            if len(c.children) == 0:
+                continue
+            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(), c.value))
+            lines.append(c.cli())
+            lines.append('#end if')
+        return "\n".join(lines)
 
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
@@ -374,13 +415,17 @@ class Param(InputParameter):
     name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
-    def __init__(self, name, optional=None, label=None, help=None, **kwargs):
+    def __init__(self, name, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        params["type"] = self.type
+        params = dict([("name", params["name"]),
+                      ("argument", params["argument"]),
+                      ("type", self.type)] + list(params.items()))
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
             raise Exception("Param class is not an actual parameter type, use a subclass of Param")
+
+
 
     def acceptable_child(self, child):
         return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
@@ -389,7 +434,7 @@ class Param(InputParameter):
 class TextParam(Param):
     type = "text"
 
-    def __init__(self, name, optional=None, label=None, help=None, value=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, value=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
@@ -404,7 +449,7 @@ class TextParam(Param):
 
 
 class _NumericParam(Param):
-    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None, **kwargs):
+    def __init__(self, name, value, argument=None, optional=None, min=None, max=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -421,7 +466,7 @@ class BooleanParam(Param):
     type = "boolean"
 
     def __init__(
-        self, name, optional=None, label=None, help=None, checked=False, truevalue=None, falsevalue=None, **kwargs
+        self, name, argument=None, optional=None, checked=False, truevalue=None, falsevalue=None, label=None, help=None, **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
 
@@ -450,7 +495,7 @@ class BooleanParam(Param):
 class DataParam(Param):
     type = "data"
 
-    def __init__(self, name, optional=None, label=None, help=None, format=None, multiple=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, format=None, multiple=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -461,14 +506,15 @@ class SelectParam(Param):
     def __init__(
         self,
         name,
+        argument=None,
         optional=None,
-        label=None,
-        help=None,
         data_ref=None,
         display=None,
         multiple=None,
         options=None,
         default=None,
+        label=None,
+        help=None,
         **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())

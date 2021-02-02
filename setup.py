@@ -9,7 +9,7 @@ setup(
     description="Galaxy XML generation library",
     author="Helena Rasche",
     author_email="hxr@hx42.org",
-    install_requires=["lxml"],
+    install_requires=["lxml", "galaxy-tool-util"],
     long_description=readme,
     long_description_content_type="text/x-rst",
     packages=["galaxyxml", "galaxyxml.tool", "galaxyxml.tool.parameters"],

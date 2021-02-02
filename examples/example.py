@@ -29,8 +29,10 @@ inputs.append(param)
 
 # A float in a section
 section = gxtp.Section("float_section", "Float section")
-param = gxtp.FloatParam("float", label="Float label", help="Float help", value=0, num_dashes=1)
+param = gxtp.FloatParam("float", value=0, label="Float label", help="Float help", num_dashes=1)
 param.space_between_arg = " "
+section.append(param)
+param = gxtp.FloatParam(None, argument="--float-fromarg", value=0, label="Float label", help="Float help")
 section.append(param)
 inputs.append(section)
 
@@ -68,6 +70,11 @@ options.append(column_b)
 filter_a = gxtp.Filter("sort_by", name="sorted", column="1")
 options.append(filter_a)
 param.append(options)
+inputs.append(param)
+
+param = gxtp.Repeat("repeat", "repeat title")
+data = gxtp.DataParam("data", argument="--data", optional=True, format="fasta", multiple=True, label="data label", help="data help")
+param.append(data)
 inputs.append(param)
 
 # Configfiles
