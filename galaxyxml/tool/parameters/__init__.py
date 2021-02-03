@@ -68,7 +68,12 @@ class XMLParam(object):
             lines.append(child.command_line())
         return "\n".join(lines)
 
-    def command_line(self):
+    def command_line(self, mako_path = None):
+        """
+        genetate the command line for the node (and its childres)
+
+        mako_path override the path to the node
+        """
         return None
 
 
@@ -130,7 +135,7 @@ class Expand(XMLParam):
         passed_kwargs['macro'] = params['macro']
         super(Expand, self).__init__(**passed_kwargs)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         """
         need to define empty command line contribution
         since Expand can be child of Inputs/Outputs
@@ -152,7 +157,7 @@ class ExpandIO(Expand):
         passed_kwargs['macro'] = params['macro']
         super(Expand, self).__init__(**passed_kwargs)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         return "@%s@" % self.node.attrib["macro"].upper()
 
 
@@ -377,46 +382,44 @@ class InputParameter(XMLParam):
 
         super(InputParameter, self).__init__(**kwargs)
 
-    def command_line(self):
-        before = self.command_line_before()
-        cli = self.command_line_actual()
+    def command_line(self, mako_path=None):
+        before = self.command_line_before(mako_path)
+        cli = self.command_line_actual(mako_path)
         after = self.command_line_after()
 
         complete = [x for x in (before, cli, after) if x is not None]
         return "\n".join(complete)
 
-    def command_line_before(self):
-        try:
-            return self.command_line_before_override
-        except Exception:
-            return None
+    def command_line_before(self, mako_path):
+        return None
 
     def command_line_after(self):
-        try:
-            return self.command_line_after_override
-        except Exception:
-            return None
+        return None
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
         try:
             return self.command_line_override
         except Exception:
             if self.positional:
-                return self.mako_name()
+                return self.mako_name(mako_path)
             else:
-                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
+                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name(mako_path))
 
-    def mako_name(self):
-        parent_identifiers = []
-        p = self.parent
-        while p is not None and hasattr(p, "mako_identifier"):
-            # exclude None identifiers -- e.g. <when> tags
-            if p.mako_identifier is not None:
-                parent_identifiers.append(p.mako_identifier)
-            p = p.parent
-        if len(parent_identifiers) > 0:
-            parent_identifiers.append("")
-        return "$"+ ".".join(parent_identifiers) + self.mako_identifier
+    def mako_name(self, mako_path=None):
+        if mako_path:
+            path = mako_path + "."
+        else:
+            parent_identifiers = []
+            p = self.parent
+            while p is not None and hasattr(p, "mako_identifier"):
+                # exclude None identifiers -- e.g. <when> tags
+                if p.mako_identifier is not None:
+                    parent_identifiers.append(p.mako_identifier)
+                p = p.parent
+            if len(parent_identifiers) > 0:
+                parent_identifiers.append("")
+            path = ".".join(parent_identifiers)
+        return "$"+ path + self.mako_identifier
 
     def flag(self):
         flag = "-" * self.num_dashes
@@ -430,10 +433,10 @@ class Section(InputParameter):
         params = Util.clean_kwargs(locals().copy())
         super(Section, self).__init__(**params)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         cli = []
         for child in self.children:
-            cli.append(child.command_line())
+            cli.append(child.command_line(mako_path))
         return "\n".join(cli)
 
     def acceptable_child(self, child):
@@ -446,20 +449,22 @@ class Repeat(InputParameter):
 
     def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        # Allow overriding
-        self.command_line_before_override = "#for $i in $%s:" % name
-        self.command_line_after_override = "#end for"
-        # self.command_line_override
         super(Repeat, self).__init__(**params)
+
+    def command_line_before(self, mako_path):
+        return "#for $i_%s in %s" % (self.name, self.mako_name(mako_path))
+    
+    def command_line_after(self):
+        return "#end for"
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
             or isinstance(child, Expand)
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path):
         lines = []
         for c in self.children:
-            lines.append(c.command_line())
+            lines.append(c.command_line(mako_path="i_%s" % self.name))
         return "\n".join(lines)
 
 
@@ -481,12 +486,12 @@ class Conditional(InputParameter):
             return False
 #         return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         lines = []
         for c in self.children[1:]:
             if len(c.children) == 0:
                 continue
-            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(), c.value))
+            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(mako_path), c.value))
             lines.append(c.cli())
             lines.append('#end if')
         return "\n".join(lines)
@@ -522,8 +527,6 @@ class Param(InputParameter):
         if type(self) == Param:
             raise Exception("Param class is not an actual parameter type, use a subclass of Param")
 
-
-
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
             or isinstance(child, ValidatorParam) \
@@ -537,12 +540,13 @@ class TextParam(Param):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
+        # TODO same as parent class
         try:
             return self.command_line_override
         except Exception:
             if self.positional:
-                return self.mako_name()
+                return self.mako_name(mako_path)
             else:
                 return f"{self.flag()}{self.space_between_arg}'{self.mako_name()}'"
 
@@ -584,11 +588,11 @@ class BooleanParam(Param):
         if falsevalue is None:
             self.node.attrib["falsevalue"] = ""
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
         if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
-            return "%s" % self.mako_name()
+            return "%s" % self.mako_name(mako_path)
 
 
 class DataParam(Param):
@@ -754,11 +758,11 @@ class OutputData(XMLParam):
 
         super(OutputData, self).__init__(**params)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
-            return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
+            return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name(mako_path))
 
     def mako_name(self):
         return "'$" + self.mako_identifier + "'"
@@ -830,7 +834,7 @@ class OutputCollection(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
-    def command_line(self):
+    def command_line(self, mako_path):
         return "## TODO CLI for OutputCollection %s" % self.name
 
 class DiscoverDatasets(XMLParam):

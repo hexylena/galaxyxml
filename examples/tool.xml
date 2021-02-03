@@ -20,11 +20,9 @@
 
 $posint
 select_local $select_local
-#for $i in $repeat:
---data $repeat.data
-#end for
--output '$output'
-## TODO CLI for OutputCollection collection]]></command>
+#for $i_repeat in $repeat
+--data $i_repeat.data
+#end for]]></command>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
     <inputs name="inputs"/>
