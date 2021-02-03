@@ -453,7 +453,7 @@ class Repeat(InputParameter):
 
     def command_line_before(self, mako_path):
         return "#for $i_%s in %s" % (self.name, self.mako_name(mako_path))
-    
+
     def command_line_after(self):
         return "#end for"
 
