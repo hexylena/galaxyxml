@@ -153,6 +153,7 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.inputs.cli())
             except Exception as e:
                 logger.warning(str(e))
+                raise
             try:
                 command_line.append(export_xml.outputs.cli())
             except Exception:

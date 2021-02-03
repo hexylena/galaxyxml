@@ -11,21 +11,20 @@
   <expand macro="stdio"/>
   <version_command><![CDATA[aragorn.exe --version]]></version_command>
   <command><![CDATA[aragorn.exe $flag
--float $float
---float-fromarg $float_fromarg
-#if str($Select) == "bye"
--some_int $some_int
+-float $float_section.float
+--float-fromarg $float_section.float_fromarg
+#if str($cond.Select) == "bye"
+-some_int $cond.some_int
 #end if
 -i$int_min,$int_max
 
 $posint
 select_local $select_local
 #for $i in $repeat:
---data $data
+--data $repeat.data
 #end for
 -output '$output'
-## TODO CLI for OutputCollection collection
-  ]]></command>
+## TODO CLI for OutputCollection collection]]></command>
   <configfiles>
     <configfile name="testing"><![CDATA[Hello <> World]]></configfile>
     <inputs name="inputs"/>

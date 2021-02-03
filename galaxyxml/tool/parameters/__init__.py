@@ -2,11 +2,15 @@ from builtins import (
     str,
     object
 )
+import logging
 
 from galaxyxml import Util
 
 from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class XMLParam(object):
     name = "node"
@@ -160,7 +164,7 @@ class RequestParamTranslation(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, RequestParamTranslation) \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class RequestParam(XMLParam):
@@ -175,7 +179,7 @@ class RequestParam(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, AppendParam) and self.galaxy_name == "URL" \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class AppendParam(XMLParam):
@@ -205,7 +209,7 @@ class EdamOperations(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamOperation) \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
     def has_operation(self, edam_operation):
         """
@@ -232,7 +236,7 @@ class EdamTopics(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic) \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
     def has_topic(self, edam_topic):
         """
@@ -260,8 +264,8 @@ class Requirements(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Requirement) \
-               or issubclass(type(child), Container) \
-               or isinstance(child, Expand)
+            or issubclass(type(child), Container) \
+            or isinstance(child, Expand)
 
 
 class Requirement(XMLParam):
@@ -292,8 +296,8 @@ class Configfiles(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Configfile) \
-               or issubclass(type(child), ConfigfileDefaultInputs) \
-               or isinstance(child, Expand)
+            or issubclass(type(child), ConfigfileDefaultInputs) \
+            or isinstance(child, Expand)
 
 
 class Configfile(XMLParam):
@@ -327,8 +331,8 @@ class Inputs(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-                or issubclass(type(child), Expand) \
-                or issubclass(type(child), ExpandIO)
+            or issubclass(type(child), Expand) \
+            or issubclass(type(child), ExpandIO)
 
 
 class InputParameter(XMLParam):
@@ -406,7 +410,9 @@ class InputParameter(XMLParam):
         parent_identifiers = []
         p = self.parent
         while p is not None and hasattr(p, "mako_identifier"):
-            parent_identifiers.append(p.mako_identifier)
+            # exclude None identifiers -- e.g. <when> tags
+            if p.mako_identifier is not None:
+                parent_identifiers.append(p.mako_identifier)
             p = p.parent
         if len(parent_identifiers) > 0:
             parent_identifiers.append("")
@@ -432,7 +438,7 @@ class Section(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class Repeat(InputParameter):
@@ -448,7 +454,7 @@ class Repeat(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-               or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
     def command_line_actual(self):
         lines = []
@@ -499,7 +505,7 @@ class When(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-                          or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class Param(InputParameter):
@@ -520,8 +526,8 @@ class Param(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), InputParameter) \
-                          or isinstance(child, ValidatorParam) \
-                          or isinstance(child, Expand)
+            or isinstance(child, ValidatorParam) \
+            or isinstance(child, Expand)
 
 
 class TextParam(Param):
@@ -627,8 +633,8 @@ class SelectParam(Param):
 
     def acceptable_child(self, child):
         return issubclass(type(child), SelectOption) \
-                          or issubclass(type(child), Options) \
-                          or isinstance(child, Expand)
+            or issubclass(type(child), Options) \
+            or isinstance(child, Expand)
 
 
 class SelectOption(InputParameter):
@@ -655,8 +661,8 @@ class Options(InputParameter):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Column) \
-                          or issubclass(type(child), Filter) \
-                          or isinstance(child, Expand)
+            or issubclass(type(child), Filter) \
+            or isinstance(child, Expand)
 
 
 class Column(InputParameter):
@@ -713,9 +719,9 @@ class Outputs(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, OutputData) \
-                          or isinstance(child, OutputCollection) \
-                          or isinstance(child, Expand) \
-                          or isinstance(child, ExpandIO)
+            or isinstance(child, OutputCollection) \
+            or isinstance(child, Expand) \
+            or isinstance(child, ExpandIO)
 
 
 class OutputData(XMLParam):
@@ -763,9 +769,9 @@ class OutputData(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, OutputFilter) \
-                          or isinstance(child, ChangeFormat) \
-                          or isinstance(child, DiscoverDatasets) \
-                          or isinstance(child, Expand)
+            or isinstance(child, ChangeFormat) \
+            or isinstance(child, DiscoverDatasets) \
+            or isinstance(child, Expand)
 
 
 class OutputFilter(XMLParam):
@@ -790,7 +796,7 @@ class ChangeFormat(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, ChangeFormatWhen) \
-                          or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class ChangeFormatWhen(XMLParam):
@@ -840,7 +846,7 @@ class Tests(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Test) \
-                          or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
 
 class Test(XMLParam):
@@ -848,8 +854,8 @@ class Test(XMLParam):
 
     def acceptable_child(self, child):
         return isinstance(child, TestParam) \
-                          or isinstance(child, TestOutput) \
-                          or isinstance(child, Expand)
+            or isinstance(child, TestOutput) \
+            or isinstance(child, Expand)
 
 
 class TestParam(XMLParam):
@@ -886,7 +892,7 @@ class Citations(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), Citation) \
-                          or isinstance(child, Expand)
+            or isinstance(child, Expand)
 
     def has_citation(self, type, value):
         """
