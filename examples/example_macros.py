@@ -2,17 +2,20 @@
 import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 
-tool = gxt.Tool(
-    "aragorn",
-    "se.lu.mbioekol.mbio-serv2.aragorn",
-    "1.2.36",
-    "Aragorn is a tRNA finder",
-    "aragorn.exe",
+# examplify the use of MacrosTool
+# 
+
+tool = gxt.MacrosTool(
+    name="aragorn",
+    id="aragorn",
+    version="1.2.36",
+    description="Aragorn is a tRNA finder",
+    executable="aragorn.exe",
     version_command="aragorn.exe --version",
 )
 
-inputs = gxtp.Inputs()
-outputs = gxtp.Outputs()
+inputs = tool.inputs
+outputs = tool.outputs
 
 # Add requirements
 requirements = gxtp.Requirements()
@@ -29,10 +32,8 @@ inputs.append(param)
 
 # A float in a section
 section = gxtp.Section("float_section", "Float section")
-param = gxtp.FloatParam("float", value=0, label="Float label", help="Float help", num_dashes=1)
+param = gxtp.FloatParam("float", label="Float label", help="Float help", value=0, num_dashes=1)
 param.space_between_arg = " "
-section.append(param)
-param = gxtp.FloatParam(None, argument="--float-fromarg", value=0, label="Float label", help="Float help")
 section.append(param)
 inputs.append(section)
 
@@ -70,11 +71,6 @@ options.append(column_b)
 filter_a = gxtp.Filter("sort_by", name="sorted", column="1")
 options.append(filter_a)
 param.append(options)
-inputs.append(param)
-
-param = gxtp.Repeat("repeat", "repeat title")
-data = gxtp.DataParam("data", argument="--data", optional=True, format="fasta", multiple=True, label="data label", help="data help")
-param.append(data)
 inputs.append(param)
 
 # Configfiles

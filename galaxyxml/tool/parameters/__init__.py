@@ -1,10 +1,16 @@
-from builtins import object
-from builtins import str
+from builtins import (
+    str,
+    object
+)
+import logging
 
 from galaxyxml import Util
 
+from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class XMLParam(object):
     name = "node"
@@ -12,10 +18,24 @@ class XMLParam(object):
     def __init__(self, *args, **kwargs):
         # http://stackoverflow.com/a/12118700
         self.children = []
+        self.parent = None
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
         self.node = etree.Element(self.name, **kwargs)
+
+    def __getattr__(self, name):
+        """
+        Allow to access keys of the node "attributes" (i.e. the dict
+        self.node.attrib) as attributes.
+        """
+        # https://stackoverflow.com/questions/47299243/recursionerror-when-python-copy-deepcopy
+        if name == "__setstate__":
+            raise AttributeError(name)
+        try:
+            return self.node.attrib[name]
+        except KeyError:
+            raise AttributeError(name)
 
     def append(self, sub_node):
         if self.acceptable_child(sub_node):
@@ -23,6 +43,7 @@ class XMLParam(object):
             if issubclass(type(sub_node), XMLParam):
                 self.node.append(sub_node.node)
                 self.children.append(sub_node)
+                self.children[-1].parent = self
             else:
                 raise Exception(
                     "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
@@ -45,10 +66,14 @@ class XMLParam(object):
         lines = []
         for child in self.children:
             lines.append(child.command_line())
-            # lines += child.command_line()
         return "\n".join(lines)
 
-    def command_line(self):
+    def command_line(self, mako_path = None):
+        """
+        genetate the command line for the node (and its childres)
+
+        mako_path override the path to the node
+        """
         return None
 
 
@@ -62,11 +87,78 @@ class Stdios(XMLParam):
 class Stdio(XMLParam):
     name = "exit_code"
 
-    def __init__(
-        self, range="1:", level="fatal", **kwargs,
-    ):
+    def __init__(self, range="1:", level="fatal", **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Stdio, self).__init__(**params)
+
+
+class Macros(XMLParam):
+    name = "macros"
+
+    def acceptable_child(self, child):
+        return isinstance(child, (Macro, Import))
+
+
+class Macro(XMLParam):
+    name = "xml"
+
+    def __init__(self, name):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['name'] = params['name']
+        super(Macro, self).__init__(**passed_kwargs)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), XMLParam) and not isinstance(child, Macro)
+
+
+class Import(XMLParam):
+    name = "import"
+
+    def __init__(self, value):
+        super(Import, self).__init__()
+        self.node.text = value
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), XMLParam) and not isinstance(child, Macro)
+
+
+class Expand(XMLParam):
+    """
+    <expand macro="...">
+    """
+    name = "expand"
+
+    def __init__(self, macro):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['macro'] = params['macro']
+        super(Expand, self).__init__(**passed_kwargs)
+
+    def command_line(self, mako_path=None):
+        """
+        need to define empty command line contribution
+        since Expand can be child of Inputs/Outputs
+        """
+        return ""
+
+
+class ExpandIO(Expand):
+    """
+    macro expasion like for Expand
+    but an additional token with the same name but in upper case is added to
+    the command section. can only be used in Inputs and Outputs
+    """
+    name = "expand"
+
+    def __init__(self, macro):
+        params = Util.clean_kwargs(locals().copy())
+        passed_kwargs = {}
+        passed_kwargs['macro'] = params['macro']
+        super(Expand, self).__init__(**passed_kwargs)
+
+    def command_line(self, mako_path=None):
+        return "@%s@" % self.node.attrib["macro"].upper()
 
 
 class RequestParamTranslation(XMLParam):
@@ -76,7 +168,8 @@ class RequestParamTranslation(XMLParam):
         self.node = etree.Element(self.name)
 
     def acceptable_child(self, child):
-        return isinstance(child, RequestParamTranslation)
+        return isinstance(child, RequestParamTranslation) \
+            or isinstance(child, Expand)
 
 
 class RequestParam(XMLParam):
@@ -90,7 +183,8 @@ class RequestParam(XMLParam):
         super(RequestParam, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return isinstance(child, AppendParam) and self.galaxy_name == "URL"
+        return isinstance(child, AppendParam) and self.galaxy_name == "URL" \
+            or isinstance(child, Expand)
 
 
 class AppendParam(XMLParam):
@@ -119,7 +213,8 @@ class EdamOperations(XMLParam):
     name = "edam_operations"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), EdamOperation)
+        return issubclass(type(child), EdamOperation) \
+            or isinstance(child, Expand)
 
     def has_operation(self, edam_operation):
         """
@@ -145,7 +240,8 @@ class EdamTopics(XMLParam):
     name = "edam_topics"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), EdamTopic)
+        return issubclass(type(child), EdamTopic) \
+            or isinstance(child, Expand)
 
     def has_topic(self, edam_topic):
         """
@@ -172,7 +268,9 @@ class Requirements(XMLParam):
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Requirement) or issubclass(type(child), Container)
+        return issubclass(type(child), Requirement) \
+            or issubclass(type(child), Container) \
+            or isinstance(child, Expand)
 
 
 class Requirement(XMLParam):
@@ -202,7 +300,9 @@ class Configfiles(XMLParam):
     name = "configfiles"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Configfile) or issubclass(type(child), ConfigfileDefaultInputs)
+        return issubclass(type(child), Configfile) \
+            or issubclass(type(child), ConfigfileDefaultInputs) \
+            or isinstance(child, Expand)
 
 
 class Configfile(XMLParam):
@@ -235,17 +335,26 @@ class Inputs(XMLParam):
         super(Inputs, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter)
+        return issubclass(type(child), InputParameter) \
+            or issubclass(type(child), Expand) \
+            or issubclass(type(child), ExpandIO)
 
 
 class InputParameter(XMLParam):
     def __init__(self, name, **kwargs):
         # TODO: look at
-        self.mako_identifier = name
+        if "argument" in kwargs and kwargs['argument']:
+            self.flag_identifier = kwargs['argument'].lstrip()
+            self.num_dashes = len(kwargs['argument']) - len(self.flag_identifier)
+            self.mako_identifier = _parse_name(name, kwargs['argument'])
+        else:
+            self.flag_identifier = name
+            self.mako_identifier = name
+
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
         if name is not None:
-            kwargs["name"] = name
+            kwargs = dict([("name", name)] + list(kwargs.items()) )
 
         # Handle positional parameters
         if "positional" in kwargs and kwargs["positional"]:
@@ -268,48 +377,53 @@ class InputParameter(XMLParam):
             if len(self.flag()) > 0:
                 if kwargs["label"] is None:
                     kwargs["label"] = "Author did not provide help for this parameter... "
-                if not self.positional:
-                    kwargs["argument"] = self.flag()
+#                 if not self.positional and "argument" not in kwargs:
+#                     kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
-    def command_line(self):
-        before = self.command_line_before()
-        cli = self.command_line_actual()
+    def command_line(self, mako_path=None):
+        before = self.command_line_before(mako_path)
+        cli = self.command_line_actual(mako_path)
         after = self.command_line_after()
 
         complete = [x for x in (before, cli, after) if x is not None]
         return "\n".join(complete)
 
-    def command_line_before(self):
-        try:
-            return self.command_line_before_override
-        except Exception:
-            return None
+    def command_line_before(self, mako_path):
+        return None
 
     def command_line_after(self):
-        try:
-            return self.command_line_after_override
-        except Exception:
-            return None
+        return None
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
         try:
             return self.command_line_override
         except Exception:
             if self.positional:
-                return self.mako_name()
+                return self.mako_name(mako_path)
             else:
-                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
+                return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name(mako_path))
 
-    def mako_name(self):
-        # TODO: enhance logic to check up parents for things like
-        # repeat>condotion>param
-        return "$" + self.mako_identifier
+    def mako_name(self, mako_path=None):
+        if mako_path:
+            path = mako_path + "."
+        else:
+            parent_identifiers = []
+            p = self.parent
+            while p is not None and hasattr(p, "mako_identifier"):
+                # exclude None identifiers -- e.g. <when> tags
+                if p.mako_identifier is not None:
+                    parent_identifiers.append(p.mako_identifier)
+                p = p.parent
+            if len(parent_identifiers) > 0:
+                parent_identifiers.append("")
+            path = ".".join(parent_identifiers)
+        return "$"+ path + self.mako_identifier
 
     def flag(self):
         flag = "-" * self.num_dashes
-        return flag + self.mako_identifier
+        return flag + self.flag_identifier
 
 
 class Section(InputParameter):
@@ -319,8 +433,15 @@ class Section(InputParameter):
         params = Util.clean_kwargs(locals().copy())
         super(Section, self).__init__(**params)
 
+    def command_line(self, mako_path=None):
+        cli = []
+        for child in self.children:
+            cli.append(child.command_line(mako_path))
+        return "\n".join(cli)
+
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter)
+        return issubclass(type(child), InputParameter) \
+            or isinstance(child, Expand)
 
 
 class Repeat(InputParameter):
@@ -328,20 +449,23 @@ class Repeat(InputParameter):
 
     def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        # Allow overriding
-        self.command_line_before_override = "#for $i in $%s:" % name
-        self.command_line_after_override = "#end for"
-        # self.command_line_override
         super(Repeat, self).__init__(**params)
 
-    def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter)
+    def command_line_before(self, mako_path):
+        return "#for $i_%s in %s" % (self.name, self.mako_name(mako_path))
 
-    def command_line_actual(self):
-        if hasattr(self, "command_line_override"):
-            return self.command_line_override
-        else:
-            return "%s" % self.mako_name()
+    def command_line_after(self):
+        return "#end for"
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), InputParameter) \
+            or isinstance(child, Expand)
+
+    def command_line_actual(self, mako_path):
+        lines = []
+        for c in self.children:
+            lines.append(c.command_line(mako_path="i_%s" % self.name))
+        return "\n".join(lines)
 
 
 class Conditional(InputParameter):
@@ -352,7 +476,25 @@ class Conditional(InputParameter):
         super(Conditional, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+        if isinstance(child, Expand):
+            return True
+        elif len(self.children) == 0 and issubclass(type(child), SelectParam):
+            return True
+        elif len(self.children) > 0 and issubclass(type(child), When):
+            return True
+        else:
+            return False
+#         return issubclass(type(child), InputParameter) and not isinstance(child, Conditional)
+
+    def command_line(self, mako_path=None):
+        lines = []
+        for c in self.children[1:]:
+            if len(c.children) == 0:
+                continue
+            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(mako_path), c.value))
+            lines.append(c.cli())
+            lines.append('#end if')
+        return "\n".join(lines)
 
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
@@ -367,44 +509,50 @@ class When(InputParameter):
         super(When, self).__init__(None, **params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter)
+        return issubclass(type(child), InputParameter) \
+            or isinstance(child, Expand)
 
 
 class Param(InputParameter):
     name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
-    def __init__(self, name, optional=None, label=None, help=None, **kwargs):
+    def __init__(self, name, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
-        params["type"] = self.type
+        params = dict([("name", params["name"]),
+                      ("argument", params["argument"]),
+                      ("type", self.type)] + list(params.items()))
         super(Param, self).__init__(**params)
 
         if type(self) == Param:
             raise Exception("Param class is not an actual parameter type, use a subclass of Param")
 
     def acceptable_child(self, child):
-        return issubclass(type(child, InputParameter) or isinstance(child), ValidatorParam)
+        return issubclass(type(child), InputParameter) \
+            or isinstance(child, ValidatorParam) \
+            or isinstance(child, Expand)
 
 
 class TextParam(Param):
     type = "text"
 
-    def __init__(self, name, optional=None, label=None, help=None, value=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, value=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
+        # TODO same as parent class
         try:
             return self.command_line_override
         except Exception:
             if self.positional:
-                return self.mako_name()
+                return self.mako_name(mako_path)
             else:
-                return f"{self.flag}{self.space_between_arg}'{self.mako_name()}'"
+                return f"{self.flag()}{self.space_between_arg}'{self.mako_name()}'"
 
 
 class _NumericParam(Param):
-    def __init__(self, name, value, optional=None, label=None, help=None, min=None, max=None, **kwargs):
+    def __init__(self, name, value, argument=None, optional=None, min=None, max=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -421,7 +569,7 @@ class BooleanParam(Param):
     type = "boolean"
 
     def __init__(
-        self, name, optional=None, label=None, help=None, checked=False, truevalue=None, falsevalue=None, **kwargs
+        self, name, argument=None, optional=None, checked=False, truevalue=None, falsevalue=None, label=None, help=None, **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
 
@@ -440,17 +588,17 @@ class BooleanParam(Param):
         if falsevalue is None:
             self.node.attrib["falsevalue"] = ""
 
-    def command_line_actual(self):
+    def command_line_actual(self, mako_path=None):
         if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
-            return "%s" % self.mako_name()
+            return "%s" % self.mako_name(mako_path)
 
 
 class DataParam(Param):
     type = "data"
 
-    def __init__(self, name, optional=None, label=None, help=None, format=None, multiple=None, **kwargs):
+    def __init__(self, name, argument=None, optional=None, format=None, multiple=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -461,14 +609,15 @@ class SelectParam(Param):
     def __init__(
         self,
         name,
+        argument=None,
         optional=None,
-        label=None,
-        help=None,
         data_ref=None,
         display=None,
         multiple=None,
         options=None,
         default=None,
+        label=None,
+        help=None,
         **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
@@ -487,7 +636,9 @@ class SelectParam(Param):
                 self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
-        return issubclass(type(child), SelectOption) or issubclass(type(child), Options)
+        return issubclass(type(child), SelectOption) \
+            or issubclass(type(child), Options) \
+            or isinstance(child, Expand)
 
 
 class SelectOption(InputParameter):
@@ -513,7 +664,9 @@ class Options(InputParameter):
         super(Options, self).__init__(None, **params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Column) or issubclass(type(child), Filter)
+        return issubclass(type(child), Column) \
+            or issubclass(type(child), Filter) \
+            or isinstance(child, Expand)
 
 
 class Column(InputParameter):
@@ -569,7 +722,10 @@ class Outputs(XMLParam):
     name = "outputs"
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputData) or isinstance(child, OutputCollection)
+        return isinstance(child, OutputData) \
+            or isinstance(child, OutputCollection) \
+            or isinstance(child, Expand) \
+            or isinstance(child, ExpandIO)
 
 
 class OutputData(XMLParam):
@@ -602,21 +758,24 @@ class OutputData(XMLParam):
 
         super(OutputData, self).__init__(**params)
 
-    def command_line(self):
+    def command_line(self, mako_path=None):
         if hasattr(self, "command_line_override"):
             return self.command_line_override
         else:
-            return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name())
+            return "%s%s%s" % (self.flag(), self.space_between_arg, self.mako_name(mako_path))
 
     def mako_name(self):
-        return "$" + self.mako_identifier
+        return "'$" + self.mako_identifier + "'"
 
     def flag(self):
         flag = "-" * self.num_dashes
         return flag + self.mako_identifier
 
     def acceptable_child(self, child):
-        return isinstance(child, OutputFilter) or isinstance(child, ChangeFormat) or isinstance(child, DiscoverDatasets)
+        return isinstance(child, OutputFilter) \
+            or isinstance(child, ChangeFormat) \
+            or isinstance(child, DiscoverDatasets) \
+            or isinstance(child, Expand)
 
 
 class OutputFilter(XMLParam):
@@ -640,7 +799,8 @@ class ChangeFormat(XMLParam):
         super(ChangeFormat, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return isinstance(child, ChangeFormatWhen)
+        return isinstance(child, ChangeFormatWhen) \
+            or isinstance(child, Expand)
 
 
 class ChangeFormatWhen(XMLParam):
@@ -674,6 +834,8 @@ class OutputCollection(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
+    def command_line(self, mako_path):
+        return "## TODO CLI for OutputCollection %s" % self.name
 
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"
@@ -687,14 +849,17 @@ class Tests(XMLParam):
     name = "tests"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Test)
+        return issubclass(type(child), Test) \
+            or isinstance(child, Expand)
 
 
 class Test(XMLParam):
     name = "test"
 
     def acceptable_child(self, child):
-        return isinstance(child, TestParam) or isinstance(child, TestOutput)
+        return isinstance(child, TestParam) \
+            or isinstance(child, TestOutput) \
+            or isinstance(child, Expand)
 
 
 class TestParam(XMLParam):
@@ -730,7 +895,8 @@ class Citations(XMLParam):
     name = "citations"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Citation)
+        return issubclass(type(child), Citation) \
+            or isinstance(child, Expand)
 
     def has_citation(self, type, value):
         """
@@ -740,7 +906,8 @@ class Citations(XMLParam):
         :type value: STRING
         """
         for citation in self.children:
-            if citation.node.attrib["type"] == type and citation.node.text == value:
+            if citation.node.attrib['type'] == type \
+               and citation.node.text == value:
                 return True
         return False
 

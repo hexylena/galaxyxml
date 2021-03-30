@@ -2,7 +2,15 @@ import copy
 import logging
 
 from galaxyxml import GalaxyXML, Util
-from galaxyxml.tool.parameters import XMLParam
+from galaxyxml.tool.parameters import (
+    Expand,
+    Import,
+    Inputs,
+    Macro,
+    Macros,
+    Outputs,
+    XMLParam
+)
 
 from lxml import etree
 
@@ -28,8 +36,10 @@ class Tool(GalaxyXML):
         interpreter=None,
         version_command="interpreter filename.exe --version",
         command_override=None,
+        macros=[],
     ):
 
+        self.id = id
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
@@ -65,6 +75,12 @@ class Tool(GalaxyXML):
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
+        if len(macros) > 0:
+            self.macros = Macros()
+            for m in macros:
+                self.macros.append(Import(m))
+        self.inputs = Inputs()
+        self.outputs = Outputs()
 
     def add_comment(self, comment_txt):
         comment = etree.Comment(comment_txt)
@@ -88,12 +104,15 @@ class Tool(GalaxyXML):
         for x in command_line:
             if x is not [] and x is not [""]:
                 clean.append(x)
-
         return "\n".join(clean)
 
     def export(self, keep_old_command=False):
         # see lib/galaxy/tool_util/linters/xml_order.py
         export_xml = copy.deepcopy(self)
+        try:
+            export_xml.append(export_xml.macros)
+        except Exception:
+            pass
 
         try:
             export_xml.append(export_xml.edam_operations)
@@ -108,7 +127,7 @@ class Tool(GalaxyXML):
         try:
             export_xml.append(export_xml.requirements)
         except Exception:
-            pass
+            export_xml.append(Expand(macro="requirements"))
 
         # Add stdio section - now an XMLParameter
         try:
@@ -118,7 +137,10 @@ class Tool(GalaxyXML):
         if not stdio_element:
             stdio_element = etree.SubElement(export_xml.root, "stdio")
             etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
-        export_xml.append(stdio_element)
+        try:
+            export_xml.append(export_xml.stdio)
+        except Exception:
+            export_xml.append(Expand(macro="stdio"))
 
         # Append version command
         export_xml.append_version_command()
@@ -131,6 +153,7 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.inputs.cli())
             except Exception as e:
                 logger.warning(str(e))
+                raise
             try:
                 command_line.append(export_xml.outputs.cli())
             except Exception:
@@ -172,7 +195,7 @@ class Tool(GalaxyXML):
         try:
             export_xml.append(export_xml.tests)
         except Exception:
-            pass
+            export_xml.append(Expand(macro="%s_tests" % self.id))
 
         help_element = etree.SubElement(export_xml.root, "help")
         help_element.text = etree.CDATA(export_xml.help)
@@ -180,6 +203,74 @@ class Tool(GalaxyXML):
 
         try:
             export_xml.append(export_xml.citations)
+        except Exception:
+            export_xml.append(Expand(macro="citations"))
+
+        return super(Tool, export_xml).export()
+
+
+class MacrosTool(Tool):
+    """
+    creates a <macros> tag containing macros and tokens
+    for the inputs and outputs:
+
+    for the inputs
+
+    - a macro `<xml name="ID_inmacro">` containing all the inputs
+    - a token `<token name="ID_INMACRO">` containing the CLI for the inputs
+
+    where ID is the id used in initialization.
+
+    analogously for the outputs `ID_outmacro` and `ID_OUTMACRO`
+    are created.
+
+    TODO all other elements, like requirements are currently ignored
+    """
+    def __init__(self, *args, **kwargs):
+        super(MacrosTool, self).__init__(*args, **kwargs)
+        self.root = etree.Element('macros')
+        self.inputs = Macro("%s_inmacro" % self.id)
+        self.outputs = Macro("%s_outmacro" % self.id)
+
+
+    def export(self, keep_old_command=False):  # noqa
+
+        export_xml = copy.deepcopy(self)
+
+        try:
+            for child in export_xml.macros:
+                export_xml.append(child)
+        except Exception:
+            pass
+
+        command_line = []
+        try:
+            command_line.append(export_xml.inputs.cli())
+        except Exception as e:
+            logger.warning(str(e))
+            raise
+
+        # Add command section
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
+        actual_cli = "%s" % (export_xml.clean_command_string(command_line))
+        command_node.text = etree.CDATA(actual_cli.strip())
+
+        command_line = []
+        try:
+            command_line.append(export_xml.outputs.cli())
+        except Exception:
+            pass
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_OUTMACRO" % self.id.upper()})
+        actual_cli = "%s" % (export_xml.clean_command_string(command_line))
+        command_node.text = etree.CDATA(actual_cli.strip())
+
+        try:
+            export_xml.append(export_xml.inputs)
+        except Exception:
+            pass
+
+        try:
+            export_xml.append(export_xml.outputs)
         except Exception:
             pass
 

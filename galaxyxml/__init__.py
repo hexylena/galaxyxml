@@ -1,5 +1,7 @@
-from builtins import object
-from builtins import str
+from builtins import (
+    str,
+    object
+)
 
 from lxml import etree
 
@@ -15,7 +17,12 @@ class GalaxyXML(object):
 class Util(object):
     @classmethod
     def coerce(cls, data, kill_lists=False):
-        """Recursive data sanitisation
+        """
+        Recursive data sanitisation
+
+        - recurse into lists, dicts, OrderedDict
+        - remove dict/OrderedDict entries with None value
+        - kill_lists: True -> replace lists by their first element
         """
         if isinstance(data, dict):
             return {k: cls.coerce(v, kill_lists=kill_lists) for k, v in list(data.items()) if v is not None}
