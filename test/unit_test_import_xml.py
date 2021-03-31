@@ -195,5 +195,5 @@ class TestTestsParser(TestImport):
 
     def test_collection_output(self):
         output = self.tool.tests.children[0].node[2]
-        self.assertEqual(output.attrib["name"], "pdf_out.foo")
+        self.assertEqual(output.attrib["name"], "pdf_out")
 
