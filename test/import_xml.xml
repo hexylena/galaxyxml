@@ -71,6 +71,7 @@
     <test>
       <param name="sequence" value="seq.fasta"/>
       <output file="file.gbk" name="genbank"/>
+      <output_collection name="pdf_out"></output_collection>
     </test>
   </tests>
   <help><![CDATA[help]]></help>

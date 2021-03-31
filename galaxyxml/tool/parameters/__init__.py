@@ -859,6 +859,7 @@ class Test(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, TestParam) \
             or isinstance(child, TestOutput) \
+            or isinstance(child, TestOutputCollection) \
             or isinstance(child, Expand)
 
 
@@ -889,6 +890,33 @@ class TestOutput(XMLParam):
     ):
         params = Util.clean_kwargs(locals().copy())
         super(TestOutput, self).__init__(**params)
+
+
+class TestOutputCollection(XMLParam):
+    name = "output_collection"
+
+    def __init__(
+        self,
+        name=None,
+        ftype=None,
+        sort=None,
+        value=None,
+        compare=None,
+        lines_diff=None,
+        delta=None,
+        **kwargs,
+    ):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestOutputCollection, self).__init__(**params)
+
+    def command_line_before(self, mako_path):
+        return "<output_collection name = '%s'>" % self.name
+
+    def command_line_after(self):
+        return "</output_collection>"
+
+    def command_line_actual(self, mako_path):
+        return ""
 
 
 class Citations(XMLParam):
