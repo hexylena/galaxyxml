@@ -104,7 +104,7 @@ param = gxtp.TestParam("float", value=5.4)
 test_a.append(param)
 test_out = gxtp.TestOutput(name="output", value="file.out")
 test_a.append(test_out)
-coll_out = gxtp.TestOutputCollection(name="coll_out")
+coll_out = gxtp.TestOutputCollection(name="pdf_out")
 test_a.append(coll_out)
 tool.tests.append(test_a)
 

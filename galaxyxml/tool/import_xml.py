@@ -698,6 +698,30 @@ class TestsParser(object):
             )
         )
 
+    def _load_output_collection(self, test_root, output_root):
+        """
+        Add <output_collection> to the <test>.
+
+        :param root: <test> root to append <output> to.
+        :param repeat_root: root of <output_collection> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        test_root.append(
+            gxtp.TestOutputCollection(
+                name=output_root.attrib.get("name", None),
+                file=output_root.attrib.get("file", None),
+                ftype=output_root.attrib.get("ftype", None),
+                sort=output_root.attrib.get("sort", None),
+                value=output_root.attrib.get("value", None),
+                md5=output_root.attrib.get("md5", None),
+                checksum=output_root.attrib.get("checksum", None),
+                compare=output_root.attrib.get("compare", None),
+                lines_diff=output_root.attrib.get("lines_diff", None),
+                delta=output_root.attrib.get("delta", None),
+            )
+        )
+
+
     def load_tests(self, root, tests_root):
         """
         Add <tests> to the root.
