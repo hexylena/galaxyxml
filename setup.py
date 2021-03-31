@@ -5,7 +5,7 @@ with open("README.rst") as fh:
 
 setup(
     name="galaxyxml",
-    version="0.4.12",
+    version="0.4.13",
     description="Galaxy XML generation library",
     author="Helena Rasche",
     author_email="hxr@hx42.org",
