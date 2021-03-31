@@ -9,7 +9,8 @@
 
 $posint
 select_local $select_local]]></token>
-  <token name="ARAGORN_OUTMACRO"><![CDATA[]]></token>
+  <token name="ARAGORN_OUTMACRO"><![CDATA[-output '$output'
+## TODO CLI for OutputCollection collection]]></token>
   <xml name="aragorn_inmacro">
     <param name="flag" type="boolean" label="Flag label" help="Flag help" checked="false" truevalue="-flag" falsevalue=""/>
     <section name="float_section" title="Float section">
