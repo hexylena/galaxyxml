@@ -67,6 +67,7 @@ select_local $select_local
     <test>
       <param name="float" value="5.4"/>
       <output name="output" value="file.out"/>
+      <output_collection name="coll_out"/>
     </test>
   </tests>
   <help><![CDATA[HI]]></help>
