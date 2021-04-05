@@ -197,3 +197,8 @@ class TestTestsParser(TestImport):
         output = self.tool.tests.children[0].node[2]
         self.assertEqual(output.attrib["name"], "pdf_out")
 
+    def test_repeat(self):
+        output = self.tool.tests.children[0].node[3]
+        self.assertEqual(output.attrib["name"],"test_repeat")
+        # how to test the repeat's parameter is parsed?
+

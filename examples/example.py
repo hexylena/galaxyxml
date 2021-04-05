@@ -106,6 +106,10 @@ test_out = gxtp.TestOutput(name="output", value="file.out")
 test_a.append(test_out)
 coll_out = gxtp.TestOutputCollection(name="pdf_out")
 test_a.append(coll_out)
+rep_out = gxtp.TestRepeat(name="testrepeat")
+param = gxtp.TestParam("repeatchild", value="foo")
+rep_out.append(param)
+test_a.append(rep_out)
 tool.tests.append(test_a)
 
 

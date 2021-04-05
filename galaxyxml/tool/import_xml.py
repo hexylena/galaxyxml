@@ -721,6 +721,23 @@ class TestsParser(object):
             )
         )
 
+    def _load_repeat(self, test_root, output_root):
+        """
+        Add <test_repeat> to the <test>.
+
+        :param root: <test> root to append <output> to.
+        :param output_root: root of <test_repeat> tag.
+        :param output_root: :class:`xml.etree._Element`
+        """
+        test_root.append(
+            gxtp.TestRepeat(
+                output_root.attrib.get("name", None),
+                output_root.attrib.get("title",None),
+                min=output_root.attrib.get("min", None),
+                max=output_root.attrib.get("max", None),
+                default=output_root.attrib.get("default", None)
+            )
+        )
 
     def load_tests(self, root, tests_root):
         """
