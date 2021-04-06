@@ -20,6 +20,9 @@ License
 
 Changelog
 ---------
+-  0.4.13
+
+   - Add TestOutputCollection and tests (thanks @fubar2)
 
 -  0.4.12
 
