@@ -698,6 +698,60 @@ class TestsParser(object):
             )
         )
 
+    def _load_output_collection(self, test_root, output_root):
+        """
+        Add <output_collection> to the <test>.
+
+        :param root: <test> root to append <output> to.
+        :param repeat_root: root of <output_collection> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        test_root.append(
+            gxtp.TestOutputCollection(
+                name=output_root.attrib.get("name", None),
+                ftype=output_root.attrib.get("ftype", None),
+                sort=output_root.attrib.get("sort", None),
+                value=output_root.attrib.get("value", None),
+                compare=output_root.attrib.get("compare", None),
+                lines_diff=output_root.attrib.get("lines_diff", None),
+                delta=output_root.attrib.get("delta", None),
+            )
+        )
+
+    def _load_repeat(self, root, repeat_root):
+        """
+        Add <test_repeat> to the <test>.
+
+        :param root: <test> root to append <output> to.
+        :param output_root: root of <test_repeat> tag.
+        :param output_root: :class:`xml.etree._Element`
+        """
+
+        repeat = gxtp.TestRepeat(
+            repeat_root.attrib.get("name", None),
+            repeat_root.attrib.get("title",None),
+            min=repeat_root.attrib.get("min", None),
+            max=repeat_root.attrib.get("max", None),
+            default=repeat_root.attrib.get("default", None)
+        )
+        # Deal with child nodes
+        self.load_inputs(repeat, repeat_root)
+        root.append(repeat)
+
+    def load_inputs(self, repeat, repeat_root):
+        """
+        Add children to repeat for test
+
+        :param repeat_root: repeat to attach inputs to.
+        :param repeat: root of <repeat> tag.
+        :type repeat_root: :class:`xml.etree._Element`
+        """
+        for rep_child in repeat_root:
+            try:
+                getattr(self, "_load_{}".format(rep_child.tag))(repeat, rep_child)
+            except AttributeError:
+                logger.warning(rep_child.tag + " tag is not processed for <" + repeat_root.tag + "> tag.")
+
     def load_tests(self, root, tests_root):
         """
         Add <tests> to the root.
