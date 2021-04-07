@@ -22,7 +22,7 @@ Changelog
 ---------
 -  0.4.13
 
-   - Add TestOutputCollection and tests (thanks @fubar2)
+   - Add TestOutputCollection, TestRepeat and tests (thanks @fubar2)
 
 -  0.4.12
 
