@@ -721,7 +721,7 @@ class TestsParser(object):
             )
         )
 
-    def _load_repeat(self, test_root, output_root):
+    def _load_repeat(self, root, repeat_root):
         """
         Add <test_repeat> to the <test>.
 
@@ -729,15 +729,31 @@ class TestsParser(object):
         :param output_root: root of <test_repeat> tag.
         :param output_root: :class:`xml.etree._Element`
         """
-        test_root.append(
-            gxtp.TestRepeat(
-                output_root.attrib.get("name", None),
-                output_root.attrib.get("title",None),
-                min=output_root.attrib.get("min", None),
-                max=output_root.attrib.get("max", None),
-                default=output_root.attrib.get("default", None)
+
+        repeat = gxtp.TestRepeat(
+                repeat_root.attrib.get("name", None),
+                repeat_root.attrib.get("title",None),
+                min=repeat_root.attrib.get("min", None),
+                max=repeat_root.attrib.get("max", None),
+                default=repeat_root.attrib.get("default", None)
             )
-        )
+       # Deal with child nodes
+        self.load_inputs(repeat, repeat_root)
+        root.append(repeat)
+
+    def load_inputs(self, repeat, repeat_root):
+        """
+        Add children to repeat for test
+
+        :param repeat_root: repeat to attach inputs to.
+        :param repeat: root of <repeat> tag.
+        :type repeat_root: :class:`xml.etree._Element`
+        """
+        for rep_child in repeat_root:
+            try:
+                getattr(self, "_load_{}".format(rep_child.tag))(repeat, rep_child)
+            except AttributeError:
+                logger.warning(inp_child.tag + " tag is not processed for <" + repeat_root.tag + "> tag.")
 
     def load_tests(self, root, tests_root):
         """
