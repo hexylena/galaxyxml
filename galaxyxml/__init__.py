@@ -1,6 +1,6 @@
 from builtins import (
-    str,
-    object
+    object,
+    str
 )
 
 from lxml import etree

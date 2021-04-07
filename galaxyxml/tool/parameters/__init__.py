@@ -1,12 +1,13 @@
-from builtins import (
-    str,
-    object
-)
 import logging
+from builtins import (
+    object,
+    str
+)
+
+from galaxy.tool_util.parser.util import _parse_name
 
 from galaxyxml import Util
 
-from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
 
 logging.basicConfig(level=logging.INFO)
@@ -860,6 +861,7 @@ class Test(XMLParam):
         return isinstance(child, TestParam) \
             or isinstance(child, TestOutput) \
             or isinstance(child, TestOutputCollection) \
+            or isinstance(child, TestRepeat) \
             or isinstance(child, Expand)
 
 
@@ -916,7 +918,40 @@ class TestOutputCollection(XMLParam):
         return "</output_collection>"
 
     def command_line_actual(self, mako_path):
+
         return ""
+
+class TestRepeat(XMLParam):
+    name = "repeat"
+
+    def __init__(
+        self,
+        name=None,
+        ftype=None,
+        sort=None,
+        value=None,
+        compare=None,
+        lines_diff=None,
+        delta=None,
+        **kwargs,
+    ):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestRepeat, self).__init__(**params)
+
+    def acceptable_child(self, child):
+        return issubclass(type(child), TestParam)
+
+    def command_line_before(self, mako_path):
+        return "<repeat name = '%s'>" % self.name
+
+    def command_line_after(self):
+        return "</repeat>"
+
+    def command_line_actual(self, mako_path):
+        lines = []
+        for child in self.children:
+            lines.append(child.command_line())
+        return "\n".join(lines)
 
 
 class Citations(XMLParam):
