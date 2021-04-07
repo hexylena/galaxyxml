@@ -939,7 +939,9 @@ class TestRepeat(XMLParam):
         super(TestRepeat, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), TestParam)
+        return issubclass(type(child), TestParam) \
+        or  issubclass(type(child), TestOutput) \
+         or issubclass(type(child), TestOutputCollection)
 
     def command_line_before(self, mako_path):
         return "<repeat name = '%s'>" % self.name

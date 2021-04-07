@@ -203,3 +203,12 @@ class TestTestsParser(TestImport):
         # test param within repeat
         self.assertEqual(repeat[0].attrib["name"], "repeatchild")
         self.assertEqual(repeat[0].attrib["value"], "foo")
+        # test output within repeat
+        output = self.tool.tests.children[0].node[4]
+        self.assertEqual(output.attrib["name"],"output_repeat")
+        self.assertEqual(output[0].attrib["file"], "outputchild")
+        self.assertEqual(output[0].attrib["name"], "bar")
+        # test outputcollection within repeat - who knows...
+        output = self.tool.tests.children[0].node[5]
+        self.assertEqual(output.attrib["name"],"collection_repeat")
+        self.assertEqual(output[0].attrib["name"], "collectionchild")

@@ -71,11 +71,17 @@
     <test>
       <param name="sequence" value="seq.fasta"/>
       <output file="file.gbk" name="genbank"/>
-      <output_collection name="pdf_out"></output_collection>
+      <output_collection name="pdf_out"/>
       <repeat name="test_repeat">
           <param name="repeatchild" value="foo"/>
       </repeat>
-    </test>
+      <repeat name="output_repeat">
+          <output file="outputchild" name="bar"/>
+      </repeat>
+      <repeat name="collection_repeat">
+          <output_collection name="collectionchild"/>
+      </repeat>
+      </test>
   </tests>
   <help><![CDATA[help]]></help>
   <citations>
