@@ -728,13 +728,13 @@ class TestsParser(object):
         """
 
         repeat = gxtp.TestRepeat(
-                repeat_root.attrib.get("name", None),
-                repeat_root.attrib.get("title",None),
-                min=repeat_root.attrib.get("min", None),
-                max=repeat_root.attrib.get("max", None),
-                default=repeat_root.attrib.get("default", None)
-            )
-       # Deal with child nodes
+            repeat_root.attrib.get("name", None),
+            repeat_root.attrib.get("title",None),
+            min=repeat_root.attrib.get("min", None),
+            max=repeat_root.attrib.get("max", None),
+            default=repeat_root.attrib.get("default", None)
+        )
+        # Deal with child nodes
         self.load_inputs(repeat, repeat_root)
         root.append(repeat)
 
@@ -750,7 +750,7 @@ class TestsParser(object):
             try:
                 getattr(self, "_load_{}".format(rep_child.tag))(repeat, rep_child)
             except AttributeError:
-                logger.warning(inp_child.tag + " tag is not processed for <" + repeat_root.tag + "> tag.")
+                logger.warning(rep_child.tag + " tag is not processed for <" + repeat_root.tag + "> tag.")
 
     def load_tests(self, root, tests_root):
         """
