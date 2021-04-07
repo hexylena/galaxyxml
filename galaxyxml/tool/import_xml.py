@@ -709,12 +709,9 @@ class TestsParser(object):
         test_root.append(
             gxtp.TestOutputCollection(
                 name=output_root.attrib.get("name", None),
-                file=output_root.attrib.get("file", None),
                 ftype=output_root.attrib.get("ftype", None),
                 sort=output_root.attrib.get("sort", None),
                 value=output_root.attrib.get("value", None),
-                md5=output_root.attrib.get("md5", None),
-                checksum=output_root.attrib.get("checksum", None),
                 compare=output_root.attrib.get("compare", None),
                 lines_diff=output_root.attrib.get("lines_diff", None),
                 delta=output_root.attrib.get("delta", None),
