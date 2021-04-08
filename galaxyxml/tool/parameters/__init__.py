@@ -459,9 +459,8 @@ class Repeat(InputParameter):
         return "#end for"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), Param) \
-            or isinstance(child, Expand) \
-            or isinstance(child, ExpandIO)
+        return issubclass(type(child), InputParameter) \
+            or isinstance(child, Expand)
 
     def command_line_actual(self, mako_path):
         lines = []
