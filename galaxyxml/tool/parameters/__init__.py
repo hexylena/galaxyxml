@@ -336,11 +336,9 @@ class Inputs(XMLParam):
         super(Inputs, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return isinstance(child, InputParameter) \
-            or issubclass(type(child), InputParameter) \
+        return issubclass(type(child), InputParameter) \
             or issubclass(type(child), Expand) \
-            or issubclass(type(child), ExpandIO) \
-            or issubclass(type(child), Param)
+            or issubclass(type(child), ExpandIO)
 
 
 class InputParameter(XMLParam):
