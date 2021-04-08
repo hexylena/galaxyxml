@@ -336,9 +336,11 @@ class Inputs(XMLParam):
         super(Inputs, self).__init__(**params)
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) \
+        return isinstance(child, InputParameter) \
+            or issubclass(type(child), InputParameter) \
             or issubclass(type(child), Expand) \
-            or issubclass(type(child), ExpandIO)
+            or issubclass(type(child), ExpandIO) \
+            or issubclass(type(child), Param)
 
 
 class InputParameter(XMLParam):
@@ -459,8 +461,9 @@ class Repeat(InputParameter):
         return "#end for"
 
     def acceptable_child(self, child):
-        return issubclass(type(child), InputParameter) \
-            or isinstance(child, Expand)
+        return issubclass(type(child), Param) \
+            or isinstance(child, Expand) \
+            or isinstance(child, ExpandIO)
 
     def command_line_actual(self, mako_path):
         lines = []
