@@ -842,10 +842,10 @@ class OutputCollection(XMLParam):
         return "</output_collection>"
 
     def command_line_actual(self, mako_path):
-            lines = []
-            for child in self.children:
-                lines.append(child.command_line())
-            return "\n".join(lines)
+        lines = []
+        for child in self.children:
+            lines.append(child.command_line())
+        return "\n".join(lines)
 
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"
@@ -938,7 +938,7 @@ class TestOutputCollection(XMLParam):
         return "</output_collection>"
 
 
-def command_line_actual(self, mako_path):
+    def command_line_actual(self, mako_path):
         lines = []
         for child in self.children:
             lines.append(child.command_line())

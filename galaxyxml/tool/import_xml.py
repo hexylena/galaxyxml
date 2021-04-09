@@ -707,14 +707,14 @@ class TestsParser(object):
         :param repeat_root: :class:`xml.etree._Element`
         """
         collection = gxtp.TestOutputCollection(
-                name=output_root.attrib.get("name", None),
-                ftype=output_root.attrib.get("ftype", None),
-                sort=output_root.attrib.get("sort", None),
-                value=output_root.attrib.get("value", None),
-                compare=output_root.attrib.get("compare", None),
-                lines_diff=output_root.attrib.get("lines_diff", None),
-                delta=output_root.attrib.get("delta", None),
-            )
+            name=output_root.attrib.get("name", None),
+            ftype=output_root.attrib.get("ftype", None),
+            sort=output_root.attrib.get("sort", None),
+            value=output_root.attrib.get("value", None),
+            compare=output_root.attrib.get("compare", None),
+            lines_diff=output_root.attrib.get("lines_diff", None),
+            delta=output_root.attrib.get("delta", None),
+        )
         # Deal with child nodes
         self.load_inputs(collection, output_root)
         test_root.append(collection)
@@ -728,10 +728,10 @@ class TestsParser(object):
         :param repeat_root: :class:`xml.etree._Element`
         """
         test_root.append(gxtp.TestOCElement(
-                name=element_root.attrib.get("name", None),
-                ftype=element_root.attrib.get("ftype", None),
-                file=element_root.attrib.get("file", None)
-                )
+            name=element_root.attrib.get("name", None),
+            ftype=element_root.attrib.get("ftype", None),
+            file=element_root.attrib.get("file", None)
+        )
         )
 
 
