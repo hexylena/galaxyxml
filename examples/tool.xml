@@ -71,6 +71,12 @@ select_local $select_local
       <test_repeat name="testrepeat">
         <param name="repeatchild" value="foo"/>
       </test_repeat>
+      <output_collection name="pdf_out">
+        <element name="apdf" file="apdf" ftype="pdf"/>
+      </output_collection>
+      <test_repeat name="output_repeat">
+        <output name="repeatout" value="repeatfile.out"/>
+      </test_repeat>
     </test>
   </tests>
   <help><![CDATA[HI]]></help>

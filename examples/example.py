@@ -97,6 +97,23 @@ tool.outputs = outputs
 tool.help = "HI"
 tool.configfiles = configfiles
 
+      # <param name="sequence" value="seq.fasta"/>
+      # <output file="file.gbk" name="genbank"/>
+      # <output_collection name="pdf_out">
+         # <element name="apdf" file="apdf" ftype="pdf"/>
+      # </output_collection>
+      # <test_repeat name="testrepeat">
+          # <param name="repeatchild" value="foo"/>
+      # </test_repeat>
+      # <test_repeat name="output_repeat">
+          # <output file="outputchild" name="bar"/>
+      # </test_repeat>
+      # <test_repeat name="collection_repeat">
+          # <output_collection name="collectionchild">
+              # <element name="elementary" file="efile" ftype="txt"/>
+          # </output_collection>
+      # </test_repeat>
+
 # Add Tests sections
 tool.tests = gxtp.Tests()
 test_a = gxtp.Test()
@@ -108,6 +125,14 @@ coll_out = gxtp.TestOutputCollection(name="pdf_out")
 test_a.append(coll_out)
 rep_out = gxtp.TestRepeat(name="testrepeat")
 param = gxtp.TestParam("repeatchild", value="foo")
+rep_out.append(param)
+test_a.append(rep_out)
+test_coll = gxtp.TestOutputCollection(name="pdf_out")
+test_elem = gxtp.TestOCElement(name="apdf",file="apdf",ftype="pdf")
+test_coll.append(test_elem)
+test_a.append(test_coll)
+rep_out = gxtp.TestRepeat(name="output_repeat")
+param = gxtp.TestOutput(name="repeatout", value="repeatfile.out")
 rep_out.append(param)
 test_a.append(rep_out)
 tool.tests.append(test_a)
