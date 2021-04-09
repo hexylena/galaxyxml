@@ -835,8 +835,17 @@ class OutputCollection(XMLParam):
     def acceptable_child(self, child):
         return isinstance(child, OutputData) or isinstance(child, OutputFilter) or isinstance(child, DiscoverDatasets)
 
-    def command_line(self, mako_path):
-        return "## TODO CLI for OutputCollection %s" % self.name
+    def command_line_before(self, mako_path):
+        return "<output_collection name = '%s'>" % self.name
+
+    def command_line_after(self):
+        return "</output_collection>"
+
+    def command_line_actual(self, mako_path):
+            lines = []
+            for child in self.children:
+                lines.append(child.command_line())
+            return "\n".join(lines)
 
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"
@@ -894,6 +903,14 @@ class TestOutput(XMLParam):
         super(TestOutput, self).__init__(**params)
 
 
+class TestOCElement(XMLParam):
+    name = "element"
+
+    def __init__(self, name=None, file=None, ftype=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(TestOCElement, self).__init__(**params)
+
+
 class TestOutputCollection(XMLParam):
     name = "output_collection"
 
@@ -911,18 +928,25 @@ class TestOutputCollection(XMLParam):
         params = Util.clean_kwargs(locals().copy())
         super(TestOutputCollection, self).__init__(**params)
 
+    def acceptable_child(self, child):
+        return isinstance(child, TestOCElement)
+
     def command_line_before(self, mako_path):
         return "<output_collection name = '%s'>" % self.name
 
     def command_line_after(self):
         return "</output_collection>"
 
-    def command_line_actual(self, mako_path):
 
-        return ""
+def command_line_actual(self, mako_path):
+        lines = []
+        for child in self.children:
+            lines.append(child.command_line())
+        return "\n".join(lines)
+
 
 class TestRepeat(XMLParam):
-    name = "repeat"
+    name = "test_repeat"
 
     def __init__(
         self,

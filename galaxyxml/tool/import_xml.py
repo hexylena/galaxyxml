@@ -706,8 +706,7 @@ class TestsParser(object):
         :param repeat_root: root of <output_collection> tag.
         :param repeat_root: :class:`xml.etree._Element`
         """
-        test_root.append(
-            gxtp.TestOutputCollection(
+        collection = gxtp.TestOutputCollection(
                 name=output_root.attrib.get("name", None),
                 ftype=output_root.attrib.get("ftype", None),
                 sort=output_root.attrib.get("sort", None),
@@ -716,9 +715,27 @@ class TestsParser(object):
                 lines_diff=output_root.attrib.get("lines_diff", None),
                 delta=output_root.attrib.get("delta", None),
             )
+        # Deal with child nodes
+        self.load_inputs(collection, output_root)
+        test_root.append(collection)
+
+
+    def _load_element(self, test_root, element_root):
+        """
+        Add <element> to the <test>.
+        :param root: <test> root to append <output> to.
+        :param repeat_root: root of <output_collection> tag.
+        :param repeat_root: :class:`xml.etree._Element`
+        """
+        test_root.append(gxtp.TestOCElement(
+                name=element_root.attrib.get("name", None),
+                ftype=element_root.attrib.get("ftype", None),
+                file=element_root.attrib.get("file", None)
+                )
         )
 
-    def _load_repeat(self, root, repeat_root):
+
+    def _load_test_repeat(self, test_root, repeat_root):
         """
         Add <test_repeat> to the <test>.
 
@@ -736,14 +753,15 @@ class TestsParser(object):
         )
         # Deal with child nodes
         self.load_inputs(repeat, repeat_root)
-        root.append(repeat)
+        test_root.append(repeat)
+
 
     def load_inputs(self, repeat, repeat_root):
         """
-        Add children to repeat for test
+        Add children to repeat/collection for test
 
         :param repeat_root: repeat to attach inputs to.
-        :param repeat: root of <repeat> tag.
+        :param repeat: root of <repeat> or <collection> tag.
         :type repeat_root: :class:`xml.etree._Element`
         """
         for rep_child in repeat_root:

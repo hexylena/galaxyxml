@@ -199,7 +199,7 @@ class TestTestsParser(TestImport):
 
     def test_repeat(self):
         repeat = self.tool.tests.children[0].node[3]
-        self.assertEqual(repeat.attrib["name"],"test_repeat")
+        self.assertEqual(repeat.attrib["name"],"testrepeat")
         # test param within repeat
         self.assertEqual(repeat[0].attrib["name"], "repeatchild")
         self.assertEqual(repeat[0].attrib["value"], "foo")
@@ -208,7 +208,14 @@ class TestTestsParser(TestImport):
         self.assertEqual(output.attrib["name"],"output_repeat")
         self.assertEqual(output[0].attrib["file"], "outputchild")
         self.assertEqual(output[0].attrib["name"], "bar")
+
+    def test_ocr(self):
         # test outputcollection within repeat - who knows...
         output = self.tool.tests.children[0].node[5]
         self.assertEqual(output.attrib["name"],"collection_repeat")
-        self.assertEqual(output[0].attrib["name"], "collectionchild")
+        collection = output[0]
+        self.assertEqual(collection.attrib["name"], "collectionchild")
+        element = collection[0]
+        self.assertEqual(element.attrib["name"], "elementary")
+        self.assertEqual(element.attrib["file"], "efile")
+        self.assertEqual(element.attrib["ftype"], "txt")
