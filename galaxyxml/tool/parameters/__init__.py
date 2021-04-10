@@ -946,7 +946,7 @@ class TestOutputCollection(XMLParam):
 
 
 class TestRepeat(XMLParam):
-    name = "test_repeat"
+    name = "repeat"
 
     def __init__(
         self,

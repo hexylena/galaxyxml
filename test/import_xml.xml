@@ -74,17 +74,17 @@
       <output_collection name="pdf_out">
          <element name="apdf" file="apdf" ftype="pdf"/>
       </output_collection>
-      <test_repeat name="testrepeat">
+      <repeat name="testrepeat">
           <param name="repeatchild" value="foo"/>
-      </test_repeat>
-      <test_repeat name="output_repeat">
+      </repeat>
+      <repeat name="output_repeat">
           <output file="outputchild" name="bar"/>
-      </test_repeat>
-      <test_repeat name="collection_repeat">
+      </repeat>
+      <repeat name="collection_repeat">
           <output_collection name="collectionchild">
               <element name="elementary" file="efile" ftype="txt"/>
           </output_collection>
-      </test_repeat>
+      </repeat>
       </test>
   </tests>
   <help><![CDATA[help]]></help>

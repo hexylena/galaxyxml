@@ -735,12 +735,12 @@ class TestsParser(object):
         )
 
 
-    def _load_test_repeat(self, test_root, repeat_root):
+    def _load_repeat(self, test_root, repeat_root):
         """
-        Add <test_repeat> to the <test>.
+        Add <repeat> to the <test>.
 
         :param root: <test> root to append <output> to.
-        :param output_root: root of <test_repeat> tag.
+        :param output_root: root of <repeat> tag.
         :param output_root: :class:`xml.etree._Element`
         """
 
