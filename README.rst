@@ -20,6 +20,10 @@ License
 
 Changelog
 ---------
+-  0.4.14
+
+   - Fix for TestRepeats (@fubar2)
+
 -  0.4.13
 
    - Add TestOutputCollection, TestRepeat and tests (thanks @fubar2)

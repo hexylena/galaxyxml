@@ -68,9 +68,15 @@ select_local $select_local
       <param name="float" value="5.4"/>
       <output name="output" value="file.out"/>
       <output_collection name="pdf_out"/>
-      <test_repeat name="testrepeat">
+      <repeat name="testrepeat">
         <param name="repeatchild" value="foo"/>
-      </test_repeat>
+      </repeat>
+      <output_collection name="pdf_out">
+        <element name="apdf" file="apdf" ftype="pdf"/>
+      </output_collection>
+      <repeat name="output_repeat">
+        <output name="repeatout" value="repeatfile.out"/>
+      </repeat>
     </test>
   </tests>
   <help><![CDATA[HI]]></help>

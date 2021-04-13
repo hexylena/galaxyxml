@@ -138,7 +138,7 @@ class Tool(GalaxyXML):
             stdio_element = etree.SubElement(export_xml.root, "stdio")
             etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
         try:
-            export_xml.append(export_xml.stdio)
+            export_xml.append(stdio_element)
         except Exception:
             export_xml.append(Expand(macro="stdio"))
 
