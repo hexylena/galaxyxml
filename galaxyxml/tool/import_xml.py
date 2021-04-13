@@ -719,10 +719,10 @@ class TestsParser(object):
         self.load_inputs(collection, output_root)
         test_root.append(collection)
 
-
     def _load_element(self, test_root, element_root):
         """
         Add <element> to the <test>.
+
         :param root: <test> root to append <output> to.
         :param repeat_root: root of <output_collection> tag.
         :param repeat_root: :class:`xml.etree._Element`
@@ -734,7 +734,6 @@ class TestsParser(object):
         )
         )
 
-
     def _load_repeat(self, test_root, repeat_root):
         """
         Add <repeat> to the <test>.
@@ -743,10 +742,9 @@ class TestsParser(object):
         :param output_root: root of <repeat> tag.
         :param output_root: :class:`xml.etree._Element`
         """
-
         repeat = gxtp.TestRepeat(
             repeat_root.attrib.get("name", None),
-            repeat_root.attrib.get("title",None),
+            repeat_root.attrib.get("title", None),
             min=repeat_root.attrib.get("min", None),
             max=repeat_root.attrib.get("max", None),
             default=repeat_root.attrib.get("default", None)
@@ -754,7 +752,6 @@ class TestsParser(object):
         # Deal with child nodes
         self.load_inputs(repeat, repeat_root)
         test_root.append(repeat)
-
 
     def load_inputs(self, repeat, repeat_root):
         """

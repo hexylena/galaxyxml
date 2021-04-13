@@ -13,6 +13,7 @@ from lxml import etree
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class XMLParam(object):
     name = "node"
 
@@ -69,7 +70,7 @@ class XMLParam(object):
             lines.append(child.command_line())
         return "\n".join(lines)
 
-    def command_line(self, mako_path = None):
+    def command_line(self, mako_path=None):
         """
         genetate the command line for the node (and its childres)
 
@@ -355,7 +356,7 @@ class InputParameter(XMLParam):
         # We use kwargs instead of the usual locals(), so manually copy the
         # name to kwargs
         if name is not None:
-            kwargs = dict([("name", name)] + list(kwargs.items()) )
+            kwargs = dict([("name", name)] + list(kwargs.items()))
 
         # Handle positional parameters
         if "positional" in kwargs and kwargs["positional"]:
@@ -420,7 +421,7 @@ class InputParameter(XMLParam):
             if len(parent_identifiers) > 0:
                 parent_identifiers.append("")
             path = ".".join(parent_identifiers)
-        return "$"+ path + self.mako_identifier
+        return "$" + path + self.mako_identifier
 
     def flag(self):
         flag = "-" * self.num_dashes
@@ -492,7 +493,7 @@ class Conditional(InputParameter):
         for c in self.children[1:]:
             if len(c.children) == 0:
                 continue
-            lines.append('#if str(%s) == "%s"' %(self.children[0].mako_name(mako_path), c.value))
+            lines.append('#if str(%s) == "%s"' % (self.children[0].mako_name(mako_path), c.value))
             lines.append(c.cli())
             lines.append('#end if')
         return "\n".join(lines)
@@ -847,6 +848,7 @@ class OutputCollection(XMLParam):
             lines.append(child.command_line())
         return "\n".join(lines)
 
+
 class DiscoverDatasets(XMLParam):
     name = "discover_datasets"
 
@@ -937,7 +939,6 @@ class TestOutputCollection(XMLParam):
     def command_line_after(self):
         return "</output_collection>"
 
-
     def command_line_actual(self, mako_path):
         lines = []
         for child in self.children:
@@ -964,7 +965,7 @@ class TestRepeat(XMLParam):
 
     def acceptable_child(self, child):
         return issubclass(type(child), TestParam) \
-            or  issubclass(type(child), TestOutput) \
+            or issubclass(type(child), TestOutput) \
             or issubclass(type(child), TestOutputCollection)
 
     def command_line_before(self, mako_path):

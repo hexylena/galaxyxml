@@ -5,7 +5,7 @@ with open("README.rst") as fh:
 
 setup(
     name="galaxyxml",
-    version="0.4.13",
+    version="0.4.14",
     description="Galaxy XML generation library",
     author="Helena Rasche",
     author_email="hxr@hx42.org",
@@ -20,5 +20,5 @@ setup(
         "Environment :: Console",
         "License :: OSI Approved :: Apache Software License",
     ],
-    data_files = [("", ["LICENSE.TXT"])]
+    data_files=[("", ["LICENSE.TXT"])]
 )
