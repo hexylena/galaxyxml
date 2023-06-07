@@ -81,6 +81,7 @@ class Tool(GalaxyXML):
                 self.macros.append(Import(m))
         self.inputs = Inputs()
         self.outputs = Outputs()
+        self.help = "TODO"
 
     def add_comment(self, comment_txt):
         comment = etree.Comment(comment_txt)
