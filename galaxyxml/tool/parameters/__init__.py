@@ -54,6 +54,10 @@ class XMLParam(object):
             raise Exception(
                 "Child was unacceptable to parent (%s is not appropriate for %s)" % (type(self), type(sub_node))
             )
+    
+    def extend(self, sub_nodes):
+        for s in sub_nodes:
+            self.append(s)
 
     def validate(self):
         # Very few need validation, but some nodes we may want to have
