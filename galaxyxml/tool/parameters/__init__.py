@@ -705,7 +705,7 @@ class Filter(InputParameter):
         super(Filter, self).__init__(**params)
 
 
-class ValidatorParam(InputParameter):
+class ValidatorParam(XMLParam):
     name = "validator"
 
     def __init__(
@@ -718,10 +718,13 @@ class ValidatorParam(InputParameter):
         line_startswith=None,
         min=None,
         max=None,
+        text="",
         **kwargs,
     ):
         params = Util.clean_kwargs(locals().copy())
+        del params["text"]
         super(ValidatorParam, self).__init__(**params)
+        self.node.text = etree.CDATA(str(text))
 
 
 class Outputs(XMLParam):

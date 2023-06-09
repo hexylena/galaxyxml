@@ -70,6 +70,9 @@ options.append(column_b)
 filter_a = gxtp.Filter("sort_by", name="sorted", column="1")
 options.append(filter_a)
 param.append(options)
+validator = gxtp.ValidatorParam(type="regex")
+validator.node.text = ".*"
+param.append(validator)
 inputs.append(param)
 
 param = gxtp.Repeat("repeat", "repeat title")
