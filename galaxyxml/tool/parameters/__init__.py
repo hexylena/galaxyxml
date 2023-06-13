@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class XMLParam(object):
-    name = "node"
+    node_name = "node"
 
     def __init__(self, *args, **kwargs):
         # http://stackoverflow.com/a/12118700
@@ -24,7 +24,7 @@ class XMLParam(object):
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         kwargs = Util.coerce(kwargs, kill_lists=True)
         kwargs = Util.clean_kwargs(kwargs, final=True)
-        self.node = etree.Element(self.name, **kwargs)
+        self.node = etree.Element(self.node_name, **kwargs)
 
     def __getattr__(self, name):
         """
@@ -84,14 +84,14 @@ class XMLParam(object):
 
 
 class Stdios(XMLParam):
-    name = "stdio"
+    node_name = "stdio"
 
     def acceptable_child(self, child):
         return isinstance(child, Stdio)
 
 
 class Stdio(XMLParam):
-    name = "exit_code"
+    node_name = "exit_code"
 
     def __init__(self, range="1:", level="fatal", **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -99,14 +99,14 @@ class Stdio(XMLParam):
 
 
 class Macros(XMLParam):
-    name = "macros"
+    node_name = "macros"
 
     def acceptable_child(self, child):
         return isinstance(child, (Macro, Import))
 
 
 class Macro(XMLParam):
-    name = "xml"
+    node_name = "xml"
 
     def __init__(self, name):
         params = Util.clean_kwargs(locals().copy())
@@ -119,7 +119,7 @@ class Macro(XMLParam):
 
 
 class Import(XMLParam):
-    name = "import"
+    node_name = "import"
 
     def __init__(self, value):
         super(Import, self).__init__()
@@ -133,7 +133,7 @@ class Expand(XMLParam):
     """
     <expand macro="...">
     """
-    name = "expand"
+    node_name = "expand"
 
     def __init__(self, macro):
         params = Util.clean_kwargs(locals().copy())
@@ -155,7 +155,7 @@ class ExpandIO(Expand):
     but an additional token with the same name but in upper case is added to
     the command section. can only be used in Inputs and Outputs
     """
-    name = "expand"
+    node_name = "expand"
 
     def __init__(self, macro):
         params = Util.clean_kwargs(locals().copy())
@@ -168,7 +168,7 @@ class ExpandIO(Expand):
 
 
 class RequestParamTranslation(XMLParam):
-    name = "request_param_translation"
+    node_name = "request_param_translation"
 
     def __init__(self, **kwargs):
         self.node = etree.Element(self.name)
@@ -179,7 +179,7 @@ class RequestParamTranslation(XMLParam):
 
 
 class RequestParam(XMLParam):
-    name = "request_param"
+    node_name = "request_param"
 
     def __init__(self, galaxy_name, remote_name, missing, **kwargs):
         # TODO: bulk copy locals into self.attr?
@@ -194,7 +194,7 @@ class RequestParam(XMLParam):
 
 
 class AppendParam(XMLParam):
-    name = "append_param"
+    node_name = "append_param"
 
     def __init__(self, separator="&amp;", first_separator="?", join="=", **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -205,7 +205,7 @@ class AppendParam(XMLParam):
 
 
 class AppendParamValue(XMLParam):
-    name = "value"
+    node_name = "value"
 
     def __init__(self, name="_export", missing="1", **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -216,7 +216,7 @@ class AppendParamValue(XMLParam):
 
 
 class EdamOperations(XMLParam):
-    name = "edam_operations"
+    node_name = "edam_operations"
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamOperation) \
@@ -235,7 +235,7 @@ class EdamOperations(XMLParam):
 
 
 class EdamOperation(XMLParam):
-    name = "edam_operation"
+    node_name = "edam_operation"
 
     def __init__(self, value):
         super(EdamOperation, self).__init__()
@@ -243,7 +243,7 @@ class EdamOperation(XMLParam):
 
 
 class EdamTopics(XMLParam):
-    name = "edam_topics"
+    node_name = "edam_topics"
 
     def acceptable_child(self, child):
         return issubclass(type(child), EdamTopic) \
@@ -262,7 +262,7 @@ class EdamTopics(XMLParam):
 
 
 class EdamTopic(XMLParam):
-    name = "edam_topic"
+    node_name = "edam_topic"
 
     def __init__(self, value):
         super(EdamTopic, self).__init__()
@@ -270,7 +270,7 @@ class EdamTopic(XMLParam):
 
 
 class Requirements(XMLParam):
-    name = "requirements"
+    node_name = "requirements"
     # This bodes to be an issue -__-
 
     def acceptable_child(self, child):
@@ -280,7 +280,7 @@ class Requirements(XMLParam):
 
 
 class Requirement(XMLParam):
-    name = "requirement"
+    node_name = "requirement"
 
     def __init__(self, type, value, version=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -292,7 +292,7 @@ class Requirement(XMLParam):
 
 
 class Container(XMLParam):
-    name = "container"
+    node_name = "container"
 
     def __init__(self, type, value, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -303,7 +303,7 @@ class Container(XMLParam):
 
 
 class Configfiles(XMLParam):
-    name = "configfiles"
+    node_name = "configfiles"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Configfile) \
@@ -312,7 +312,7 @@ class Configfiles(XMLParam):
 
 
 class Configfile(XMLParam):
-    name = "configfile"
+    node_name = "configfile"
 
     def __init__(self, name, text, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -323,7 +323,7 @@ class Configfile(XMLParam):
 
 
 class ConfigfileDefaultInputs(XMLParam):
-    name = "inputs"
+    node_name = "inputs"
 
     def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -333,7 +333,7 @@ class ConfigfileDefaultInputs(XMLParam):
 
 
 class Inputs(XMLParam):
-    name = "inputs"
+    node_name = "inputs"
     # This bodes to be an issue -__-
 
     def __init__(self, action=None, check_value=None, method=None, target=None, nginx_upload=None, **kwargs):
@@ -433,7 +433,7 @@ class InputParameter(XMLParam):
 
 
 class Section(InputParameter):
-    name = "section"
+    node_name = "section"
 
     def __init__(self, name, title, expanded=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -451,7 +451,7 @@ class Section(InputParameter):
 
 
 class Repeat(InputParameter):
-    name = "repeat"
+    node_name = "repeat"
 
     def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -471,11 +471,12 @@ class Repeat(InputParameter):
         lines = []
         for c in self.children:
             lines.append(c.command_line(mako_path="i_%s" % self.name))
+            lines.append(c.command_line())
         return "\n".join(lines)
 
 
 class Conditional(InputParameter):
-    name = "conditional"
+    node_name = "conditional"
 
     def __init__(self, name, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -508,7 +509,7 @@ class Conditional(InputParameter):
 
 
 class When(InputParameter):
-    name = "when"
+    node_name = "when"
 
     def __init__(self, value):
         params = Util.clean_kwargs(locals().copy())
@@ -520,7 +521,7 @@ class When(InputParameter):
 
 
 class Param(InputParameter):
-    name = "param"
+    node_name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
     def __init__(self, name=None, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
@@ -649,7 +650,7 @@ class SelectParam(Param):
 
 
 class SelectOption(InputParameter):
-    name = "option"
+    node_name = "option"
 
     def __init__(self, value, text, selected=False, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -664,7 +665,7 @@ class SelectOption(InputParameter):
 
 
 class Options(InputParameter):
-    name = "options"
+    node_name = "options"
 
     def __init__(self, from_dataset=None, from_file=None, from_data_table=None, from_parameter=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -677,7 +678,7 @@ class Options(InputParameter):
 
 
 class Column(InputParameter):
-    name = "column"
+    node_name = "column"
 
     def __init__(self, name, index, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -685,7 +686,7 @@ class Column(InputParameter):
 
 
 class Filter(InputParameter):
-    name = "filter"
+    node_name = "filter"
 
     def __init__(
         self,
@@ -707,7 +708,7 @@ class Filter(InputParameter):
 
 
 class ValidatorParam(XMLParam):
-    name = "validator"
+    node_name = "validator"
 
     def __init__(
         self,
@@ -729,7 +730,7 @@ class ValidatorParam(XMLParam):
 
 
 class Outputs(XMLParam):
-    name = "outputs"
+    node_name = "outputs"
 
     def acceptable_child(self, child):
         return isinstance(child, OutputData) \
@@ -742,7 +743,7 @@ class OutputData(XMLParam):
     """Copypasta of InputParameter, needs work
     """
 
-    name = "data"
+    node_name = "data"
 
     def __init__(
         self,
@@ -789,7 +790,7 @@ class OutputData(XMLParam):
 
 
 class OutputFilter(XMLParam):
-    name = "filter"
+    node_name = "filter"
 
     def __init__(self, text, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -802,7 +803,7 @@ class OutputFilter(XMLParam):
 
 
 class ChangeFormat(XMLParam):
-    name = "change_format"
+    node_name = "change_format"
 
     def __init__(self, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -814,7 +815,7 @@ class ChangeFormat(XMLParam):
 
 
 class ChangeFormatWhen(XMLParam):
-    name = "when"
+    node_name = "when"
 
     def __init__(self, input, format, value, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -825,7 +826,7 @@ class ChangeFormatWhen(XMLParam):
 
 
 class OutputCollection(XMLParam):
-    name = "collection"
+    node_name = "collection"
 
     def __init__(
         self,
@@ -858,7 +859,7 @@ class OutputCollection(XMLParam):
 
 
 class DiscoverDatasets(XMLParam):
-    name = "discover_datasets"
+    node_name = "discover_datasets"
 
     def __init__(self, pattern, directory=None, format=None, ext=None, visible=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -866,7 +867,7 @@ class DiscoverDatasets(XMLParam):
 
 
 class Tests(XMLParam):
-    name = "tests"
+    node_name = "tests"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Test) \
@@ -874,7 +875,7 @@ class Tests(XMLParam):
 
 
 class Test(XMLParam):
-    name = "test"
+    node_name = "test"
 
     def acceptable_child(self, child):
         return isinstance(child, TestParam) \
@@ -885,7 +886,7 @@ class Test(XMLParam):
 
 
 class TestParam(XMLParam):
-    name = "param"
+    node_name = "param"
 
     def __init__(self, name, value=None, ftype=None, dbkey=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -893,7 +894,7 @@ class TestParam(XMLParam):
 
 
 class TestOutput(XMLParam):
-    name = "output"
+    node_name = "output"
 
     def __init__(
         self,
@@ -914,7 +915,7 @@ class TestOutput(XMLParam):
 
 
 class TestOCElement(XMLParam):
-    name = "element"
+    node_name = "element"
 
     def __init__(self, name=None, file=None, ftype=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
@@ -922,7 +923,7 @@ class TestOCElement(XMLParam):
 
 
 class TestOutputCollection(XMLParam):
-    name = "output_collection"
+    node_name = "output_collection"
 
     def __init__(
         self,
@@ -955,7 +956,7 @@ class TestOutputCollection(XMLParam):
 
 
 class TestRepeat(XMLParam):
-    name = "repeat"
+    node_name = "repeat"
 
     def __init__(
         self,
@@ -990,7 +991,7 @@ class TestRepeat(XMLParam):
 
 
 class Citations(XMLParam):
-    name = "citations"
+    node_name = "citations"
 
     def acceptable_child(self, child):
         return issubclass(type(child), Citation) \
@@ -1011,7 +1012,7 @@ class Citations(XMLParam):
 
 
 class Citation(XMLParam):
-    name = "citation"
+    node_name = "citation"
 
     def __init__(self, type, value):
         passed_kwargs = {}
