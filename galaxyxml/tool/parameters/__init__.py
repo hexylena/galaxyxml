@@ -523,7 +523,8 @@ class Param(InputParameter):
     name = "param"
 
     # This...isn't really valid as-is, and shouldn't be used.
-    def __init__(self, name, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
+    def __init__(self, name=None, argument=None, value=None, optional=None, label=None, help=None, **kwargs):
+        assert name is not None or argument is not None, "name or argument must be given"
         params = Util.clean_kwargs(locals().copy())
         params = dict([("name", params["name"]),
                       ("argument", params["argument"]),
@@ -542,7 +543,7 @@ class Param(InputParameter):
 class TextParam(Param):
     type = "text"
 
-    def __init__(self, name, argument=None, optional=None, value=None, label=None, help=None, **kwargs):
+    def __init__(self, name=None, argument=None, optional=None, value=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
 
@@ -558,7 +559,7 @@ class TextParam(Param):
 
 
 class _NumericParam(Param):
-    def __init__(self, name, value, argument=None, optional=None, min=None, max=None, label=None, help=None, **kwargs):
+    def __init__(self, name=None, value=None, argument=None, optional=None, min=None, max=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(_NumericParam, self).__init__(**params)
 
@@ -575,7 +576,7 @@ class BooleanParam(Param):
     type = "boolean"
 
     def __init__(
-        self, name, argument=None, optional=None, checked=False, truevalue=None, falsevalue=None, label=None, help=None, **kwargs
+        self, name=None, argument=None, optional=None, checked=False, truevalue=None, falsevalue=None, label=None, help=None, **kwargs
     ):
         params = Util.clean_kwargs(locals().copy())
 
@@ -604,7 +605,7 @@ class BooleanParam(Param):
 class DataParam(Param):
     type = "data"
 
-    def __init__(self, name, argument=None, optional=None, format=None, multiple=None, label=None, help=None, **kwargs):
+    def __init__(self, name=None, argument=None, optional=None, format=None, multiple=None, label=None, help=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(DataParam, self).__init__(**params)
 
@@ -614,7 +615,7 @@ class SelectParam(Param):
 
     def __init__(
         self,
-        name,
+        name=None,
         argument=None,
         optional=None,
         data_ref=None,
