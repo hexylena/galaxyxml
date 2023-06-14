@@ -422,6 +422,7 @@ class InputParameter(XMLParam):
                 if p.mako_identifier is not None:
                     parent_identifiers.append(p.mako_identifier)
                 p = p.parent
+            parent_identifiers.reverse()
             if len(parent_identifiers) > 0:
                 parent_identifiers.append("")
             path = ".".join(parent_identifiers)
