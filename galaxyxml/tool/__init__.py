@@ -1,6 +1,8 @@
 import copy
 import logging
 
+from lxml import etree
+
 from galaxyxml import GalaxyXML, Util
 from galaxyxml.tool.parameters import (
     Expand,
@@ -9,10 +11,8 @@ from galaxyxml.tool.parameters import (
     Macro,
     Macros,
     Outputs,
-    XMLParam
+    XMLParam,
 )
-
-from lxml import etree
 
 VALID_TOOL_TYPES = ("data_source", "data_source_async")
 VALID_URL_METHODS = ("get", "post")
@@ -38,7 +38,6 @@ class Tool(GalaxyXML):
         command_override=None,
         macros=[],
     ):
-
         self.id = id
         self.executable = executable
         self.interpreter = interpreter
@@ -63,7 +62,9 @@ class Tool(GalaxyXML):
 
         if tool_type is not None:
             if tool_type not in VALID_TOOL_TYPES:
-                raise Exception("Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES))
+                raise Exception(
+                    "Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES)
+                )
             else:
                 kwargs["tool_type"] = tool_type
 
@@ -71,7 +72,9 @@ class Tool(GalaxyXML):
                     if URL_method in VALID_URL_METHODS:
                         kwargs["URL_method"] = URL_method
                     else:
-                        raise Exception("URL_method must be one of %s" % ",".join(VALID_URL_METHODS))
+                        raise Exception(
+                            "URL_method must be one of %s" % ",".join(VALID_URL_METHODS)
+                        )
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
@@ -169,13 +172,18 @@ class Tool(GalaxyXML):
             if getattr(self, "command", None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
-                logger.warning("The tool does not have any old command stored. Only the command line is written.")
+                logger.warning(
+                    "The tool does not have any old command stored. Only the command line is written."
+                )
                 command_node.text = export_xml.executable
         else:
             if self.command_override:
                 actual_cli = export_xml.clean_command_string(command_line)
             else:
-                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line),)
+                actual_cli = "%s %s" % (
+                    export_xml.executable,
+                    export_xml.clean_command_string(command_line),
+                )
             command_node.text = etree.CDATA(actual_cli.strip())
         export_xml.append(command_node)
 
@@ -227,15 +235,14 @@ class MacrosTool(Tool):
 
     TODO all other elements, like requirements are currently ignored
     """
+
     def __init__(self, *args, **kwargs):
         super(MacrosTool, self).__init__(*args, **kwargs)
-        self.root = etree.Element('macros')
+        self.root = etree.Element("macros")
         self.inputs = Macro("%s_inmacro" % self.id)
         self.outputs = Macro("%s_outmacro" % self.id)
 
-
     def export(self, keep_old_command=False):  # noqa
-
         export_xml = copy.deepcopy(self)
 
         try:
@@ -252,7 +259,9 @@ class MacrosTool(Tool):
             raise
 
         # Add command section
-        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
+        command_node = etree.SubElement(
+            export_xml.root, "token", {"name": "%s_INMACRO" % self.id.upper()}
+        )
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 
@@ -261,7 +270,9 @@ class MacrosTool(Tool):
             command_line.append(export_xml.outputs.cli())
         except Exception:
             pass
-        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_OUTMACRO" % self.id.upper()})
+        command_node = etree.SubElement(
+            export_xml.root, "token", {"name": "%s_OUTMACRO" % self.id.upper()}
+        )
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 

@@ -1,7 +1,4 @@
-from builtins import (
-    object,
-    str
-)
+from builtins import object, str
 
 from lxml import etree
 
@@ -25,7 +22,11 @@ class Util(object):
         - kill_lists: True -> replace lists by their first element
         """
         if isinstance(data, dict):
-            return {k: cls.coerce(v, kill_lists=kill_lists) for k, v in list(data.items()) if v is not None}
+            return {
+                k: cls.coerce(v, kill_lists=kill_lists)
+                for k, v in list(data.items())
+                if v is not None
+            }
         elif isinstance(data, list):
             if kill_lists:
                 return cls.coerce(data[0])
@@ -36,8 +37,7 @@ class Util(object):
 
     @classmethod
     def coerce_value(cls, obj):
-        """Make everything a string!
-        """
+        """Make everything a string!"""
         if isinstance(obj, bool):
             if obj:
                 return "true"
