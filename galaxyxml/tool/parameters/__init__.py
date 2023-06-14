@@ -645,9 +645,12 @@ class SelectParam(Param):
                 self.append(SelectOption(k, v, selected=selected))
 
     def acceptable_child(self, child):
-        return issubclass(type(child), SelectOption) \
-            or issubclass(type(child), Options) \
-            or isinstance(child, Expand)
+        return (
+            issubclass(type(child), SelectOption) or
+            issubclass(type(child), Options) or
+            issubclass(type(child), ValidatorParam) or
+            isinstance(child, Expand)
+        )
 
 
 class SelectOption(InputParameter):
