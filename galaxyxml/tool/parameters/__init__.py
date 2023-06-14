@@ -456,6 +456,7 @@ class Repeat(InputParameter):
     def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Repeat, self).__init__(**params)
+        self.mako_identifier = f"i_{self.name}"
 
     def command_line_before(self, mako_path):
         return "#for $i_%s in %s" % (self.name, self.mako_name(mako_path))
@@ -470,7 +471,6 @@ class Repeat(InputParameter):
     def command_line_actual(self, mako_path):
         lines = []
         for c in self.children:
-            lines.append(c.command_line(mako_path="i_%s" % self.name))
             lines.append(c.command_line())
         return "\n".join(lines)
 
