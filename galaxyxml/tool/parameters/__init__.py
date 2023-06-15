@@ -431,22 +431,28 @@ class InputParameter(XMLParam):
                     self.mako_name(mako_path),
                 )
 
-    def mako_name(self, mako_path=None):
+    def mako_name(self, mako_path: Optional[str] = None) -> str:
+        """
+        
+        mako_path overwrites the path
+        """
+        path = []
         if mako_path:
-            path = mako_path + "."
+            path.append(mako_path)
         else:
-            parent_identifiers = []
             p = self.parent
             while p is not None and hasattr(p, "mako_identifier"):
                 # exclude None identifiers -- e.g. <when> tags
                 if p.mako_identifier is not None:
-                    parent_identifiers.append(p.mako_identifier)
+                    path.append(p.mako_identifier)
                 p = p.parent
-            parent_identifiers.reverse()
-            if len(parent_identifiers) > 0:
-                parent_identifiers.append("")
-            path = ".".join(parent_identifiers)
-        return "$" + path + self.mako_identifier
+            path.reverse()
+        if (
+            hasattr(self, "mako_identifier")
+            and self.mako_identifier is not None
+        ):
+            path.append(self.mako_identifier)
+        return f"${'.'.join(path)}"
 
     def flag(self):
         flag = "-" * self.num_dashes
@@ -476,10 +482,23 @@ class Repeat(InputParameter):
     def __init__(self, name, title, min=None, max=None, default=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Repeat, self).__init__(**params)
+        # for simplicity of code we overwrite the repeat name by the
+        # name of the loop variable
         self.mako_identifier = f"i_{self.name}"
 
     def command_line_before(self, mako_path):
-        return "#for $i_%s in %s" % (self.name, self.mako_name(mako_path))
+        parent = self.parent
+        while not (
+            isinstance(parent, Inputs) or
+            hasattr(parent, "mako_identifier")
+        ):
+            parent = parent.parent
+
+        if isinstance(parent, Inputs) or not hasattr(parent, "mako_identifier"):
+            repeat_name = f"${self.name}"
+        else:
+            repeat_name = f"{parent.mako_name()}.{self.name}"
+        return f"#for $i_{self.name} in {repeat_name}"
 
     def command_line_after(self):
         return "#end for"
