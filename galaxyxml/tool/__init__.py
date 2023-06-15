@@ -150,7 +150,7 @@ class Tool(GalaxyXML):
         export_xml.append_version_command()
 
         if self.command_override:
-            command_line = self.command_override
+            command_line = [self.command_override]
         else:
             command_line = []
             try:
