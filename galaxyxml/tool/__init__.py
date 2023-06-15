@@ -37,6 +37,7 @@ class Tool(GalaxyXML):
         version_command="interpreter filename.exe --version",
         command_override=None,
         macros=[],
+        profile=None,
     ):
         self.id = id
         self.executable = executable
@@ -47,6 +48,7 @@ class Tool(GalaxyXML):
             "id": id,
             "version": version,
             "hidden": hidden,
+            "profile": profile,
             "workflow_compatible": workflow_compatible,
         }
         self.version_command = version_command
