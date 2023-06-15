@@ -1,5 +1,6 @@
 import logging
 from builtins import object, str
+from typing import Optional
 
 from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
@@ -377,18 +378,9 @@ class InputParameter(XMLParam):
             kwargs = dict([("name", name)] + list(kwargs.items()))
 
         # Handle positional parameters
-        if "positional" in kwargs and kwargs["positional"]:
-            self.positional = True
-        else:
-            self.positional = False
-
-        if "num_dashes" in kwargs:
-            self.num_dashes = kwargs["num_dashes"]
-            del kwargs["num_dashes"]
-        else:
-            self.num_dashes = 0
-
-        self.space_between_arg = " "
+        self.positional = kwargs.pop("positional", False)
+        self.num_dashes = kwargs.pop("num_dashes", 0)
+        self.space_between_arg = kwargs.pop("space_between_arg", " ")
 
         # Not sure about this :(
         # https://wiki.galaxyproject.org/Tools/BestPractices#Parameter_help
@@ -399,8 +391,6 @@ class InputParameter(XMLParam):
                     kwargs[
                         "label"
                     ] = "Author did not provide help for this parameter... "
-        #                 if not self.positional and "argument" not in kwargs:
-        #                     kwargs["argument"] = self.flag()
 
         super(InputParameter, self).__init__(**kwargs)
 
@@ -493,7 +483,7 @@ class Repeat(InputParameter):
             hasattr(parent, "mako_identifier")
         ):
             parent = parent.parent
-
+        
         if isinstance(parent, Inputs) or not hasattr(parent, "mako_identifier"):
             repeat_name = f"${self.name}"
         else:
