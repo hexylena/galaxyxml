@@ -591,6 +591,24 @@ class Param(InputParameter):
         )
 
 
+class HiddenParam(Param):
+    type = "hidden"
+
+    def __init__(self, name, value):
+        params = Util.clean_kwargs(locals().copy())
+        params['label'] = ""
+        super().__init__(**params)
+
+
+class HiddenDataParam(Param):
+    type = "hidden_data"
+
+    def __init__(self, name, value):
+        params = Util.clean_kwargs(locals().copy())
+        params['label'] = ""
+        super().__init__(**params)
+
+
 class TextParam(Param):
     type = "text"
 
