@@ -728,7 +728,7 @@ class SelectParam(Param):
                 raise Exception("Specified a default that isn't in options")
 
         if options:
-            for k, v in list(sorted(options.items())):
+            for k, v in options.items():
                 selected = k == default
                 self.append(SelectOption(k, v, selected=selected))
 
