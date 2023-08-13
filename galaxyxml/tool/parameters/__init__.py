@@ -620,10 +620,20 @@ class TextParam(Param):
         value=None,
         label=None,
         help=None,
+        require_non_empty=False
         **kwargs,
     ):
+        """
+        A <param type="text"/>
+
+        require_non_empty: do not allow ampty strings (adds an empty_field validator)
+        """
         params = Util.clean_kwargs(locals().copy())
         super(TextParam, self).__init__(**params)
+        if require_non_empty:
+            self.append(
+                ValidatorParam(type="empty_field")
+            )
 
     def command_line_actual(self, mako_path=None):
         # TODO same as parent class
