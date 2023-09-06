@@ -83,10 +83,9 @@ class GalaxyXmlParser(object):
         """
         now an XMLParameter with a text
         """
-        detect_errors = "aggressive"
+        detect_errors = command_root.attrib['detect_errors']
+        ctext = command_root.text
         command = gxtp.Command(detect_errors = detect_errors)
-        ctext = getattr(command_root.node, text)
-        print('load_command text=', ctext)
         command.node.text = ctext
         tool.command_text = ctext
         tool.command = command

@@ -18,7 +18,7 @@
     <exit_code level="fatal" range="1:"/>
   </stdio>
   <version_command>v_command</version_command>
-  <command detect_errors="aggressive">
+  <command detect_errors="foo!">
       <![CDATA[command]]>
   </command>
   <inputs>

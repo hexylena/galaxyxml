@@ -32,7 +32,9 @@ class TestOverrides(TestImport):
 class TestCommand(TestImport):
     def test_command(self):
         de = self.tool.command.node.attrib["detect_errors"]
-        self.assertEqual(de, "aggressive")
+        self.assertEqual(de, "foo!")
+        ctext = self.tool.command.node.text
+        self.assertEqual(ctext.strip(), "command")
 
 
 class TestImportXml(TestImport):

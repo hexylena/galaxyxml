@@ -131,13 +131,11 @@ class Tool(GalaxyXML):
             stdio_element = export_xml.stdios
         except Exception:
             stdio_element = None
-        if not stdio_element:
-            stdio_element = etree.SubElement(export_xml.root, "stdio")
-            etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
-        try:
-            export_xml.append(stdio_element)
-        except Exception:
-            export_xml.append(Expand(macro="stdio"))
+        if stdio_element:
+            try:
+                export_xml.append(stdio_element)
+            except Exception:
+                export_xml.append(Expand(macro="stdio"))
 
         # Append version command
         export_xml.append_version_command()
