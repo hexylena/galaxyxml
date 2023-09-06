@@ -1,7 +1,4 @@
-from builtins import (
-    object,
-    str
-)
+from builtins import object, str
 
 from lxml import etree
 
@@ -36,8 +33,7 @@ class Util(object):
 
     @classmethod
     def coerce_value(cls, obj):
-        """Make everything a string!
-        """
+        """Make everything a string!"""
         if isinstance(obj, bool):
             if obj:
                 return "true"

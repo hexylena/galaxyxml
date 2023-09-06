@@ -12,7 +12,6 @@ class TestImport(unittest.TestCase):
         gxp = GalaxyXmlParser()
         self.tool = gxp.import_xml("test/import_xml.xml")
 
-
 class TestStdios(TestImport):
     def test_stdio(self):
         std = self.tool.stdios.children[0].node
@@ -27,7 +26,13 @@ class TestOverrides(TestImport):
         exml = self.tool.export()
         self.assertEqual(self.tool.command_override, col)
         exml = exml.replace("\n", " ")
+        print("-----------exml", exml)
         self.assertTrue(co in exml)
+
+class TestCommand(TestImport):
+    def test_command(self):
+        de = self.tool.command.node.attrib["detect_errors"]
+        self.assertEqual(de, "aggressive")
 
 
 class TestImportXml(TestImport):
@@ -36,6 +41,7 @@ class TestImportXml(TestImport):
         self.assertEqual(xml_root.attrib["id"], "import_test")
         self.assertEqual(xml_root.attrib["name"], "Import")
         self.assertEqual(xml_root.attrib["version"], "1.0")
+        self.assertEqual(xml_root.attrib["profile"], "22.05")
         self.assertEqual(xml_root[0].text, "description")
 
     def test_load_help(self):
