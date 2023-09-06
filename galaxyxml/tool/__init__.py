@@ -30,11 +30,9 @@ class Tool(GalaxyXML):
         command_override=None,
         macros=[],
         profile="22.05",
-        detect_errors="aggressive",
     ):
 
         self.id = id
-        self.detect_errors = detect_errors
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
