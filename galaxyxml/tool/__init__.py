@@ -174,7 +174,7 @@ class Tool(GalaxyXML):
         try:
             command_element = export_xml.command
         except Exception:
-            command_element = etree.SubElement(export_xml.root, "command", detect_errors="aggressive")
+            command_element = etree.SubElement(export_xml.root, "command", detect_errors=None)
         command_element.node.text = etree.CDATA(ctext)
         export_xml.append(command_element)
 

@@ -81,7 +81,7 @@ class XMLParam(object):
 class Command(XMLParam):
     name = "command"
 
-    def __init__(self, detect_errors="aggressive", **kwargs):
+    def __init__(self, detect_errors=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
         super(Command, self).__init__(**params)
 

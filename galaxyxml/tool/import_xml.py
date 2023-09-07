@@ -83,14 +83,17 @@ class GalaxyXmlParser(object):
         """
         now an XMLParameter with a text
         """
-        detect_errors = command_root.attrib['detect_errors']
+        try:
+            detect_errors = command_root.attrib['detect_errors']
+        except KeyError:
+            detect_errors = None
         ctext = command_root.text
         command = gxtp.Command(detect_errors = detect_errors)
         command.node.text = ctext
         tool.command_text = ctext
         tool.command = command
         tool.executable = ctext.split()[0]
-        logger.info("<command> is loaded.")
+
 
     def _load_help(self, tool, help_root):
         """
