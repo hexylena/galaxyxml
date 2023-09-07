@@ -36,6 +36,13 @@ class TestCommand(TestImport):
         ctext = self.tool.command.node.text
         self.assertEqual(ctext.strip(), "command")
 
+class TestChangeProfDet(TestImport):
+    def test_changes(self):
+        self.tool.command.node.attrib["detect_errors"] = "foobarfoo"
+        de = self.tool.command.node.attrib["detect_errors"]
+        self.assertEqual(de, "foobarfoo")
+        self.tool.profile  = "anything you want"
+        self.assertEqual(self.tool.profile,  "anything you want")
 
 class TestImportXml(TestImport):
     def test_init_tool(self):
