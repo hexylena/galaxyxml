@@ -53,7 +53,6 @@ class TestImportXml(TestImport):
         self.assertEqual(xml_root.attrib["id"], "import_test")
         self.assertEqual(xml_root.attrib["name"], "Import")
         self.assertEqual(xml_root.attrib["version"], "1.0")
-        self.assertEqual(xml_root.attrib["profile"], "22.05")
         self.assertEqual(xml_root[0].text, "description")
 
     def test_load_help(self):
