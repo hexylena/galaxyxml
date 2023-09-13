@@ -1,6 +1,9 @@
 import logging
 from builtins import object, str
-from typing import Optional
+from typing import (
+    Dict,
+    Optional,
+)
 
 from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
@@ -423,7 +426,7 @@ class InputParameter(XMLParam):
 
     def mako_name(self, mako_path: Optional[str] = None) -> str:
         """
-        
+
         mako_path overwrites the path
         """
         path = []
@@ -437,10 +440,7 @@ class InputParameter(XMLParam):
                     path.append(p.mako_identifier)
                 p = p.parent
             path.reverse()
-        if (
-            hasattr(self, "mako_identifier")
-            and self.mako_identifier is not None
-        ):
+        if hasattr(self, "mako_identifier") and self.mako_identifier is not None:
             path.append(self.mako_identifier)
         return f"${'.'.join(path)}"
 
@@ -478,12 +478,9 @@ class Repeat(InputParameter):
 
     def command_line_before(self, mako_path):
         parent = self.parent
-        while not (
-            isinstance(parent, Inputs) or
-            hasattr(parent, "mako_identifier")
-        ):
+        while not (isinstance(parent, Inputs) or hasattr(parent, "mako_identifier")):
             parent = parent.parent
-        
+
         if isinstance(parent, Inputs) or not hasattr(parent, "mako_identifier"):
             repeat_name = f"${self.name}"
         else:
@@ -506,7 +503,11 @@ class Repeat(InputParameter):
 class Conditional(InputParameter):
     node_name = "conditional"
 
-    def __init__(self, name, **kwargs):
+    def __init__(
+        self,
+        name,
+        **kwargs,
+    ):
         params = Util.clean_kwargs(locals().copy())
         super(Conditional, self).__init__(**params)
 
@@ -537,6 +538,9 @@ class Conditional(InputParameter):
     def validate(self):
         # Find a way to check if one of the kids is a WHEN
         pass
+
+    def get_when(option: str):
+        return self._whens.get(option)
 
 
 class When(InputParameter):
@@ -596,7 +600,7 @@ class HiddenParam(Param):
 
     def __init__(self, name, value):
         params = Util.clean_kwargs(locals().copy())
-        params['label'] = ""
+        params["label"] = ""
         super().__init__(**params)
 
 
@@ -605,7 +609,7 @@ class HiddenDataParam(Param):
 
     def __init__(self, name, value):
         params = Util.clean_kwargs(locals().copy())
-        params['label'] = ""
+        params["label"] = ""
         super().__init__(**params)
 
 
@@ -620,7 +624,7 @@ class TextParam(Param):
         value=None,
         label=None,
         help=None,
-        require_non_empty=False
+        require_non_empty=False,
         **kwargs,
     ):
         """
@@ -629,11 +633,10 @@ class TextParam(Param):
         require_non_empty: do not allow ampty strings (adds an empty_field validator)
         """
         params = Util.clean_kwargs(locals().copy())
+        del params["require_non_empty"]
         super(TextParam, self).__init__(**params)
         if require_non_empty:
-            self.append(
-                ValidatorParam(type="empty_field")
-            )
+            self.append(ValidatorParam(type="empty_field"))
 
     def command_line_actual(self, mako_path=None):
         # TODO same as parent class
