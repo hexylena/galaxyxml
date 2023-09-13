@@ -19,6 +19,7 @@ class TestStdios(TestImport):
         self.assertEqual(std.attrib["level"], "fatal")
         self.assertEqual(std.attrib["range"], "1:")
 
+
 class TestOverrides(TestImport):
     def test_override(self):
         co = "bash foo.sh > output1"
@@ -199,20 +200,20 @@ class TestTestsParser(TestImport):
 
     def test_repeat(self):
         repeat = self.tool.tests.children[0].node[3]
-        self.assertEqual(repeat.attrib["name"],"testrepeat")
+        self.assertEqual(repeat.attrib["name"], "testrepeat")
         # test param within repeat
         self.assertEqual(repeat[0].attrib["name"], "repeatchild")
         self.assertEqual(repeat[0].attrib["value"], "foo")
         # test output within repeat
         output = self.tool.tests.children[0].node[4]
-        self.assertEqual(output.attrib["name"],"output_repeat")
+        self.assertEqual(output.attrib["name"], "output_repeat")
         self.assertEqual(output[0].attrib["file"], "outputchild")
         self.assertEqual(output[0].attrib["name"], "bar")
 
     def test_ocr(self):
         # test outputcollection within repeat - who knows...
         output = self.tool.tests.children[0].node[5]
-        self.assertEqual(output.attrib["name"],"collection_repeat")
+        self.assertEqual(output.attrib["name"], "collection_repeat")
         collection = output[0]
         self.assertEqual(collection.attrib["name"], "collectionchild")
         element = collection[0]

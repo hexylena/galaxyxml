@@ -3,7 +3,7 @@ import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 
 # examplify the use of MacrosTool
-# 
+#
 
 tool = gxt.MacrosTool(
     name="aragorn",
@@ -57,6 +57,7 @@ param_min.command_line_override = "-i$int_min,$int_max"
 param_max.command_line_override = ""
 param_min.space_between_arg = " "
 param_max.space_between_arg = " "
+
 inputs.append(param_min)
 inputs.append(param_max)
 inputs.append(posint)
@@ -84,7 +85,7 @@ param.space_between_arg = " "
 outputs.append(param)
 # Collection
 collection = gxtp.OutputCollection("supercollection", label="a small label")
-discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+)\.pdf.fasta", format="fasta")
+discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+).pdf.fasta", format="fasta")
 collection.append(discover)
 outputs.append(collection)
 
