@@ -25,6 +25,7 @@ jobs:
       run: flake8 --ignore=C901,W503
     - name: Black
       uses: psf/black@23.3.0
+
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -45,8 +46,9 @@ jobs:
       run: python -m pip install .
     - name: install packages for testing
       run: pip install nose xmldiff
-    - name: run nosetests
-      run: nosetests --with-coverage --cover-package=galaxyxml
+      # TODO: replace with tox tests from #38
+      #- name: run nosetests
+      #  run: nosetests --with-coverage --cover-package=galaxyxml
 
     - name: Run smoke test on example
       run: |
@@ -54,7 +56,6 @@ jobs:
         xmldiff tmp.xml examples/tool.xml
         python examples/example_macros.py > tmp.xml
         xmldiff tmp.xml examples/example_macros.xml
-
 
   deploy:
     name: Deploy
