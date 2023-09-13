@@ -29,7 +29,7 @@ class Tool(GalaxyXML):
         version_command="interpreter filename.exe --version",
         command_override=None,
         macros=[],
-        profile="22.05",
+        profile=None,
     ):
 
         self.id = id
@@ -154,7 +154,7 @@ class Tool(GalaxyXML):
             except Exception:
                 pass
         if keep_old_command:
-            if getattr(self, "command_line", None):
+            if getattr(self, "command_text", None):
                 ctext = export_xml.command_text
             else:
                 logger.warning("The tool does not have any old command stored. Only the command line is written.")
