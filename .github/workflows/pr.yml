@@ -53,6 +53,6 @@ jobs:
     - name: Run smoke test on example
       run: |
         python examples/example.py > tmp.xml
-        xmldiff tmp.xml examples/tool.xml
+        xmldiff --check tmp.xml examples/tool.xml
         python examples/example_macros.py > tmp.xml
-        xmldiff tmp.xml examples/example_macros.xml
+        xmldiff --check tmp.xml examples/example_macros.xml
