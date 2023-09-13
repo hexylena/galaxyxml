@@ -52,6 +52,7 @@ select_local $select_local
         <column name="value" index="1"/>
         <filter name="sorted" type="sort_by" column="1"/>
       </options>
+      <validator type="regex">.*</validator>
     </param>
     <repeat name="repeat" title="repeat title">
       <param name="data" argument="--data" type="data" optional="true" label="data label" help="data help" format="fasta" multiple="true"/>
