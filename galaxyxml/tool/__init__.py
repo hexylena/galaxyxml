@@ -169,7 +169,6 @@ class Tool(GalaxyXML):
                 )
             ctext = actual_cli.strip()
         export_xml.command_text = ctext
-        ctext = '\n' + ctext # pretty - bjoern's suggestion
         command_kwargs = {}
         try:
             command_element = export_xml.command
