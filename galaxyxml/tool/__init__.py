@@ -153,12 +153,14 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.outputs.cli())
             except Exception:
                 pass
+        # Add command section
+        command_node_text = None
         if keep_old_command:
             if getattr(self, "command", None):
                 command_node.text = etree.CDATA(export_xml.command)
             else:
                 logger.warning("The tool does not have any old command stored. Only the command line is written.")
-                command_node.text = export_xml.executable
+                command_node_text = export_xml.executable
         else:
             if self.command_override:
                 actual_cli = export_xml.clean_command_string(command_line)
@@ -167,14 +169,14 @@ class Tool(GalaxyXML):
                     export_xml.executable,
                     export_xml.clean_command_string(command_line),
                 )
-            command_node.text = actual_cli.strip()
-        export_xml.command_line = ctext
+            command_node_text = actual_cli.strip()
+        export_xml.command_line = command_node_text
         command_kwargs = {}
         try:
             command_element = export_xml.command
         except Exception:
             command_element = etree.SubElement(export_xml.root, "command", detect_errors=None)
-        command_element.node.text = etree.CDATA(ctext)
+        command_element.node.text = etree.CDATA(command_node_text)
         export_xml.append(command_element)
 
         try:
