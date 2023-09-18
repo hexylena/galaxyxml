@@ -1,6 +1,8 @@
 import logging
-from builtins import object, str
-
+from builtins import  (
+        object,
+        str
+)
 from galaxy.tool_util.parser.util import _parse_name
 
 from galaxyxml import Util
@@ -34,10 +36,7 @@ class XMLParam(object):
         try:
             return self.node.attrib[name]
         except KeyError:
-            try:
-                return object.__getattribute__(self,name)
-            except KeyError:
-                raise AttributeError(name)
+            raise AttributeError(name)
 
     def append(self, sub_node):
         if self.acceptable_child(sub_node):
@@ -114,7 +113,7 @@ class Macro(XMLParam):
     def __init__(self, name):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs["name"] = params["name"]
+        passed_kwargs['name'] = params['name']
         super(Macro, self).__init__(**passed_kwargs)
 
     def acceptable_child(self, child):
@@ -142,7 +141,7 @@ class Expand(XMLParam):
     def __init__(self, macro):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs["macro"] = params["macro"]
+        passed_kwargs['macro'] = params['macro']
         super(Expand, self).__init__(**passed_kwargs)
 
     def command_line(self, mako_path=None):
@@ -165,7 +164,7 @@ class ExpandIO(Expand):
     def __init__(self, macro):
         params = Util.clean_kwargs(locals().copy())
         passed_kwargs = {}
-        passed_kwargs["macro"] = params["macro"]
+        passed_kwargs['macro'] = params['macro']
         super(Expand, self).__init__(**passed_kwargs)
 
     def command_line(self, mako_path=None):

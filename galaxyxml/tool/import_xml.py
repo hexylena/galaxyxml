@@ -81,7 +81,10 @@ class GalaxyXmlParser(object):
 
     def _load_command(self, tool, command_root):
         """
-        now an XMLParameter with a text
+        :param tool: Tool object from galaxyxml.
+        :type tool: :class:`galaxyxml.tool.Tool`
+        :param desc_root: root of <command> tag.
+        :type desc_root: :class:`xml.etree._Element`
         """
         try:
             detect_errors = command_root.attrib['detect_errors']
@@ -90,7 +93,7 @@ class GalaxyXmlParser(object):
         ctext = command_root.text
         command = gxtp.Command(detect_errors = detect_errors)
         command.node.text = ctext
-        tool.command_text = ctext
+        tool.command_line = ctext
         tool.command = command
         tool.executable = ctext.split()[0]
 
