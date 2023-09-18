@@ -141,34 +141,34 @@ class Tool(GalaxyXML):
         export_xml.append_version_command()
 
         if self.command_override:
-            command_text = self.command_override
+            command_line = self.command_override
         else:
-            command_text = []
+            command_line = []
             try:
-                command_text.append(export_xml.inputs.cli())
+                command_line.append(export_xml.inputs.cli())
             except Exception as e:
                 logger.warning(str(e))
                 raise
             try:
-                command_text.append(export_xml.outputs.cli())
+                command_line.append(export_xml.outputs.cli())
             except Exception:
                 pass
         if keep_old_command:
-            if getattr(self, "command_text", None):
-                ctext = export_xml.command_text
+            if getattr(self, "command", None):
+                command_node.text = etree.CDATA(export_xml.command)
             else:
                 logger.warning("The tool does not have any old command stored. Only the command line is written.")
-                ctext = export_xml.executable
+                command_node.text = export_xml.executable
         else:
             if self.command_override:
-                actual_cli = export_xml.clean_command_string(command_text)
+                actual_cli = export_xml.clean_command_string(command_line)
             else:
                 actual_cli = "%s %s" % (
                     export_xml.executable,
-                    export_xml.clean_command_string(command_text),
+                    export_xml.clean_command_string(command_line),
                 )
-            ctext = actual_cli.strip()
-        export_xml.command_text = ctext
+            command_node.text = actual_cli.strip()
+        export_xml.command_line = ctext
         command_kwargs = {}
         try:
             command_element = export_xml.command
@@ -228,7 +228,7 @@ class MacrosTool(Tool):
 
     def __init__(self, *args, **kwargs):
         super(MacrosTool, self).__init__(*args, **kwargs)
-        self.root = etree.Element("macros")
+        self.root = etree.Element('macros')
         self.inputs = Macro("%s_inmacro" % self.id)
         self.outputs = Macro("%s_outmacro" % self.id)
 
@@ -250,7 +250,7 @@ class MacrosTool(Tool):
             raise
 
         # Add command section
-        command_node = etree.SubElement(export_xml.root, "token", {"name": "%s_INMACRO" % self.id.upper()})
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 
@@ -259,7 +259,7 @@ class MacrosTool(Tool):
             command_line.append(export_xml.outputs.cli())
         except Exception:
             pass
-        command_node = etree.SubElement(export_xml.root, "token", {"name": "%s_OUTMACRO" % self.id.upper()})
+        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_OUTMACRO" % self.id.upper()})
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 
