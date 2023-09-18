@@ -25,10 +25,11 @@ class GalaxyXmlParser(object):
         for child in xml_root:
             if child.tag == "description":
                 description = child.text
-            elif child.tag == "version_command":
-                version_cmd = child.text
             elif child.tag == "command":
                 executable = child.text.split()[0]
+            elif child.tag == "version_command":
+                version_cmd = child.text
+
         tool = gxt.Tool(
             xml_root.attrib["name"],
             xml_root.attrib["id"],
