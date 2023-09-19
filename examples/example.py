@@ -88,7 +88,7 @@ param.space_between_arg = " "
 outputs.append(param)
 # Collection
 collection = gxtp.OutputCollection("supercollection", label="a small label")
-discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+)\.pdf.fasta", format="fasta")
+discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+).pdf.fasta", format="fasta")
 collection.append(discover)
 outputs.append(collection)
 
@@ -111,7 +111,7 @@ param = gxtp.TestParam("repeatchild", value="foo")
 rep_out.append(param)
 test_a.append(rep_out)
 test_coll = gxtp.TestOutputCollection(name="pdf_out")
-test_elem = gxtp.TestOCElement(name="apdf",file="apdf",ftype="pdf")
+test_elem = gxtp.TestOCElement(name="apdf", file="apdf", ftype="pdf")
 test_coll.append(test_elem)
 test_a.append(test_coll)
 rep_out = gxtp.TestRepeat(name="output_repeat")
