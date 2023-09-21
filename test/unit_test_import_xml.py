@@ -33,7 +33,7 @@ class TestCommand(TestImport):
         try:
             de = self.tool.command.node.attrib["detect_errors"]
         except KeyError:
-                de = None
+            de = None
         self.assertEqual(de, None)
         ctext = self.tool.command.node.text
         self.assertEqual(ctext.strip(), "command")
