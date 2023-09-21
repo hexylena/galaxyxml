@@ -1,8 +1,5 @@
 import logging
-from builtins import  (
-        object,
-        str
-)
+from builtins import  (object, str)
 from galaxy.tool_util.parser.util import _parse_name
 
 from galaxyxml import Util
@@ -76,6 +73,7 @@ class XMLParam(object):
         mako_path override the path to the node
         """
         return None
+
 
 class Command(XMLParam):
     name = "command"

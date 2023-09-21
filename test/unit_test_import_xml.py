@@ -12,6 +12,7 @@ class TestImport(unittest.TestCase):
         gxp = GalaxyXmlParser()
         self.tool = gxp.import_xml("test/import_xml.xml")
 
+
 class TestStdios(TestImport):
     def test_stdio(self):
         std = self.tool.stdios.children[0].node
@@ -28,6 +29,7 @@ class TestOverrides(TestImport):
         exml = exml.replace("\n", " ")
         self.assertTrue(co in exml)
 
+
 class TestCommand(TestImport):
     def test_command(self):
         try:
@@ -37,6 +39,7 @@ class TestCommand(TestImport):
         self.assertEqual(de, None)
         ctext = self.tool.command.node.text
         self.assertEqual(ctext.strip(), "command")
+
 
 class TestImportXml(TestImport):
     def test_init_tool(self):

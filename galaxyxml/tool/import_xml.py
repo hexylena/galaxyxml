@@ -92,12 +92,11 @@ class GalaxyXmlParser(object):
         except KeyError:
             detect_errors = None
         ctext = command_root.text
-        command = gxtp.Command(detect_errors = detect_errors)
+        command = gxtp.Command(detect_errors=detect_errors)
         command.node.text = ctext
         tool.command_line = ctext
         tool.command = command
         tool.executable = ctext.split()[0]
-
 
     def _load_help(self, tool, help_root):
         """

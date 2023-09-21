@@ -89,7 +89,6 @@ class Tool(GalaxyXML):
         except Exception:
             pass
 
-
     def append(self, sub_node):
         if issubclass(type(sub_node), XMLParam):
             self.root.append(sub_node.node)
@@ -171,7 +170,6 @@ class Tool(GalaxyXML):
                 )
             command_node_text = actual_cli.strip()
         export_xml.command_line = command_node_text
-        command_kwargs = {}
         try:
             command_element = export_xml.command
         except Exception:
