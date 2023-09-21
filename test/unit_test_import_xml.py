@@ -26,7 +26,6 @@ class TestOverrides(TestImport):
         exml = self.tool.export()
         self.assertEqual(self.tool.command_override, col)
         exml = exml.replace("\n", " ")
-        print("-----------exml", exml)
         self.assertTrue(co in exml)
 
 class TestCommand(TestImport):
