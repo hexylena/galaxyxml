@@ -20,6 +20,14 @@ License
 
 Changelog
 ---------
+-  0.5.2
+
+   - Debugging Build
+
+-  0.5.1
+
+   - Debugging Build
+
 -  0.5.0
 
    - Added support for toolprofile (@fubar2)
