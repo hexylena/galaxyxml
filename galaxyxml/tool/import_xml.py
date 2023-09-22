@@ -27,7 +27,6 @@ class GalaxyXmlParser(object):
                 description = child.text
             elif child.tag == "command":
                 executable = child.text.split()[0]
-                command = child.text
             elif child.tag == "version_command":
                 version_cmd = child.text
 
@@ -43,7 +42,6 @@ class GalaxyXmlParser(object):
             workflow_compatible=xml_root.attrib.get("workflow_compatible", True),
             version_command=version_cmd,
         )
-        tool.command = command
         return tool
 
     def _load_description(self, tool, desc_root):
@@ -77,21 +75,28 @@ class GalaxyXmlParser(object):
         """
         tool.stdios = gxtp.Stdios()
         for std in stdio_root:
-            slevel = std.attrib['level']
-            srange = std.attrib['range']
+            slevel = std.attrib["level"]
+            srange = std.attrib["range"]
             tool.stdios.append(gxtp.Stdio(level=slevel, range=srange))
         logger.info("<stdio> loaded.")
 
-    def _load_command(self, tool, desc_root):
+    def _load_command(self, tool, command_root):
         """
-        <command> is already loaded during initiation.
-
         :param tool: Tool object from galaxyxml.
         :type tool: :class:`galaxyxml.tool.Tool`
         :param desc_root: root of <command> tag.
         :type desc_root: :class:`xml.etree._Element`
         """
-        logger.info("<command> is loaded during initiation of the object.")
+        try:
+            detect_errors = command_root.attrib['detect_errors']
+        except KeyError:
+            detect_errors = None
+        ctext = command_root.text
+        command = gxtp.Command(detect_errors=detect_errors)
+        command.node.text = ctext
+        tool.command_line = ctext
+        tool.command = command
+        tool.executable = ctext.split()[0]
 
     def _load_help(self, tool, help_root):
         """
@@ -727,11 +732,12 @@ class TestsParser(object):
         :param repeat_root: root of <output_collection> tag.
         :param repeat_root: :class:`xml.etree._Element`
         """
-        test_root.append(gxtp.TestOCElement(
-            name=element_root.attrib.get("name", None),
-            ftype=element_root.attrib.get("ftype", None),
-            file=element_root.attrib.get("file", None)
-        )
+        test_root.append(
+            gxtp.TestOCElement(
+                name=element_root.attrib.get("name", None),
+                ftype=element_root.attrib.get("ftype", None),
+                file=element_root.attrib.get("file", None),
+            )
         )
 
     def _load_repeat(self, test_root, repeat_root):
@@ -747,7 +753,7 @@ class TestsParser(object):
             repeat_root.attrib.get("title", None),
             min=repeat_root.attrib.get("min", None),
             max=repeat_root.attrib.get("max", None),
-            default=repeat_root.attrib.get("default", None)
+            default=repeat_root.attrib.get("default", None),
         )
         # Deal with child nodes
         self.load_inputs(repeat, repeat_root)

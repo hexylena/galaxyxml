@@ -2,15 +2,7 @@ import copy
 import logging
 
 from galaxyxml import GalaxyXML, Util
-from galaxyxml.tool.parameters import (
-    Expand,
-    Import,
-    Inputs,
-    Macro,
-    Macros,
-    Outputs,
-    XMLParam
-)
+from galaxyxml.tool.parameters import Expand, Import, Inputs, Macro, Macros, Outputs, XMLParam, Command
 
 from lxml import etree
 
@@ -37,18 +29,21 @@ class Tool(GalaxyXML):
         version_command="interpreter filename.exe --version",
         command_override=None,
         macros=[],
+        profile=None,
     ):
 
         self.id = id
         self.executable = executable
         self.interpreter = interpreter
         self.command_override = command_override
+        self.profile = profile
         kwargs = {
             "name": name,
             "id": id,
             "version": version,
             "hidden": hidden,
             "workflow_compatible": workflow_compatible,
+            "profile": profile
         }
         self.version_command = version_command
 
@@ -81,6 +76,7 @@ class Tool(GalaxyXML):
                 self.macros.append(Import(m))
         self.inputs = Inputs()
         self.outputs = Outputs()
+        self.command = Command()
 
     def add_comment(self, comment_txt):
         comment = etree.Comment(comment_txt)
@@ -134,13 +130,11 @@ class Tool(GalaxyXML):
             stdio_element = export_xml.stdios
         except Exception:
             stdio_element = None
-        if not stdio_element:
-            stdio_element = etree.SubElement(export_xml.root, "stdio")
-            etree.SubElement(stdio_element, "exit_code", range="1:", level="fatal")
-        try:
-            export_xml.append(stdio_element)
-        except Exception:
-            export_xml.append(Expand(macro="stdio"))
+        if stdio_element:
+            try:
+                export_xml.append(stdio_element)
+            except Exception:
+                export_xml.append(Expand(macro="stdio"))
 
         # Append version command
         export_xml.append_version_command()
@@ -158,25 +152,30 @@ class Tool(GalaxyXML):
                 command_line.append(export_xml.outputs.cli())
             except Exception:
                 pass
-        # Steal interpreter from kwargs
-        command_kwargs = {}
-        if export_xml.interpreter is not None:
-            command_kwargs["interpreter"] = export_xml.interpreter
         # Add command section
-        command_node = etree.SubElement(export_xml.root, "command", **command_kwargs)
+        command_node_text = None
         if keep_old_command:
             if getattr(self, "command", None):
-                command_node.text = etree.CDATA(export_xml.command)
+                command_node_text = etree.CDATA(export_xml.command)
             else:
                 logger.warning("The tool does not have any old command stored. Only the command line is written.")
-                command_node.text = export_xml.executable
+                command_node_text = export_xml.executable
         else:
             if self.command_override:
                 actual_cli = export_xml.clean_command_string(command_line)
             else:
-                actual_cli = "%s %s" % (export_xml.executable, export_xml.clean_command_string(command_line),)
-            command_node.text = etree.CDATA(actual_cli.strip())
-        export_xml.append(command_node)
+                actual_cli = "%s %s" % (
+                    export_xml.executable,
+                    export_xml.clean_command_string(command_line),
+                )
+            command_node_text = actual_cli.strip()
+        export_xml.command_line = command_node_text
+        try:
+            command_element = export_xml.command
+        except Exception:
+            command_element = etree.SubElement(export_xml.root, "command", detect_errors=None)
+        command_element.node.text = etree.CDATA(command_node_text)
+        export_xml.append(command_element)
 
         try:
             export_xml.append(export_xml.configfiles)
@@ -226,12 +225,12 @@ class MacrosTool(Tool):
 
     TODO all other elements, like requirements are currently ignored
     """
+
     def __init__(self, *args, **kwargs):
         super(MacrosTool, self).__init__(*args, **kwargs)
         self.root = etree.Element('macros')
         self.inputs = Macro("%s_inmacro" % self.id)
         self.outputs = Macro("%s_outmacro" % self.id)
-
 
     def export(self, keep_old_command=False):  # noqa
 

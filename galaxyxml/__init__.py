@@ -1,7 +1,4 @@
-from builtins import (
-    object,
-    str
-)
+from builtins import object, str
 
 from lxml import etree
 

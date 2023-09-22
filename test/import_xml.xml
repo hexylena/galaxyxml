@@ -18,7 +18,8 @@
     <exit_code level="fatal" range="1:"/>
   </stdio>
   <version_command>v_command</version_command>
-  <command><![CDATA[command]]></command>
+  <command><![CDATA[command]]>
+  </command>
   <inputs>
     <param name="interval_file" type="data" format="interval" label="near intervals in"/>
     <param checked="false" help="a help" label="a label" name="bool" type="boolean" truevalue="--bool" falsevalue=""/>
