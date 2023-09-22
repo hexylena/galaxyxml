@@ -20,6 +20,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install build wheel
     - name: Build package
-      run: python setup.py sdist bdist_wheel
+      run: |
+        pwd;
+        find
+        cd ../
+        pwd;
+        find
+        python setup.py sdist bdist_wheel
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
