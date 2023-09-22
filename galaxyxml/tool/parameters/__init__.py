@@ -1,5 +1,5 @@
 import logging
-from builtins import  (object, str)
+from builtins import (object, str)
 from galaxy.tool_util.parser.util import _parse_name
 
 from galaxyxml import Util
