@@ -1,9 +1,6 @@
 import logging
 from builtins import object, str
-from typing import (
-    Dict,
-    Optional,
-)
+from typing import Optional
 
 from galaxy.tool_util.parser.util import _parse_name
 from lxml import etree
@@ -546,7 +543,7 @@ class Conditional(InputParameter):
         # Find a way to check if one of the kids is a WHEN
         pass
 
-    def get_when(option: str):
+    def get_when(self, option: str):
         return self._whens.get(option)
 
 

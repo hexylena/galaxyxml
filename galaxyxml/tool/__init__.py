@@ -14,6 +14,7 @@ from galaxyxml.tool.parameters import (
     Outputs,
     XMLParam,
 )
+
 VALID_TOOL_TYPES = ("data_source", "data_source_async")
 VALID_URL_METHODS = ("get", "post")
 
