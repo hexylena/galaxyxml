@@ -1,5 +1,9 @@
 import copy
 import logging
+from typing import (
+    List,
+    Optional,
+)
 
 from lxml import etree
 
@@ -36,7 +40,7 @@ class Tool(GalaxyXML):
         workflow_compatible=True,
         interpreter=None,
         version_command="interpreter filename.exe --version",
-        command_override=None,
+        command_override: Optional[List[str]] = None,
         macros=[],
         profile=None,
     ):
@@ -109,7 +113,7 @@ class Tool(GalaxyXML):
         else:
             self.root.append(sub_node)
 
-    def clean_command_string(self, command_line):
+    def clean_command_string(self, command_line: List[str]) -> str:
         clean = []
         for x in command_line:
             if x is not [] and x is not [""]:
@@ -154,7 +158,7 @@ class Tool(GalaxyXML):
         export_xml.append_version_command()
 
         if self.command_override:
-            command_line = [self.command_override]
+            command_line = self.command_override
         else:
             command_line = []
             try:
