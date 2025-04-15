@@ -31,7 +31,7 @@ jobs:
     - name: Black
       uses: psf/black@23.3.0
 
-test:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
