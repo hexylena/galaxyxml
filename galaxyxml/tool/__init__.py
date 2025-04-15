@@ -53,7 +53,7 @@ class Tool(GalaxyXML):
             "hidden": hidden,
             "profile": profile,
             "workflow_compatible": workflow_compatible,
-            "profile": profile
+            "profile": profile,
         }
         self.version_command = version_command
 
@@ -190,7 +190,9 @@ class Tool(GalaxyXML):
         try:
             command_element = export_xml.command
         except Exception:
-            command_element = etree.SubElement(export_xml.root, "command", detect_errors=None)
+            command_element = etree.SubElement(
+                export_xml.root, "command", detect_errors=None
+            )
         command_element.node.text = etree.CDATA(command_node_text)
         export_xml.append(command_element)
 

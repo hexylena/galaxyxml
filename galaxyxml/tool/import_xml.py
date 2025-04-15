@@ -88,7 +88,7 @@ class GalaxyXmlParser(object):
         :type desc_root: :class:`xml.etree._Element`
         """
         try:
-            detect_errors = command_root.attrib['detect_errors']
+            detect_errors = command_root.attrib["detect_errors"]
         except KeyError:
             detect_errors = None
         ctext = command_root.text
