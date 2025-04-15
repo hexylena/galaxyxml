@@ -71,6 +71,7 @@ param_min.command_line_override = "-i$int_min,$int_max"
 param_max.command_line_override = ""
 param_min.space_between_arg = " "
 param_max.space_between_arg = " "
+
 inputs.append(param_min)
 inputs.append(param_max)
 inputs.append(posint)

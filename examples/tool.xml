@@ -5,10 +5,6 @@
     <requirement version="1.0.0" type="package">samtools</requirement>
     <container type="docker">one_super_image</container>
   </requirements>
-  <stdio>
-    <exit_code range="1:" level="fatal"/>
-  </stdio>
-  <expand macro="stdio"/>
   <version_command><![CDATA[aragorn.exe --version]]></version_command>
   <command><![CDATA[aragorn.exe $flag
 -float $float_section.float

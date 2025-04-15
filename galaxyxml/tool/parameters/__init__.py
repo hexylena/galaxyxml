@@ -85,6 +85,14 @@ class XMLParam(object):
         return None
 
 
+class Command(XMLParam):
+    name = "command"
+
+    def __init__(self, detect_errors=None, **kwargs):
+        params = Util.clean_kwargs(locals().copy())
+        super(Command, self).__init__(**params)
+
+
 class Stdios(XMLParam):
     node_name = "stdio"
 
@@ -394,7 +402,6 @@ class InputParameter(XMLParam):
                     kwargs[
                         "label"
                     ] = "Author did not provide help for this parameter... "
-
         super(InputParameter, self).__init__(**kwargs)
 
     def command_line(self, mako_path=None):

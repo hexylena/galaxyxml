@@ -5,10 +5,10 @@ with open("README.rst") as fh:
 
 setup(
     name="galaxyxml",
-    version="0.4.14",
+    version="0.5.3",
     description="Galaxy XML generation library",
     author="Helena Rasche",
-    author_email="hxr@hx42.org",
+    author_email="hexylena@galaxians.org",
     install_requires=["lxml", "galaxy-tool-util"],
     long_description=readme,
     long_description_content_type="text/x-rst",

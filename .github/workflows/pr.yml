@@ -30,7 +30,8 @@ jobs:
         configuration: --check --diff --profile black
     - name: Black
       uses: psf/black@23.3.0
-  test:
+
+test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -51,6 +52,7 @@ jobs:
     - name: install packages for testing
       run: pip install nose xmldiff
     - name: run nosetests
+      # TODO: replace with tox tests from #38
       run: nosetests --with-coverage --cover-package=galaxyxml
 
     - name: Run smoke test on example
