@@ -386,9 +386,9 @@ class InputParameter(XMLParam):
             kwargs = dict([("name", name)] + list(kwargs.items()))
 
         # Handle positional parameters
-        self.positional = kwargs.pop("positional", False)
+        self.positional = kwargs.get("positional", False)
         self.num_dashes = kwargs.pop("num_dashes", 0)
-        self.space_between_arg = kwargs.pop("space_between_arg", " ")
+        self.space_between_arg = kwargs.get("space_between_arg", " ")
 
         # Not sure about this :(
         # https://wiki.galaxyproject.org/Tools/BestPractices#Parameter_help
