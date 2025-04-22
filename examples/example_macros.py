@@ -3,7 +3,6 @@ import galaxyxml.tool as gxt
 import galaxyxml.tool.parameters as gxtp
 
 # examplify the use of MacrosTool
-#
 
 tool = gxt.MacrosTool(
     name="aragorn",
@@ -32,7 +31,9 @@ inputs.append(param)
 
 # A float in a section
 section = gxtp.Section("float_section", "Float section")
-param = gxtp.FloatParam("float", label="Float label", help="Float help", value=0, num_dashes=1)
+param = gxtp.FloatParam(
+    "float", label="Float label", help="Float help", value=0, num_dashes=1
+)
 param.space_between_arg = " "
 section.append(param)
 inputs.append(section)
@@ -42,16 +43,29 @@ param = gxtp.Conditional("cond", label="Conditional")
 param.append(gxtp.SelectParam("Select", options={"hi": "1", "bye": "2"}))
 when_a = gxtp.When(value="hi")
 when_b = gxtp.When(value="bye")
-when_b.append(gxtp.IntegerParam("some_int", value=0, num_dashes=1, label="Advanced value"))
+when_b.append(
+    gxtp.IntegerParam("some_int", value=0, num_dashes=1, label="Advanced value")
+)
 param.append(when_a)
 param.append(when_b)
 inputs.append(param)
 
 # Integer parameters
-param_min = gxtp.IntegerParam("int_min", label="int_min label", help="int_min help", value=0, num_dashes=1)
-param_max = gxtp.IntegerParam("int_max", label="int_max label", help="int_max help", value=0, num_dashes=1)
+param_min = gxtp.IntegerParam(
+    "int_min", label="int_min label", help="int_min help", value=0, num_dashes=1
+)
+param_max = gxtp.IntegerParam(
+    "int_max", label="int_max label", help="int_max help", value=0, num_dashes=1
+)
 
-posint = gxtp.IntegerParam("posint", label="posint label", positional=True, help="posinthelp", value=0, num_dashes=2)
+posint = gxtp.IntegerParam(
+    "posint",
+    label="posint label",
+    positional=True,
+    help="posinthelp",
+    value=0,
+    num_dashes=2,
+)
 
 param_min.command_line_override = "-i$int_min,$int_max"
 param_max.command_line_override = ""
@@ -85,7 +99,9 @@ param.space_between_arg = " "
 outputs.append(param)
 # Collection
 collection = gxtp.OutputCollection("supercollection", label="a small label")
-discover = gxtp.DiscoverDatasets("(?P&lt;designation&gt;.+).pdf.fasta", format="fasta")
+discover = gxtp.DiscoverDatasets(
+    r"(?P&lt;designation&gt;.+)\.pdf.fasta", format="fasta"
+)
 collection.append(discover)
 outputs.append(collection)
 

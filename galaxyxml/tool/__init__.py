@@ -1,10 +1,20 @@
 import copy
 import logging
-
-from galaxyxml import GalaxyXML, Util
-from galaxyxml.tool.parameters import Expand, Import, Inputs, Macro, Macros, Outputs, XMLParam, Command
+from typing import List, Optional
 
 from lxml import etree
+
+from galaxyxml import GalaxyXML, Util
+from galaxyxml.tool.parameters import (
+    Command,
+    Expand,
+    Import,
+    Inputs,
+    Macro,
+    Macros,
+    Outputs,
+    XMLParam,
+)
 
 VALID_TOOL_TYPES = ("data_source", "data_source_async")
 VALID_URL_METHODS = ("get", "post")
@@ -27,11 +37,10 @@ class Tool(GalaxyXML):
         workflow_compatible=True,
         interpreter=None,
         version_command="interpreter filename.exe --version",
-        command_override=None,
+        command_override: Optional[List[str]] = None,
         macros=[],
         profile=None,
     ):
-
         self.id = id
         self.executable = executable
         self.interpreter = interpreter
@@ -42,8 +51,9 @@ class Tool(GalaxyXML):
             "id": id,
             "version": version,
             "hidden": hidden,
+            "profile": profile,
             "workflow_compatible": workflow_compatible,
-            "profile": profile
+            "profile": profile,
         }
         self.version_command = version_command
 
@@ -58,7 +68,9 @@ class Tool(GalaxyXML):
 
         if tool_type is not None:
             if tool_type not in VALID_TOOL_TYPES:
-                raise Exception("Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES))
+                raise Exception(
+                    "Tool type must be one of %s" % ",".join(VALID_TOOL_TYPES)
+                )
             else:
                 kwargs["tool_type"] = tool_type
 
@@ -66,7 +78,9 @@ class Tool(GalaxyXML):
                     if URL_method in VALID_URL_METHODS:
                         kwargs["URL_method"] = URL_method
                     else:
-                        raise Exception("URL_method must be one of %s" % ",".join(VALID_URL_METHODS))
+                        raise Exception(
+                            "URL_method must be one of %s" % ",".join(VALID_URL_METHODS)
+                        )
 
         description_node = etree.SubElement(self.root, "description")
         description_node.text = description
@@ -76,6 +90,7 @@ class Tool(GalaxyXML):
                 self.macros.append(Import(m))
         self.inputs = Inputs()
         self.outputs = Outputs()
+        self.help = "TODO"
         self.command = Command()
 
     def add_comment(self, comment_txt):
@@ -95,7 +110,7 @@ class Tool(GalaxyXML):
         else:
             self.root.append(sub_node)
 
-    def clean_command_string(self, command_line):
+    def clean_command_string(self, command_line: List[str]) -> str:
         clean = []
         for x in command_line:
             if x is not [] and x is not [""]:
@@ -158,7 +173,9 @@ class Tool(GalaxyXML):
             if getattr(self, "command", None):
                 command_node_text = etree.CDATA(export_xml.command)
             else:
-                logger.warning("The tool does not have any old command stored. Only the command line is written.")
+                logger.warning(
+                    "The tool does not have any old command stored. Only the command line is written."
+                )
                 command_node_text = export_xml.executable
         else:
             if self.command_override:
@@ -173,7 +190,9 @@ class Tool(GalaxyXML):
         try:
             command_element = export_xml.command
         except Exception:
-            command_element = etree.SubElement(export_xml.root, "command", detect_errors=None)
+            command_element = etree.SubElement(
+                export_xml.root, "command", detect_errors=None
+            )
         command_element.node.text = etree.CDATA(command_node_text)
         export_xml.append(command_element)
 
@@ -228,12 +247,11 @@ class MacrosTool(Tool):
 
     def __init__(self, *args, **kwargs):
         super(MacrosTool, self).__init__(*args, **kwargs)
-        self.root = etree.Element('macros')
+        self.root = etree.Element("macros")
         self.inputs = Macro("%s_inmacro" % self.id)
         self.outputs = Macro("%s_outmacro" % self.id)
 
     def export(self, keep_old_command=False):  # noqa
-
         export_xml = copy.deepcopy(self)
 
         try:
@@ -250,7 +268,9 @@ class MacrosTool(Tool):
             raise
 
         # Add command section
-        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_INMACRO" % self.id.upper()})
+        command_node = etree.SubElement(
+            export_xml.root, "token", {"name": "%s_INMACRO" % self.id.upper()}
+        )
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 
@@ -259,7 +279,9 @@ class MacrosTool(Tool):
             command_line.append(export_xml.outputs.cli())
         except Exception:
             pass
-        command_node = etree.SubElement(export_xml.root, 'token', {"name": "%s_OUTMACRO" % self.id.upper()})
+        command_node = etree.SubElement(
+            export_xml.root, "token", {"name": "%s_OUTMACRO" % self.id.upper()}
+        )
         actual_cli = "%s" % (export_xml.clean_command_string(command_line))
         command_node.text = etree.CDATA(actual_cli.strip())
 

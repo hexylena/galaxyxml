@@ -88,7 +88,7 @@ class GalaxyXmlParser(object):
         :type desc_root: :class:`xml.etree._Element`
         """
         try:
-            detect_errors = command_root.attrib['detect_errors']
+            detect_errors = command_root.attrib["detect_errors"]
         except KeyError:
             detect_errors = None
         ctext = command_root.text
@@ -124,7 +124,9 @@ class GalaxyXmlParser(object):
             value = req.text
             if req.tag == "requirement":
                 version = req.attrib.get("version", None)
-                tool.requirements.append(gxtp.Requirement(req_type, value, version=version))
+                tool.requirements.append(
+                    gxtp.Requirement(req_type, value, version=version)
+                )
             elif req.tag == "container":
                 tool.requirements.append(gxtp.Container(req_type, value))
             else:
@@ -357,7 +359,9 @@ class InputsParser(object):
         """
         root.append(
             gxtp.SelectOption(
-                option.attrib.get("value", None), option.text, selected=option.attrib.get("selected", False)
+                option.attrib.get("value", None),
+                option.text,
+                selected=option.attrib.get("selected", False),
             )
         )
 
@@ -437,9 +441,13 @@ class InputsParser(object):
         # Deal with child nodes (usually option and options)
         for sel_child in sel_param:
             try:
-                getattr(self, "_load_{}_select".format(sel_child.tag))(select_param, sel_child)
+                getattr(self, "_load_{}_select".format(sel_child.tag))(
+                    select_param, sel_child
+                )
             except AttributeError:
-                logger.warning(sel_child.tag + " tag is not processed for <param type='select'>.")
+                logger.warning(
+                    sel_child.tag + " tag is not processed for <param type='select'>."
+                )
         root.append(select_param)
 
     def _load_param(self, root, param_root):
@@ -540,7 +548,12 @@ class InputsParser(object):
             try:
                 getattr(self, "_load_{}".format(inp_child.tag))(root, inp_child)
             except AttributeError:
-                logger.warning(inp_child.tag + " tag is not processed for <" + inputs_root.tag + "> tag.")
+                logger.warning(
+                    inp_child.tag
+                    + " tag is not processed for <"
+                    + inputs_root.tag
+                    + "> tag."
+                )
 
 
 class OutputsParser(object):
@@ -585,7 +598,9 @@ class OutputsParser(object):
         for chfmt_child in chfmt_root:
             change_format.append(
                 gxtp.ChangeFormatWhen(
-                    chfmt_child.attrib["input"], chfmt_child.attrib["format"], chfmt_child.attrib["value"]
+                    chfmt_child.attrib["input"],
+                    chfmt_child.attrib["format"],
+                    chfmt_child.attrib["value"],
                 )
             )
         root.append(change_format)
@@ -612,7 +627,9 @@ class OutputsParser(object):
             try:
                 getattr(self, "_load_{}".format(coll_child.tag))(collection, coll_child)
             except AttributeError:
-                logger.warning(coll_child.tag + " tag is not processed for <collection>.")
+                logger.warning(
+                    coll_child.tag + " tag is not processed for <collection>."
+                )
         outputs_root.append(collection)
 
     def _load_discover_datasets(self, root, disc_root):
@@ -771,7 +788,12 @@ class TestsParser(object):
             try:
                 getattr(self, "_load_{}".format(rep_child.tag))(repeat, rep_child)
             except AttributeError:
-                logger.warning(rep_child.tag + " tag is not processed for <" + repeat_root.tag + "> tag.")
+                logger.warning(
+                    rep_child.tag
+                    + " tag is not processed for <"
+                    + repeat_root.tag
+                    + "> tag."
+                )
 
     def load_tests(self, root, tests_root):
         """
@@ -787,5 +809,7 @@ class TestsParser(object):
                 try:
                     getattr(self, "_load_{}".format(test_child.tag))(test, test_child)
                 except AttributeError:
-                    logger.warning(test_child.tag + " tag is not processed within <test>.")
+                    logger.warning(
+                        test_child.tag + " tag is not processed within <test>."
+                    )
             root.append(test)

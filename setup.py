@@ -20,5 +20,5 @@ setup(
         "Environment :: Console",
         "License :: OSI Approved :: Apache Software License",
     ],
-    data_files=[("", ["LICENSE.TXT"])]
+    data_files=[("", ["LICENSE.TXT"])],
 )

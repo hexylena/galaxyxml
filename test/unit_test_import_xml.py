@@ -23,7 +23,7 @@ class TestStdios(TestImport):
 class TestOverrides(TestImport):
     def test_override(self):
         co = "bash foo.sh > output1"
-        col = co.split(' ')
+        col = co.split(" ")
         self.tool.command_override = col
         exml = self.tool.export()
         self.assertEqual(self.tool.command_override, col)
