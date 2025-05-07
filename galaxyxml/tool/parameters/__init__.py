@@ -83,7 +83,7 @@ class XMLParam(object):
 
 
 class Command(XMLParam):
-    name = "command"
+    node_name = "command"
 
     def __init__(self, detect_errors=None, **kwargs):
         params = Util.clean_kwargs(locals().copy())
