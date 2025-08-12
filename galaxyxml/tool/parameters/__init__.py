@@ -862,7 +862,8 @@ class ValidatorParam(XMLParam):
         params = Util.clean_kwargs(locals().copy())
         del params["text"]
         super(ValidatorParam, self).__init__(**params)
-        self.node.text = etree.CDATA(str(text))
+        if text: 
+            self.node.text = etree.CDATA(str(text))
 
 
 class Outputs(XMLParam):
